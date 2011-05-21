@@ -55,5 +55,26 @@ namespace Glav.CacheAdapter.Core
             if (_cache.Contains(cacheKey))
                 _cache.Remove(cacheKey);
         }
-    }
+
+
+		public void Add<T>(string cacheKey, TimeSpan slidingExpiryWindow, T dataToAdd) where T : class
+		{
+			if (dataToAdd != null)
+			{
+				var item = new CacheItem(cacheKey, dataToAdd);
+				var policy = new CacheItemPolicy() {SlidingExpiration = slidingExpiryWindow};
+				_cache.Add(item, policy);
+			}
+		}
+
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
+		{
+			Add<object>(cacheKey,slidingExpiryWindow,dataToAdd);
+		}
+
+		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
+		{
+			// There is no per request cache do we dont do anything.
+		}
+	}
 }

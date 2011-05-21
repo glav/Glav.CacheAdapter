@@ -35,12 +35,27 @@ namespace Glav.CacheAdapter.Web
         public T Get<T>(string cacheKey) where T : class
         {
             T data = _cache.Get(cacheKey) as T;
+			if (data == null)
+			{
+				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
+				{
+					return System.Web.HttpContext.Current.Items[cacheKey] as T;
+				}
+			}
             return data;
         }
 
         public object Get(string cacheKey)
         {
-            return _cache.Get(cacheKey);
+			var data = _cache.Get(cacheKey);
+			if (data == null)
+			{
+				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
+				{
+					return System.Web.HttpContext.Current.Items[cacheKey];
+				}
+			}
+        	return data;
         }
 
         public void InvalidateCacheItem(string cacheKey)
@@ -49,6 +64,37 @@ namespace Glav.CacheAdapter.Web
                 _cache.Remove(cacheKey);
         }
 
-        #endregion
-    }
+		public void Add<T>(string cacheKey, TimeSpan slidingExpiryWindow, T dataToAdd) where T : class
+		{
+			if (dataToAdd != null)
+			{
+				_cache.Add(cacheKey, dataToAdd, null, Cache.NoAbsoluteExpiration, slidingExpiryWindow, CacheItemPriority.BelowNormal,
+				           null);
+			}
+		}
+
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
+		{
+			Add<object>(cacheKey,slidingExpiryWindow,dataToAdd);
+		}
+
+		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
+		{
+			if (dataToAdd != null && System.Web.HttpContext.Current != null)
+			{
+				if (!System.Web.HttpContext.Current.Items.Contains(cacheKey))
+				{
+					System.Web.HttpContext.Current.Items.Add(cacheKey,dataToAdd);
+				}
+				else
+				{
+					System.Web.HttpContext.Current.Items[cacheKey] = dataToAdd;
+				}
+				
+			}
+		}
+
+		#endregion
+
+	}
 }
