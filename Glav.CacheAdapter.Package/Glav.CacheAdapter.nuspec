@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>Glav.CacheAdapter</id>
+		<version>0.9</version>
+		<authors>
+			<author>Paul Glavich</author>
+		</authors>
+		<description>A generic cache mechanism that provides abstracted cache interfaces, configurable cache options such as MemoryCache, ASP.NET Web cache and Windows AppFabric cache, as well resolution of cache mechanisms via dependency injection.</description>
+		<language>en-US</language>
+	</metadata>
+</package>
