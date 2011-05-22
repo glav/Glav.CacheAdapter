@@ -37,9 +37,6 @@
     <Reference Include="Microsoft.ApplicationServer.Caching.Core">
       <HintPath>..\Dependencies\Windows AppFabric\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\Dependencies\Enterprise Library 5.0\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Caching" />
@@ -51,14 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrap\CacheBootstrapper.cs" />
     <Compile Include="Bootstrap\CacheTypes.cs" />
     <Compile Include="CacheProvider.cs" />
     <Compile Include="CacheSettingEnumeration.cs" />
-    <Compile Include="DependencyInjection\ApplicationService.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
-    <Compile Include="DependencyInjection\ContainerBootStrapper.cs" />
-    <Compile Include="DependencyInjection\IApplicationService.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Distributed\AppFabricCacheAdapter.cs" />
