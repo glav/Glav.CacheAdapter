@@ -9,8 +9,8 @@ namespace Glav.CacheAdapter.Core
 
     public interface ICacheProvider
     {
-        T Get<T>(string cacheKey, DateTime expiryDate, GetDataToCacheDelegate<T> getData) where T : class;
-        object GetObject(string cacheKey, DateTime expiryDate, GetDataToCacheDelegate<object> getData);
+        T Get<T>(string cacheKey, DateTime absoluteExpiryDate, GetDataToCacheDelegate<T> getData) where T : class;
+		T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, GetDataToCacheDelegate<T> getData) where T : class;
         void InvalidateCacheItem(string cacheKey);
     }
 }

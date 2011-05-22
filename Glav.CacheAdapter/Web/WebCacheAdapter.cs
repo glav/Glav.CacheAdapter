@@ -21,15 +21,10 @@ namespace Glav.CacheAdapter.Web
 
         #region ICache Members
 
-        public void Add<T>(string cacheKey, DateTime expiry, T dataToAdd) where T : class
+        public void Add(string cacheKey, DateTime expiry, object dataToAdd)
         {
             if (dataToAdd != null)
                 _cache.Add(cacheKey, dataToAdd, null, expiry, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
-        }
-
-        public void Add(string cacheKey, DateTime expiry, object dataToAdd)
-        {
-            Add<object>(cacheKey, expiry, dataToAdd);
         }
 
         public T Get<T>(string cacheKey) where T : class
@@ -45,37 +40,19 @@ namespace Glav.CacheAdapter.Web
             return data;
         }
 
-        public object Get(string cacheKey)
-        {
-			var data = _cache.Get(cacheKey);
-			if (data == null)
-			{
-				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
-				{
-					return System.Web.HttpContext.Current.Items[cacheKey];
-				}
-			}
-        	return data;
-        }
-
         public void InvalidateCacheItem(string cacheKey)
         {
             if (_cache.Get(cacheKey) != null)
                 _cache.Remove(cacheKey);
         }
 
-		public void Add<T>(string cacheKey, TimeSpan slidingExpiryWindow, T dataToAdd) where T : class
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd) 
 		{
 			if (dataToAdd != null)
 			{
 				_cache.Add(cacheKey, dataToAdd, null, Cache.NoAbsoluteExpiration, slidingExpiryWindow, CacheItemPriority.BelowNormal,
 				           null);
 			}
-		}
-
-		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
-		{
-			Add<object>(cacheKey,slidingExpiryWindow,dataToAdd);
 		}
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
