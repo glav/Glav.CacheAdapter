@@ -17,8 +17,6 @@ namespace Glav.CacheAdapter.ExampleUsage
     {
         static void Main(string[] args)
         {
-            CacheBootstrapper.InitialiseCache();
-
             ExampleAddAndRetrieveFromCache();
 
             Console.WriteLine("Done.");
@@ -28,7 +26,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 
         private static void ExampleAddAndRetrieveFromCache()
         {
-            var cacheProvider = AppServices.Resolve<ICacheProvider>();
+        	var cacheProvider = AppServices.Cache;
 
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
             // the item is automatically added to the cache and returned.

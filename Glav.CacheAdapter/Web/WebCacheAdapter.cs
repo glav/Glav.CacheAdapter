@@ -4,15 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Web.Caching;
 using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Web
 {
     public class WebCacheAdapter : ICache
     {
         private System.Web.Caching.Cache _cache;
+    	private ILogging _logger;
 
-        public WebCacheAdapter()
+        public WebCacheAdapter(ILogging logger)
         {
+        	_logger = logger;
+
             if (System.Web.HttpContext.Current != null)
                 _cache = System.Web.HttpContext.Current.Cache;
             else

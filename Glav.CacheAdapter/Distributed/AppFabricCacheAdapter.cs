@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Practices.Unity;
+using Glav.CacheAdapter.Core.Diagnostics;
 using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
@@ -12,10 +12,12 @@ namespace Glav.CacheAdapter.Distributed
     public class AppFabricCacheAdapter : ICache
     {
         private DataCache _cache;
+    	private ILogging _logger;
 
-        public AppFabricCacheAdapter()
+        public AppFabricCacheAdapter(ILogging logger)
         {
-            var factory = AppServices.Container.Resolve<AppFabricCacheFactory>();
+        	_logger = logger;
+        	var factory = new AppFabricCacheFactory(_logger);
             _cache = factory.ConstructCache(MainConfig.Default.DistributedCacheServers);
         }
 
