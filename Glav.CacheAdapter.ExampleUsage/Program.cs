@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.Core.DependencyInjection;
-using Microsoft.Practices.Unity;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Distributed;
