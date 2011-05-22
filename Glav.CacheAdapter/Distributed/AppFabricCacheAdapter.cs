@@ -21,12 +21,13 @@ namespace Glav.CacheAdapter.Distributed
             _cache = factory.ConstructCache(MainConfig.Default.DistributedCacheServers);
         }
 
-        public void Add<T>(string cacheKey, DateTime expiry, T dataToAdd) where T : class
+        public void Add(string cacheKey, DateTime expiry, object dataToAdd)
         {
             if (expiry > DateTime.Now && dataToAdd != null)
             {
-                TimeSpan timeout = expiry - DateTime.Now;
+				TimeSpan timeout = expiry - DateTime.Now;
                 _cache.Add(cacheKey, dataToAdd, timeout);
+				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, expiry date {1}", cacheKey, expiry.ToString("yyyy/MM/dd hh:mm:ss")));
             }
         }
 
@@ -36,33 +37,19 @@ namespace Glav.CacheAdapter.Distributed
             return data;
         }
 
-        public void Add(string cacheKey, DateTime expiry, object dataToAdd)
-        {
-            Add<object>(cacheKey, expiry, dataToAdd);
-        }
-
-        public object Get(string cacheKey)
-        {
-            return _cache.Get(cacheKey);
-        }
-
         public void InvalidateCacheItem(string cacheKey)
         {
             _cache.Remove(cacheKey);
         }
 
 
-		public void Add<T>(string cacheKey, TimeSpan slidingExpiryWindow, T dataToAdd) where T : class
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
 		{
 			if (dataToAdd != null)
 			{
+				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding window expiry in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
 				_cache.Add(cacheKey, dataToAdd, slidingExpiryWindow);
 			}
-		}
-
-		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
-		{
-			Add<object>(cacheKey,slidingExpiryWindow,dataToAdd);
 		}
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
@@ -71,7 +58,7 @@ namespace Glav.CacheAdapter.Distributed
 			// You could simulate this in code with a dependency on the ASP.NET framework and its inbuilt request
 			// objects but we wont do that here. We simply add it into the cache for 1 second.
 			// Its hacky but this behaviour will be specific to the scenario at hand.
-			Add<object>(cacheKey,TimeSpan.FromSeconds(1),dataToAdd);
+			Add(cacheKey,TimeSpan.FromSeconds(1),dataToAdd);
 		}
 	}
 }

@@ -25,19 +25,23 @@ namespace Glav.CacheAdapter.Web
 
         #region ICache Members
 
-        public void Add(string cacheKey, DateTime expiry, object dataToAdd)
-        {
-            if (dataToAdd != null)
-                _cache.Add(cacheKey, dataToAdd, null, expiry, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
-        }
+		public void Add(string cacheKey, DateTime expiry, object dataToAdd)
+		{
+			if (dataToAdd != null)
+			{
+				_cache.Add(cacheKey, dataToAdd, null, expiry, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, expiry date {1}",cacheKey,expiry.ToString("yyyy/MM/dd hh:mm:ss")));
+			}
+		}
 
-        public T Get<T>(string cacheKey) where T : class
+    	public T Get<T>(string cacheKey) where T : class
         {
             T data = _cache.Get(cacheKey) as T;
 			if (data == null)
 			{
 				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
 				{
+					_logger.WriteInfoMessage(string.Format("Getting data from per request cache with cache key: {0}", cacheKey));
 					return System.Web.HttpContext.Current.Items[cacheKey] as T;
 				}
 			}
@@ -54,6 +58,7 @@ namespace Glav.CacheAdapter.Web
 		{
 			if (dataToAdd != null)
 			{
+				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding window expiry in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
 				_cache.Add(cacheKey, dataToAdd, null, Cache.NoAbsoluteExpiration, slidingExpiryWindow, CacheItemPriority.BelowNormal,
 				           null);
 			}
@@ -63,6 +68,8 @@ namespace Glav.CacheAdapter.Web
 		{
 			if (dataToAdd != null && System.Web.HttpContext.Current != null)
 			{
+				_logger.WriteInfoMessage(string.Format("Adding data to per request cache with cache key: {0}", cacheKey));
+
 				if (!System.Web.HttpContext.Current.Items.Contains(cacheKey))
 				{
 					System.Web.HttpContext.Current.Items.Add(cacheKey,dataToAdd);
