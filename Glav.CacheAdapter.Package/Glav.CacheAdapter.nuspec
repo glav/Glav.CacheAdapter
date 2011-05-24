@@ -2,11 +2,17 @@
 <package>
 	<metadata>
 		<id>Glav.CacheAdapter</id>
-		<version>0.9</version>
-		<authors>
-			<author>Paul Glavich</author>
-		</authors>
-		<description>A generic cache mechanism that provides abstracted cache interfaces, configurable cache options such as MemoryCache, ASP.NET Web cache and Windows AppFabric cache, as well resolution of cache mechanisms via dependency injection.</description>
+		<title>.NET CacheAdapter</title>
+		<version>1.0</version>
+		<authors>Paul Glavich</authors>
+		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web and AppFabric cache mechasnisms.</description>
 		<language>en-US</language>
 	</metadata>
+	 <files>
+		  <file src="lib\*.dll" target="lib" />
+		  <file src="content\app.config.transform" target="content" />
+		  <file src="content\web.config.transform" target="content" />
+		  <file src="content\Example-CacheAdapterUsage.cs" target="content" />
+	  </files>
 </package>
+
