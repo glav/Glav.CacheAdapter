@@ -75,7 +75,7 @@ namespace Glav.CacheAdapter.Core
 						_cache.Add(cacheKey, slidingExpiryWindow, data);
 						_logger.WriteInfoMessage(
 							string.Format("Adding item [{0}] to cache with sliding sliding expiry window in seconds [{1}].", cacheKey,
-							              slidingExpiryWindow.ToString("dd/MM/yyyy hh:mm:ss")));
+							              slidingExpiryWindow.TotalSeconds));
 					}
 				}
 			}
