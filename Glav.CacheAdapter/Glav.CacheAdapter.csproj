@@ -63,6 +63,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>MainConfig.settings</DependentUpon>
     </Compile>
+    <Compile Include="memcached\CacheServerFarm.cs" />
+    <Compile Include="memcached\FnvHash.cs" />
     <Compile Include="MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\WebCacheAdapter.cs" />
@@ -78,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Copyright.txt" />
+    <Content Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
