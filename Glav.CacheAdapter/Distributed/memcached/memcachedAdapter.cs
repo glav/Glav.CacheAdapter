@@ -92,5 +92,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			_serverFarm.SetNodeToDead(e.FailedNode);
 		}
 
+		public CacheSetting CacheType
+		{
+			get { return CacheSetting.memcached; }
+		}
 	}
 }

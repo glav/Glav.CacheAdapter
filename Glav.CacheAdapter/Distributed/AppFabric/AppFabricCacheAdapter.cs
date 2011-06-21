@@ -60,5 +60,11 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			// Its hacky but this behaviour will be specific to the scenario at hand.
 			Add(cacheKey,TimeSpan.FromSeconds(1),dataToAdd);
 		}
+
+
+		public CacheSetting CacheType
+		{
+			get { return CacheSetting.AppFabric; }
+		}
 	}
 }

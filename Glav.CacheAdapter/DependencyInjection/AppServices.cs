@@ -6,6 +6,7 @@ using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.Distributed.memcached;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
 {
@@ -42,6 +43,9 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 					break;
 				case CacheTypes.AppFabricCache:
 					_cache = new AppFabricCacheAdapter(_logger);
+					break;
+				case CacheTypes.memcached:
+					_cache = new memcachedAdapter(_logger);
 					break;
 				default:
 					_cache = new MemoryCacheAdapter(_logger);

@@ -9,6 +9,7 @@ namespace Glav.CacheAdapter.Core
     {
         Memory,
         Web,
-        AppFabric
+        AppFabric,
+		memcached
     }
 }

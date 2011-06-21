@@ -23,8 +23,6 @@ namespace Glav.CacheAdapter.Web
                 throw new ArgumentNullException("Not in a web context, unable to use the web cache.");
         }
 
-        #region ICache Members
-
 		public void Add(string cacheKey, DateTime expiry, object dataToAdd)
 		{
 			if (dataToAdd != null)
@@ -82,7 +80,9 @@ namespace Glav.CacheAdapter.Web
 			}
 		}
 
-		#endregion
-
+		public CacheSetting CacheType
+		{
+			get { return CacheSetting.Web; }
+		}
 	}
 }
