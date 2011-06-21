@@ -64,7 +64,17 @@ namespace Glav.CacheAdapter.Core
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
-			// There is no per request cache do we dont do anything.
+			// memory cache does not have a per request concept nor does it need to since all cache nodes should be in sync
+			// You could simulate this in code with a dependency on the ASP.NET framework and its inbuilt request
+			// objects but we wont do that here. We simply add it into the cache for 1 second.
+			// Its hacky but this behaviour will be specific to the scenario at hand.
+			Add(cacheKey, TimeSpan.FromSeconds(1), dataToAdd);
+		}
+
+
+		public CacheSetting CacheType
+		{
+			get { return CacheSetting.Memory; }
 		}
 	}
 }
