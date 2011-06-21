@@ -9,6 +9,13 @@ implementation underlying that interface via configuration to use either:
  3. Distributed AppFabric cache. (config setting="AppFabric")
  4. Distributed memcached cache. (config setting="memcached")
 
+For example:
+            <setting name="CacheToUse" serializeAs="String">
+                <value>memcached</value>
+            </setting>
+Means the underlying cache mechanism uses memcached and it expects to find memcached server nodes at the address listed in
+the 'DistributedCacheServers' configuration element (see below).
+
 This means you dont have to know how to program against these specific cache mechanisms, as this is all handled
 by the various adapters within this project, and driven purely through configuration.
 
