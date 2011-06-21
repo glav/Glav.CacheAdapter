@@ -25,7 +25,15 @@ methods for each cache implementation. ICacheProvider is a more fluent API that 
 configured. You can use either ICache or ICacheProvider, and it will use the underlying configured cache mechanism. ICacheProvider
 is simply provided to give a more fluent API to cache usage.
 
-In the config file, if you set the 'CacheToUse' setting to either AppFabric or memcached, then the 'DistributedServers'
+In the config file, if you set the 'CacheToUse' setting to either 'AppFabric' or 'memcached', then the 'DistributedCacheServers'
+should be a comma separated list of server IP addresses and port numbers that represent the cache servers in your cache farm. 
+For example:
+    <setting name="DistributedCacheServers" serializeAs="String">
+      <value>localhost:11211,localhost:11212</value>
+    </setting>
+This configuration states that there are 2 cache servers in the farm. One at address localhost (127.0.0.1), port 11211 and the
+other at address localhost (127.0.0.1), port 11212.
+
 
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
