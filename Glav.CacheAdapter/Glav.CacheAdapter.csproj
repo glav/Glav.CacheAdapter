@@ -54,8 +54,8 @@
     <Compile Include="DependencyInjection\AppServices.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
-    <Compile Include="Distributed\AppFabricCacheAdapter.cs" />
-    <Compile Include="Distributed\AppFabricCacheFactory.cs" />
+    <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
+    <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="ICacheProvider.cs" />
     <Compile Include="MainConfig.Designer.cs">
@@ -63,8 +63,21 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>MainConfig.settings</DependentUpon>
     </Compile>
-    <Compile Include="memcached\CacheServerFarm.cs" />
-    <Compile Include="memcached\FnvHash.cs" />
+    <Compile Include="Distributed\memcached\memcachedAdapter.cs" />
+    <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
+    <Compile Include="Distributed\memcached\DeadNodePool.cs" />
+    <Compile Include="Distributed\memcached\FnvHash.cs" />
+    <Compile Include="Distributed\memcached\memcachedCacheFactory.cs" />
+    <Compile Include="Distributed\memcached\Protocol\CommandResponse.cs" />
+    <Compile Include="Distributed\memcached\Protocol\CommandSocket.cs" />
+    <Compile Include="Distributed\memcached\Protocol\DeleteCommand.cs" />
+    <Compile Include="Distributed\memcached\Protocol\GenericCommandProcessor.cs" />
+    <Compile Include="Distributed\memcached\Protocol\GetCommand.cs" />
+    <Compile Include="Distributed\memcached\Protocol\SetCommand.cs" />
+    <Compile Include="Distributed\memcached\Protocol\StatisticsCommand.cs" />
+    <Compile Include="Distributed\memcached\Protocol\SupportedCommands.cs" />
+    <Compile Include="Distributed\memcached\Protocol\VersionCommand.cs" />
+    <Compile Include="Distributed\memcached\ServerNode.cs" />
     <Compile Include="MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\WebCacheAdapter.cs" />

@@ -7,7 +7,7 @@ using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
 
-namespace Glav.CacheAdapter.Distributed
+namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheAdapter : ICache
     {

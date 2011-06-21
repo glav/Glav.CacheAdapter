@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.Bootstrap;
-using Glav.CacheAdapter.Distributed;
+using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
 
@@ -20,7 +20,8 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
     		PreStartInitialise();
     	}
         /// <summary>
-        /// Initialise the container with core dependencies.
+        /// Initialise the container with core dependencies. The cache/cache provider should be set to be
+        /// singletons if adapting to use with a Dependency Injection mechanism
         /// </summary>
         /// <remarks>Note: In a .Net 4 web app, this method could be invoked using the new PreApplicationStartMethod attribute
         /// as in: <code>[assembly: PreApplicationStartMethod(typeof(MyStaticClass), "PreStartInitialise")]</code>
