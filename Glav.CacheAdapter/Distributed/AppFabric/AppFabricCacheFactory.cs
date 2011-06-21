@@ -6,7 +6,7 @@ using Microsoft.ApplicationServer.Caching;
 using System.Diagnostics;
 using Glav.CacheAdapter.Core.Diagnostics;
 
-namespace Glav.CacheAdapter.Distributed
+namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheFactory
     {

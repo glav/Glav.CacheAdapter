@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Glav.CacheAdapter.memcached
+namespace Glav.CacheAdapter.Distributed.memcached
 {
 
 	/// <summary>
