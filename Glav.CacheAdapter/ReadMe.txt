@@ -16,6 +16,17 @@ In addition, the use of an interface based approach means you can easily test an
 this cache interface as a dependency by mocking this interface implementation using tools such as 
 RhinoMocks of MoQ.
 
+This library consists of 2 main interfaces:
+ICache
+ICacheProvider
+
+ICache is what is implemented by each each cache mechanism such as memory, web, app fabric, memcached. It contains the raw Add/Get/Delete
+methods for each cache implementation. ICacheProvider is a more fluent API that makes use of what ever ICache implementation is
+configured. You can use either ICache or ICacheProvider, and it will use the underlying configured cache mechanism. ICacheProvider
+is simply provided to give a more fluent API to cache usage.
+
+In the config file, if you set the 'CacheToUse' setting to either AppFabric or memcached, then the 'DistributedServers'
+
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
 http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-package.aspx
