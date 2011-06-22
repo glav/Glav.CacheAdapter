@@ -29,7 +29,7 @@ ICacheProvider
 
 ICache is what is implemented by each each cache mechanism such as memory, web, app fabric, memcached. It contains the raw Add/Get/Delete
 methods for each cache implementation. ICacheProvider is a more fluent API that makes use of what ever ICache implementation is
-configured. You can use either ICache or ICacheProvider, and it will use the underlying configured cache mechanism. ICacheProvider
+configured. You can use either ICache or ICacheProvider directly, and it will use the underlying configured cache mechanism. ICacheProvider
 is simply provided to give a more fluent API to cache usage.
 
 In the config file, if you set the 'CacheToUse' setting to either 'AppFabric' or 'memcached', then the 'DistributedCacheServers'
