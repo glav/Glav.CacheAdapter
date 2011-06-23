@@ -3,9 +3,9 @@
 	<metadata>
 		<id>Glav.CacheAdapter</id>
 		<title>.NET CacheAdapter</title>
-		<version>1.1</version>
+		<version>2.0</version>
 		<authors>Paul Glavich</authors>
-		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web and AppFabric cache mechasnisms.</description>
+		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric and memcached cache mechasnisms.</description>
 		<language>en-US</language>
 	</metadata>
 	 <files>
