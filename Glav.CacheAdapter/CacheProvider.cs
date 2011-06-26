@@ -92,5 +92,21 @@ namespace Glav.CacheAdapter.Core
         }
 
         #endregion
-    }
+
+
+		public void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd)
+		{
+			_cache.Add(cacheKey,absoluteExpiryDate,dataToAdd);
+		}
+
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
+		{
+			_cache.Add(cacheKey,slidingExpiryWindow,dataToAdd);
+		}
+
+		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
+		{
+			_cache.AddToPerRequestCache(cacheKey,dataToAdd);
+		}
+	}
 }
