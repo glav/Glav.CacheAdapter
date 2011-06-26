@@ -8,7 +8,7 @@ using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.AppFabric
 {
-    public class AppFabricCacheFactory
+    public class AppFabricCacheFactory: DistributedCacheFactoryBase
     {
         private const string DEFAULT_EndpointConfig = "localhost:22233";
 
@@ -29,13 +29,15 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 endPointConfig = DEFAULT_EndpointConfig;
 
             var endPoints = ParseConfig(endPointConfig);
+			var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
+			endPoints.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
-            DataCacheFactoryConfiguration config = new DataCacheFactoryConfiguration();
-            config.Servers = endPoints;
+            var config = new DataCacheFactoryConfiguration();
+            config.Servers = dataCacheEndpoints;
 
             try
             {
-                DataCacheFactory factory = new DataCacheFactory(config);
+                var factory = new DataCacheFactory(config);
                 DataCacheClientLogManager.ChangeLogLevel(System.Diagnostics.TraceLevel.Error);
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command
@@ -49,35 +51,6 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             }
             
         }
-
-        public List<DataCacheServerEndpoint> ParseConfig(string configValue)
-        {
-            List<DataCacheServerEndpoint> config = new List<DataCacheServerEndpoint>();
-
-            if (String.IsNullOrWhiteSpace(configValue))
-                return config;
-
-            var endPointList = configValue.Split(',');
-            if (endPointList.Length == 0)
-                return config;
-
-            foreach(var endpoint in endPointList)
-            {
-                var endPointComponents = endpoint.Split(':');
-                if (endPointComponents.Length < 2)
-                    continue;
-
-                int port;
-                if (int.TryParse(endPointComponents[1],out port))
-                {
-                    var cacheEndpoint = new DataCacheServerEndpoint(endPointComponents[0],port);
-                    config.Add(cacheEndpoint);
-                }
-            }
-
-            return config;
-        }
-
 
     }
 }

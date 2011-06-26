@@ -91,7 +91,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		{
 			if (CommunicationFailure != null)
 			{
-				ServerNode failedNode = new ServerNode() {IPAddress = _ipAddress, Port = _port, IsAlive = false};
+				ServerNode failedNode = new ServerNode() {IPAddressOrHostName = _ipAddress, Port = _port, IsAlive = false};
 				CommunicationFailure(this,new CommunicationFailureEventArgs(failedNode));
 			}
 		}

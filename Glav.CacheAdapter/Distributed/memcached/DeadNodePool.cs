@@ -31,7 +31,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 				{
 					foreach (var node in _deadNodes)
 					{
-						var verCmd = new VersionCommand(node.IPAddress, node.Port);
+						var verCmd = new VersionCommand(node.IPAddressOrHostName, node.Port);
 						var response = verCmd.ExecuteCommand();
 						if (response.Status == CommandResponseStatus.Ok)
 						{
