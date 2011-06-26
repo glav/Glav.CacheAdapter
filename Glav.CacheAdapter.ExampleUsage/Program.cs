@@ -6,6 +6,11 @@ using Glav.CacheAdapter.Core.DependencyInjection;
 
 namespace Glav.CacheAdapter.ExampleUsage
 {
+	/// <summary>
+	/// This class is simply a very basic demonstration of the use of the CacheAdapter
+	/// in an application. This class is not required in any way so feel free to delete or modify
+	/// this class as you see fit.
+	/// </summary>
     class Program
     {
         static void Main(string[] args)
