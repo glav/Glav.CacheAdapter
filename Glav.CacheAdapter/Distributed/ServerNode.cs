@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Glav.CacheAdapter.Distributed.memcached
+namespace Glav.CacheAdapter.Distributed
 {
 	public class ServerNode
 	{
@@ -11,16 +11,16 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		{
 			IsAlive = true;
 			Port = 11211;
-			IPAddress = "127.0.0.1";
+			IPAddressOrHostName = "127.0.0.1";
 		}
 
 		public ServerNode(string ipAddress, int port)
 		{
-			IPAddress = ipAddress;
+			IPAddressOrHostName = ipAddress;
 			Port = port;
 			IsAlive = true;
 		}
-		public string IPAddress { get; set; }
+		public string IPAddressOrHostName { get; set; }
 		public int Port { get; set; }
 		public bool IsAlive { get; set; }
 
@@ -28,10 +28,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		{
 			if (Port == 0)
 				Port = 11211;
-			if (string.IsNullOrWhiteSpace(IPAddress))
-				IPAddress = "127.0.0.1";
+			if (string.IsNullOrWhiteSpace(IPAddressOrHostName))
+				IPAddressOrHostName = "127.0.0.1";
 
-			return string.Format("{0}:{1}", IPAddress, Port);
+			return string.Format("{0}:{1}", IPAddressOrHostName, Port);
 		}
 	}
 }

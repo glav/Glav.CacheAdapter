@@ -32,7 +32,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		{
 			foreach (var node in e.NodesBackAlive)
 			{
-				var formerlyDeadNode = _nodes.Where(n => n.IPAddress == node.IPAddress && n.Port == node.Port && n.IsAlive == false).FirstOrDefault();
+				var formerlyDeadNode = _nodes.Where(n => n.IPAddressOrHostName == node.IPAddressOrHostName && n.Port == node.Port && n.IsAlive == false).FirstOrDefault();
 				if (formerlyDeadNode != null)
 					formerlyDeadNode.IsAlive = true;
 			}
@@ -72,7 +72,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			lock (_lockObject)
 			{
 				var deadNode =
-					_nodes.Where(n => n.IPAddress == node.IPAddress && n.Port == node.Port && n.IsAlive == true).FirstOrDefault();
+					_nodes.Where(n => n.IPAddressOrHostName == node.IPAddressOrHostName && n.Port == node.Port && n.IsAlive == true).FirstOrDefault();
 				if (deadNode != null)
 				{
 					deadNode.IsAlive = false;
@@ -88,7 +88,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			{
 				nodes.ForEach(n =>
 				              	{
-				              		var pingCommand = new VersionCommand(n.IPAddress, n.Port);
+				              		var pingCommand = new VersionCommand(n.IPAddressOrHostName, n.Port);
 				              		var response = pingCommand.ExecuteCommand();
 									if (response.Status == CommandResponseStatus.Ok)
 									{
