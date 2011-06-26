@@ -13,6 +13,7 @@
 		  <file src="content\app.config.transform" target="content" />
 		  <file src="content\web.config.transform" target="content" />
 		  <file src="content\Example-CacheAdapterUsage.cs" target="content" />
+		  <file src="content\CacheAdapter-ReadMe.txt" target="content" />
 	  </files>
 </package>
 
