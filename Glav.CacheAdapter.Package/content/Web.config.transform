@@ -6,6 +6,7 @@
     </configSections>
     <applicationSettings>
         <Glav.CacheAdapter.MainConfig>
+			<!-- Use Memory, Web, AppFabric, or memcached -->
             <setting name="CacheToUse" serializeAs="String">
                 <value>Memory</value>
             </setting>
