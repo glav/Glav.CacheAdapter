@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
@@ -33,21 +34,50 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		
 		public byte[] SerialiseData(object data)
 		{
+			#region Was used for Bianry seriaisation
+			// This code was originally in place for binary serialisation however this requires that
+			// all objects to be serialised are marked with [Serializable] attribute which is 
+			// cumbersom. So have changed to using the slightly less efficient but far easier to use
+			// NetDataContractSerializer. Cache engines like AppFabric also use this.
+			//using (var memStream = new MemoryStream())
+			//{
+			//    new BinaryFormatter().Serialize(memStream, data);
+			//    memStream.Seek(0, SeekOrigin.Begin);
+			//    var serialisedData = new byte[memStream.Length];
+			//    memStream.Read(serialisedData, 0, (int)memStream.Length);
+			//    return serialisedData;
+			//}
+			#endregion
+
 			using (var memStream = new MemoryStream())
 			{
-				new BinaryFormatter().Serialize(memStream, data);
+				NetDataContractSerializer ser = new NetDataContractSerializer();
+				ser.Serialize(memStream, data);
 				memStream.Seek(0, SeekOrigin.Begin);
 				var serialisedData = new byte[memStream.Length];
 				memStream.Read(serialisedData, 0, (int)memStream.Length);
 				return serialisedData;
 			}
+
 		}
 
 		public object DeserialiseData(byte[] data)
 		{
+			#region Was used for Binary serialisation
+			// This code was originally in place for binary serialisation however this requires that
+			// all objects to be serialised are marked with [Serializable] attribute which is 
+			// cumbersom. So have changed to using the slightly less efficient but far easier to use
+			// NetDataContractSerializer. Cache engines like AppFabric also use this.
+			//using (var memStream = new MemoryStream(data))
+			//{
+			//    var deserialisedData = new BinaryFormatter().Deserialize(memStream);
+			//    return deserialisedData;
+			//}
+			#endregion
+
 			using (var memStream = new MemoryStream(data))
 			{
-				var deserialisedData = new BinaryFormatter().Deserialize(memStream);
+				var deserialisedData = new NetDataContractSerializer().Deserialize(memStream);
 				return deserialisedData;
 			}
 		}
