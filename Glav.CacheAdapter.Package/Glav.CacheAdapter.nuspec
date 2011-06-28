@@ -7,6 +7,9 @@
 		<authors>Paul Glavich</authors>
 		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric and memcached cache mechasnisms.</description>
 		<language>en-US</language>
+		<frameworkAssemblies>
+		  <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net40" />
+		</frameworkAssemblies>
 	</metadata>
 	 <files>
 		  <file src="lib\*.dll" target="lib" />
