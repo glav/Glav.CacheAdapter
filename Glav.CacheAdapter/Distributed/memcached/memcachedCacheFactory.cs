@@ -25,12 +25,12 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			if (string.IsNullOrWhiteSpace(endPointConfig))
 				endPointConfig = DEFAULT_EndpointConfig;
 
-			var serverNodes = ParseConfig(endPointConfig);
+			var config = ParseConfig(endPointConfig);
 
 			try
 			{
 				var serverFarm = new CacheServerFarm();
-				serverFarm.Initialise(serverNodes);
+				serverFarm.Initialise(config.ServerNodes);
 				return serverFarm;
 			}
 			catch (Exception ex)
