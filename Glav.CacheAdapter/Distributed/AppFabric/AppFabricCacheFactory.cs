@@ -28,16 +28,16 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             if (string.IsNullOrWhiteSpace(endPointConfig))
                 endPointConfig = DEFAULT_EndpointConfig;
 
-            var endPoints = ParseConfig(endPointConfig);
+            var config = ParseConfig(endPointConfig);
 			var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
-			endPoints.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
+			config.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
-            var config = new DataCacheFactoryConfiguration();
-            config.Servers = dataCacheEndpoints;
+            var factoryConfig = new DataCacheFactoryConfiguration();
+			factoryConfig.Servers = dataCacheEndpoints;
 
             try
             {
-                var factory = new DataCacheFactory(config);
+				var factory = new DataCacheFactory(factoryConfig);
                 DataCacheClientLogManager.ChangeLogLevel(System.Diagnostics.TraceLevel.Error);
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command

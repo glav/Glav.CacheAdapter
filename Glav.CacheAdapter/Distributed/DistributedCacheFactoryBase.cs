@@ -7,9 +7,9 @@ namespace Glav.CacheAdapter.Distributed
 {
 	public class DistributedCacheFactoryBase
 	{
-		public List<ServerNode> ParseConfig(string configValue)
+		public CacheConfig ParseConfig(string configValue)
 		{
-			List<ServerNode> config = new List<ServerNode>();
+			CacheConfig config = new CacheConfig();
 
 			if (String.IsNullOrWhiteSpace(configValue))
 				return config;
@@ -28,7 +28,7 @@ namespace Glav.CacheAdapter.Distributed
 				if (int.TryParse(endPointComponents[1], out port))
 				{
 					var cacheEndpoint = new ServerNode(endPointComponents[0], port);
-					config.Add(cacheEndpoint);
+					config.ServerNodes.Add(cacheEndpoint);
 				}
 			}
 
