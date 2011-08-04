@@ -60,6 +60,7 @@
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
+    <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />
     <Compile Include="Distributed\DistributedCacheFactoryBase.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="ICacheProvider.cs" />
