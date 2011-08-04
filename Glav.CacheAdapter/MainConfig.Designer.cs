@@ -52,8 +52,8 @@ namespace Glav.CacheAdapter {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("key1=value;amp;key2=value2;UseSsl=true;DistributedCacheName=MyCache;SecurityMode=" +
-            "Message;MessageSecurityAuthorizationInfo=some_secret_key")]
+        [global::System.Configuration.DefaultSettingValueAttribute("UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_ke" +
+            "y_from_azure_dashboard")]
         public string CacheSpecificData {
             get {
                 return ((string)(this["CacheSpecificData"]));

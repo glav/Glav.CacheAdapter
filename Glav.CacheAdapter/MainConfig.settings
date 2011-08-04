@@ -12,7 +12,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CacheSpecificData" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">key1=value;amp;key2=value2;UseSsl=true;DistributedCacheName=MyCache;SecurityMode=Message;MessageSecurityAuthorizationInfo=some_secret_key</Value>
+      <Value Profile="(Default)">UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</Value>
     </Setting>
   </Settings>
 </SettingsFile>

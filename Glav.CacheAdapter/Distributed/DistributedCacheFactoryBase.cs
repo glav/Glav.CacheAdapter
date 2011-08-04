@@ -46,14 +46,14 @@ namespace Glav.CacheAdapter.Distributed
 
 			try
 			{
-				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {';'});
+				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {CacheConstants.ConfigItemPairSeparator});
 				if (configKeyPairs.Length == 0)
 					return;
 				foreach (var keyPair in configKeyPairs)
 				{
 					if (!string.IsNullOrWhiteSpace(keyPair))
 					{
-						int posOfEquals = keyPair.IndexOf("=");
+						int posOfEquals = keyPair.IndexOf(CacheConstants.ConfigItemKeyValuePairSeparator);
 						if (posOfEquals >= 0)
 						{
 							var keyItem = keyPair.Substring(0, posOfEquals);
@@ -74,13 +74,13 @@ namespace Glav.CacheAdapter.Distributed
 
 		private static void ExtractServerNodesFromConfig(CacheConfig config)
 		{
-			var endPointList = MainConfig.Default.DistributedCacheServers.Split(',');
+			var endPointList = MainConfig.Default.DistributedCacheServers.Split(CacheConstants.ConfigDistributedServerSeparator);
 			if (endPointList.Length == 0)
 				return;
 
 			foreach (var endpoint in endPointList)
 			{
-				var endPointComponents = endpoint.Split(':');
+				var endPointComponents = endpoint.Split(CacheConstants.ConfigDistributedServerPortSeparator);
 				if (endPointComponents.Length < 2)
 					continue;
 
