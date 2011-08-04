@@ -49,5 +49,14 @@ namespace Glav.CacheAdapter {
                 return ((string)(this["DistributedCacheName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("key1=value&key2=value2&DistributedCacheName=MyCache")]
+        public string CacheSpecificData {
+            get {
+                return ((string)(this["CacheSpecificData"]));
+            }
+        }
     }
 }

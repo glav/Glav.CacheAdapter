@@ -18,11 +18,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			_logger = logger;
 
 			var factory = new memcachedCacheFactory(_logger);
-			_serverFarm = factory.ConstructCacheFarm(MainConfig.Default.DistributedCacheServers);
+			_serverFarm = factory.ConstructCacheFarm();
 
 			if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
 				throw new ArgumentException("Must specify at least 1 server node to use for memcached");
-
 		}
 
 

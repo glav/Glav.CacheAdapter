@@ -10,29 +10,23 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheFactory: DistributedCacheFactoryBase
     {
-        private const string DEFAULT_EndpointConfig = "localhost:22233";
+        private const string DEFAULT_ServerAddress = "localhost";
+    	public const string CONFIG_CacheNameKey = "DistributedCacheName";
 
-        private ILogging _logger;
+		private const int DEFAULT_Port = 22233;
 
-        public AppFabricCacheFactory()
+        public AppFabricCacheFactory(ILogging logger) : base(logger)
         {
-            _logger = new Logger();
-        }
-        public AppFabricCacheFactory(ILogging logger)
-        {
-            _logger = logger;
         }
 
-        public DataCache ConstructCache(string endPointConfig)
+        public DataCache ConstructCache()
         {
-            if (string.IsNullOrWhiteSpace(endPointConfig))
-                endPointConfig = DEFAULT_EndpointConfig;
-
-            var config = ParseConfig(endPointConfig);
+            var config = ParseConfig(DEFAULT_ServerAddress,DEFAULT_Port);
 			var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
 			config.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
             var factoryConfig = new DataCacheFactoryConfiguration();
+
 			factoryConfig.Servers = dataCacheEndpoints;
 
             try
@@ -41,12 +35,21 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 DataCacheClientLogManager.ChangeLogLevel(System.Diagnostics.TraceLevel.Error);
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command
-            	var cache = factory.GetCache(MainConfig.Default.DistributedCacheName);
+            	string cacheName;
+				// Prefer the new config mechanismover the explicit entry but still support it
+				if (config.ProviderSpecificValues.ContainsKey(CONFIG_CacheNameKey))
+				{
+					cacheName = config.ProviderSpecificValues[CONFIG_CacheNameKey];
+				} else
+				{
+					cacheName = MainConfig.Default.DistributedCacheName;
+				}
+				var cache = factory.GetCache(cacheName);
                 return cache;
             }
             catch (Exception ex)
             {
-                _logger.WriteException(ex);
+                Logger.WriteException(ex);
                 throw;
             }
             
