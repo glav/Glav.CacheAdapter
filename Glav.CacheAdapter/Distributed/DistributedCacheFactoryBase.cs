@@ -46,7 +46,7 @@ namespace Glav.CacheAdapter.Distributed
 
 			try
 			{
-				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {'&'});
+				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {';'});
 				if (configKeyPairs.Length == 0)
 					return;
 				foreach (var keyPair in configKeyPairs)

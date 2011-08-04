@@ -43,7 +43,16 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 				{
 					cacheName = MainConfig.Default.DistributedCacheName;
 				}
-				var cache = factory.GetCache(cacheName);
+
+            	DataCache cache = null;
+				if (string.IsNullOrWhiteSpace(cacheName))
+				{
+					cache = factory.GetDefaultCache();
+				}
+				else
+				{
+					cache = factory.GetCache(cacheName);
+				}
 
                 return cache;
             }
