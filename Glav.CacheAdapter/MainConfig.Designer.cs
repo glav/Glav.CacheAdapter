@@ -43,7 +43,7 @@ namespace Glav.CacheAdapter {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MyCache")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DistributedCacheName {
             get {
                 return ((string)(this["DistributedCacheName"]));
@@ -52,7 +52,8 @@ namespace Glav.CacheAdapter {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("key1=value&key2=value2&DistributedCacheName=MyCache")]
+        [global::System.Configuration.DefaultSettingValueAttribute("key1=value;amp;key2=value2;UseSsl=true;DistributedCacheName=MyCache;SecurityMode=" +
+            "Message;MessageSecurityAuthorizationInfo=some_secret_key")]
         public string CacheSpecificData {
             get {
                 return ((string)(this["CacheSpecificData"]));
