@@ -1,22 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed
 {
 	public class DistributedCacheFactoryBase
 	{
-		public CacheConfig ParseConfig(string configValue)
+		private ILogging _logger;
+
+		public DistributedCacheFactoryBase()
+		{
+			_logger = new Logger();	
+		}
+
+		public DistributedCacheFactoryBase(ILogging logger)
+		{
+			_logger = logger;
+		}
+		protected ILogging Logger { get { return _logger; } }
+
+		public CacheConfig ParseConfig(string defaultServerIp, int defaultPort)
 		{
 			CacheConfig config = new CacheConfig();
 
-			if (String.IsNullOrWhiteSpace(configValue))
+			if (String.IsNullOrWhiteSpace(MainConfig.Default.DistributedCacheServers))
 				return config;
 
-			var endPointList = configValue.Split(',');
+			ExtractServerNodesFromConfig(config);
+			if (config.ServerNodes.Count == 0)
+			{
+				config.ServerNodes.Add(new ServerNode(defaultServerIp,defaultPort));
+			}
+			ExtractCacheSpecificConfiguration(config);
+
+			return config;
+		}
+
+		private void ExtractCacheSpecificConfiguration(CacheConfig config)
+		{
+			if (string.IsNullOrWhiteSpace(MainConfig.Default.CacheSpecificData))
+				return;
+
+			try
+			{
+				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {'&'});
+				if (configKeyPairs.Length == 0)
+					return;
+				foreach (var keyPair in configKeyPairs)
+				{
+					if (!string.IsNullOrWhiteSpace(keyPair))
+					{
+						int posOfEquals = keyPair.IndexOf("=");
+						if (posOfEquals >= 0)
+						{
+							var keyItem = keyPair.Substring(0, posOfEquals);
+							var keyValue = keyPair.Substring(posOfEquals + 1, keyPair.Length - (posOfEquals + 1));
+							if (!config.ProviderSpecificValues.ContainsKey(keyItem))
+							{
+								config.ProviderSpecificValues.Add(keyItem, keyValue);
+							}
+						}
+					}
+				}
+			} catch (Exception ex)
+			{
+				Logger.WriteException(ex);
+				throw new ArgumentException("Cache Specific configuration could not be parsed.", ex);
+			}
+		}
+
+		private static void ExtractServerNodesFromConfig(CacheConfig config)
+		{
+			var endPointList = MainConfig.Default.DistributedCacheServers.Split(',');
 			if (endPointList.Length == 0)
-				return config;
+				return;
 
 			foreach (var endpoint in endPointList)
 			{
@@ -31,9 +91,6 @@ namespace Glav.CacheAdapter.Distributed
 					config.ServerNodes.Add(cacheEndpoint);
 				}
 			}
-
-			return config;
 		}
-
 	}
 }

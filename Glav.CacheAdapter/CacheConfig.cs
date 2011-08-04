@@ -11,8 +11,8 @@ namespace Glav.CacheAdapter
 		private List<ServerNode> _serverNodes = new List<ServerNode>();
 		public List<ServerNode> ServerNodes { get { return _serverNodes; } }
 
-		private List<KeyValuePair<string,string>> _providerSpecificValues = new List<KeyValuePair<string, string>>();
-		public List<KeyValuePair<string, string>> ProviderSpecificValues { get { return _providerSpecificValues; } }
+		private Dictionary<string, string> _providerSpecificValues = new Dictionary<string, string>();
+		public Dictionary<string,string> ProviderSpecificValues { get { return _providerSpecificValues; } }
 
 	}
 }
