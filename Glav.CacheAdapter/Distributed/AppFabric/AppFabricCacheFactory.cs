@@ -22,15 +22,13 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			config.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
             var factoryConfig = new DataCacheFactoryConfiguration();
-			SetSecuritySettings(config, factoryConfig);
-
 			factoryConfig.Servers = dataCacheEndpoints;
+			SetSecuritySettings(config, factoryConfig);
 
             try
             {
 				var factory = new DataCacheFactory(factoryConfig);
                 DataCacheClientLogManager.ChangeLogLevel(System.Diagnostics.TraceLevel.Error);
-
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command
             	string cacheName;
@@ -97,7 +95,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 						secureToken.AppendChar(ch);
 					}
 					bool useSsl = false;
-					if (normalisedSslValue == "true" || normalisedSslValue == "1")
+					if (normalisedSslValue == CacheConstants.ConfigValueTrueText || normalisedSslValue == CacheConstants.ConfigValueTrueNumeric)
 					{
 						useSsl = true;
 					}

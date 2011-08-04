@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap\CacheTypes.cs" />
     <Compile Include="CacheConfig.cs" />
+    <Compile Include="CacheConstants.cs" />
     <Compile Include="CacheProvider.cs" />
     <Compile Include="CacheSettingEnumeration.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
