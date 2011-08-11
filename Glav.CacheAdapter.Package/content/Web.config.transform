@@ -16,6 +16,10 @@
             <setting name="DistributedCacheName" serializeAs="String">
                 <value>MyCache</value>
             </setting>
-        </Glav.CacheAdapter.MainConfig>
+			 <!--The data config below is specific to Azure AppFabric only at this time but can be used to supply data to any cache implementation-->
+			<setting name="CacheSpecificData" serializeAs="String">
+			  <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
+			</setting>
+       </Glav.CacheAdapter.MainConfig>
     </applicationSettings>
  </configuration>
