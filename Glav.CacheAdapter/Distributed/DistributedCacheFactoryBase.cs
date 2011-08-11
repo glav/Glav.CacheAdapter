@@ -74,7 +74,14 @@ namespace Glav.CacheAdapter.Distributed
 
 		private static void ExtractServerNodesFromConfig(CacheConfig config)
 		{
-			var endPointList = MainConfig.Default.DistributedCacheServers.Split(CacheConstants.ConfigDistributedServerSeparator);
+			// Here we test to see if the old separator char is used.If not, we use the
+			// preferred one, otherwise we revert to the obsolete one (for backwards compatibility)
+			char separator = CacheConstants.ConfigDistributedServerSeparator;
+			if (MainConfig.Default.DistributedCacheServers.Contains(CacheConstants.ConfigDistributedServerSeparatorObsolete))
+			{
+				separator = CacheConstants.ConfigDistributedServerSeparatorObsolete;
+			}
+			var endPointList = MainConfig.Default.DistributedCacheServers.Split(separator);
 			if (endPointList.Length == 0)
 				return;
 
