@@ -52,7 +52,7 @@ to one cache mechanism and not make sense for others.
 For example, Windows Azure AppFabric(ie.AppFabric only when used within Azure) requires security type and a security
 key to work properly. This can be set like so:
     
-    <setting name="CacheSpecificData" serializeAs="String">
+	<setting name="CacheSpecificData" serializeAs="String">
       <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
     </setting>
 
@@ -76,6 +76,16 @@ Note: This configuration data is specific to Windows Azure AppFabric only. Using
 config is not required. Also, other cache mechanisms such as memcached do not require this information.
 However future versions of this library may support specific config data for memcached in this element and indeed other
 distributed mechanisms may also support this.
+
+Also, since the 'DistributedCacheName' configuration element is only AppFabric specific, this can also be specified
+in the CacheSpecificData setting instead of its own element. The library looks for this data (if AppFabric is used)
+in the CacheSpecificData element first before checking the single config element.
+So you could have something like:
+	<setting name="CacheSpecificData" serializeAs="String">
+      <value>DistributedCacheName=MyCache;UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
+    </setting>
+
+Also note that a blank entry for DistributedCacheName config setting will result in the default cache being used/accessed in AppFabric.
 
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
