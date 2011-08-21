@@ -84,7 +84,6 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 		protected byte[] SetCommandParameters(params string[] args)
 		{
-			string cmdToExecute = null;
 			if (args != null && args.Length > 0)
 			{
 				_commandToExecute = string.Format(_mapper.GetCommandFormat(_command), args);
@@ -111,6 +110,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				response = ProcessResponse(result);
 			} catch (Exception ex)
 			{
+				//todo: should log ex.Message somewhere
 				response.Status = CommandResponseStatus.Error;
 			}
 			return response;

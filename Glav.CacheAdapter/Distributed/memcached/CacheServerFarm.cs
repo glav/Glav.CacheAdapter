@@ -142,8 +142,6 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		/// <returns></returns>
 		private uint[] GenerateCacheServerKeys(ServerNode node)
 		{
-			const int KeyLength = 4;
-
 			var keyList = new uint[NUMBER_OF_KEYS];
 
 			string address = node.GetFullHostAddress();
