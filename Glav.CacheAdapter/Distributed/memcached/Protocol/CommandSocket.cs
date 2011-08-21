@@ -64,7 +64,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 					{
 						byte[] readData = new byte[DATA_BUFFER];
 
-						var result = socket.Send(commandBuffer);
+						socket.Send(commandBuffer);
 
 						bool keepReading = true;
 						while (keepReading)
@@ -81,6 +81,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				}
 			} catch (Exception ex)
 			{
+				//todo: should log 'ex.Message' somewhere
 				FireCommunicationFailedEvent();
 			}
 
