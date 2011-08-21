@@ -90,7 +90,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 			Console.WriteLine("Getting Some Data which should NOT BE cached.");
 			var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
 
-			System.Threading.Thread.Sleep(1000);
+        	System.Threading.Thread.Sleep(1000);
 			Console.WriteLine("Getting Some More Data which should BE cached.");
 			var data5 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
 
