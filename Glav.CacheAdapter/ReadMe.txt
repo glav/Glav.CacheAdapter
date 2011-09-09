@@ -41,6 +41,11 @@ For example:
 This configuration states that there are 2 cache servers in the farm. One at address localhost (127.0.0.1), port 11211 and the
 other at address localhost (127.0.0.1), port 11212.
 
+Please note that each distributed cache mechanism has different default ports that they use if
+none are specified. The following is the default ports for each implementation:
+* Windows AppFabric Caching = Port 22223
+* memcached = Port 11211
+
 Note: IN previous versions of this library, you could separate the DistributedCacheServers by using a ',' character.
 While this is still supported, the preferred separator is to use the ';'character to make it consistent with the
 CacheSpecificData setting (discussed below)
