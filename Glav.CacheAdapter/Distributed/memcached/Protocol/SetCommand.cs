@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 {
@@ -10,7 +11,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		private const string FLAGS = "0";
 		private const string CAS = "0";
 
-		public SetCommand(string ipAddress, int port): base(SupportedCommands.Set, ipAddress,port)
+		public SetCommand(ILogging logger, string ipAddress, int port): base(logger, SupportedCommands.Set, ipAddress,port)
 		{
 		}
 

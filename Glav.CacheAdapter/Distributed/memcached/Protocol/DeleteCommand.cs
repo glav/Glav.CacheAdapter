@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 {
 	public class DeleteCommand : GenericCommandProcessor
 	{
-		public DeleteCommand(string ipAddress, int port)
-			: base(SupportedCommands.Delete, ipAddress, port)
+		public DeleteCommand(ILogging logger, string ipAddress, int port)
+			: base(logger,SupportedCommands.Delete, ipAddress, port)
 		{
 		}
 

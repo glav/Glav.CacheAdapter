@@ -21,7 +21,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 			try
 			{
-				var serverFarm = new CacheServerFarm();
+				var serverFarm = new CacheServerFarm(Logger);
 				serverFarm.Initialise(config.ServerNodes);
 				return serverFarm;
 			}

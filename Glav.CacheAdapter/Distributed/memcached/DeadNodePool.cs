@@ -5,6 +5,7 @@ using System.Text;
 using System.Timers;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.memcached.Protocol;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached
 {
@@ -14,9 +15,12 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		private List<ServerNode> _deadNodes = new List<ServerNode>();
 		private static object _lockObject = new object();
 		public event EventHandler<DeadNodeBackToLifeEventArgs> DeadNodesBackAlive;
+		private ILogging _logger;
 		
-		public DeadNodePool()
+		public DeadNodePool(ILogging logger)
 		{
+			_logger = logger;
+
 			_timer.Elapsed += new ElapsedEventHandler(_timer_Elapsed);
 			_timer.Start();
 		}
@@ -31,7 +35,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 				{
 					foreach (var node in _deadNodes)
 					{
-						var verCmd = new VersionCommand(node.IPAddressOrHostName, node.Port);
+						var verCmd = new VersionCommand(_logger, node.IPAddressOrHostName, node.Port);
 						var response = verCmd.ExecuteCommand();
 						if (response.Status == CommandResponseStatus.Ok)
 						{
