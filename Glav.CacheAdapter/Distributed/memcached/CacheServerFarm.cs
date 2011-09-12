@@ -29,11 +29,11 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			_deadNodes = new DeadNodePool(_logger);
 		}
 
-		public void Initialise(List<ServerNode> nodes)
+		public bool Initialise(List<ServerNode> nodes)
 		{
 			_nodes = nodes;
 			_deadNodes.DeadNodesBackAlive += new EventHandler<DeadNodeBackToLifeEventArgs>(_deadNodes_DeadNodesBackAlive);
-			BuildCacheFarmHashKeys();
+			return BuildCacheFarmHashKeys();
 		}
 
 		void _deadNodes_DeadNodesBackAlive(object sender, DeadNodeBackToLifeEventArgs e)
@@ -47,9 +47,13 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			BuildCacheFarmHashKeys();
 		}
 		
-		protected void BuildCacheFarmHashKeys()
+		protected bool BuildCacheFarmHashKeys()
 		{
 			var numberAliveNodes = CheckIfNodesAreAlive(_nodes);
+			if (numberAliveNodes == 0)
+			{
+				return false;
+			}
 			var keys = new uint[numberAliveNodes * NUMBER_OF_KEYS];
 			_serverFarmKeys.Clear();
 
@@ -73,6 +77,8 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 			Array.Sort<uint>(keys);
 			Interlocked.Exchange(ref _allKeys, keys);
+
+			return true;
 		}
 
 		public void SetNodeToDead(ServerNode node)
