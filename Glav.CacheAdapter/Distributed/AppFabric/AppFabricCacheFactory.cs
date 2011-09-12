@@ -27,6 +27,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
             try
             {
+				Logger.WriteInfoMessage("Constructing AppFabric Cache");
+
 				var factory = new DataCacheFactory(factoryConfig);
                 DataCacheClientLogManager.ChangeLogLevel(System.Diagnostics.TraceLevel.Error);
 
@@ -42,6 +44,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 					cacheName = MainConfig.Default.DistributedCacheName;
 				}
 
+				Logger.WriteInfoMessage(string.Format("Appfabric Cache Name: [{0}]", cacheName));
+
             	DataCache cache = null;
 				if (string.IsNullOrWhiteSpace(cacheName))
 				{
@@ -51,6 +55,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 				{
 					cache = factory.GetCache(cacheName);
 				}
+
+				Logger.WriteInfoMessage("AppFabric cache constructed.");
 
                 return cache;
             }
@@ -68,6 +74,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_SecurityModeKey))
 			{
 				securityModeValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_SecurityModeKey];
+				Logger.WriteInfoMessage(string.Format("Setting AppFabric security mode:[{0}]", securityModeValue));
 			}
 
 			// Set the authorization info/value if required
@@ -75,12 +82,14 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_SecurityMessageAuthorisationKey))
 			{
 				securityAuthValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_SecurityMessageAuthorisationKey];
+				Logger.WriteInfoMessage("Setting AppFabric security Authorisation value");
 			}
 
 			string useSslValue = null;
 			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_UseSslKey))
 			{
 				useSslValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_UseSslKey];
+				Logger.WriteInfoMessage(string.Format("AppFabric Use Ssl: [{0}]",useSslValue));
 			}
 
 			var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
