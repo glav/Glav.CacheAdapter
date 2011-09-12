@@ -28,7 +28,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		public T Get<T>(string cacheKey) where T : class
 		{
 			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
-			var cmd = new GetCommand(node.IPAddressOrHostName, node.Port);
+			var cmd = new GetCommand(_logger, node.IPAddressOrHostName, node.Port);
 			cmd.CacheKey = cacheKey;
 			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
 			var response = cmd.ExecuteCommand();
@@ -44,7 +44,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		public void Add(string cacheKey, DateTime absoluteExpiry, object dataToAdd)
 		{
 			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
-			var cmd = new SetCommand(node.IPAddressOrHostName, node.Port);
+			var cmd = new SetCommand(_logger, node.IPAddressOrHostName, node.Port);
 			cmd.CacheKey = cacheKey;
 			cmd.ItemExpiry = absoluteExpiry;
 			cmd.Data = dataToAdd;
@@ -67,7 +67,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		public void InvalidateCacheItem(string cacheKey)
 		{
 			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
-			var cmd = new DeleteCommand(node.IPAddressOrHostName, node.Port);
+			var cmd = new DeleteCommand(_logger, node.IPAddressOrHostName, node.Port);
 			cmd.CacheKey = cacheKey;
 			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
 			var response = cmd.ExecuteCommand();

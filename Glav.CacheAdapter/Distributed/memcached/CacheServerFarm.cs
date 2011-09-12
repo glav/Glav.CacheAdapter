@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.memcached.Protocol;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached
 {
@@ -15,11 +16,18 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		Dictionary<uint, ServerNode> _serverFarmKeys = new Dictionary<uint, ServerNode>();
 		private uint[] _allKeys;
 		private List<ServerNode> _nodes;
-		private DeadNodePool _deadNodes= new DeadNodePool();
+		private DeadNodePool _deadNodes;
 		private static object _lockObject = new object();
+		private ILogging _logger;
 
 		public List<ServerNode> NodeList { get { return _nodes; } }
 		public DeadNodePool DeadNodes { get { return _deadNodes; } }
+
+		public CacheServerFarm(ILogging logger)
+		{
+			_logger = logger;
+			_deadNodes = new DeadNodePool(_logger);
+		}
 
 		public void Initialise(List<ServerNode> nodes)
 		{
@@ -88,7 +96,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			{
 				nodes.ForEach(n =>
 				              	{
-				              		var pingCommand = new VersionCommand(n.IPAddressOrHostName, n.Port);
+				              		var pingCommand = new VersionCommand(_logger, n.IPAddressOrHostName, n.Port);
 				              		var response = pingCommand.ExecuteCommand();
 									if (response.Status == CommandResponseStatus.Ok)
 									{
