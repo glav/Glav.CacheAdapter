@@ -22,7 +22,11 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var serverFarm = new CacheServerFarm(Logger);
-				serverFarm.Initialise(config.ServerNodes);
+				if (!serverFarm.Initialise(config.ServerNodes))
+				{
+					throw new ArgumentNullException("There was a problem initialising memcached server pool. No responding nodes found.");
+				}
+
 				return serverFarm;
 			}
 			catch (Exception ex)
