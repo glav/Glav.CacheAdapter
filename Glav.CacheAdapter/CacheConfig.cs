@@ -14,5 +14,12 @@ namespace Glav.CacheAdapter
 		private Dictionary<string, string> _providerSpecificValues = new Dictionary<string, string>();
 		public Dictionary<string,string> ProviderSpecificValues { get { return _providerSpecificValues; } }
 
+		private bool _isCacheEnabled = true;
+		public bool IsCacheEnabled { get { return _isCacheEnabled; } set { _isCacheEnabled = value; } }
+
+		public CacheConfig()
+		{
+			IsCacheEnabled = MainConfig.Default.IsCacheEnabled;
+		}
 	}
 }
