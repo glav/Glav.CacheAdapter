@@ -92,6 +92,16 @@ So you could have something like:
 
 Also note that a blank entry for DistributedCacheName config setting will result in the default cache being used/accessed in AppFabric.
 
+Disabling the cache globally
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You can completely disable the use of any cache so that all GET attempts will result in a cache miss 
+and execute the delegate if one is provided. You can do this by setting the configuration
+setting "IsCacheEnabled" to false.
+            <setting name="IsCacheEnabled" serializeAs="String">
+                <value>True</value>
+            </setting>
+Note: This feature only works if you are using the CacheProvider method of access. If you access the 
+InnerCache or ICache directly, you will still be able to access to cache itself.
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
 http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-package.aspx
