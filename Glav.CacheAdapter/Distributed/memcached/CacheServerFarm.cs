@@ -120,7 +120,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public ServerNode FindCacheServerNodeForKey(string key)
 		{
-			if (_serverFarmKeys.Count == 0) return null;
+			if (_serverFarmKeys.Count == 0)
+			{
+				throw new ArgumentNullException("No cache server nodes found or available");
+			}
 
 			uint itemKeyHash = BitConverter.ToUInt32(new DistributedFNV().ComputeHash(Encoding.UTF8.GetBytes(key)), 0);
 			int foundIndex = Array.BinarySearch<uint>(_serverFarmKeys.Keys.ToArray(), itemKeyHash);
@@ -142,8 +145,15 @@ namespace Glav.CacheAdapter.Distributed.memcached
 				}
 			}
 
-			if (foundIndex < 0 || foundIndex > _serverFarmKeys.Count)
-				return null;
+			if (foundIndex > _serverFarmKeys.Count - 1)
+			{
+				foundIndex = _serverFarmKeys.Count - 1;
+			}
+
+			if (foundIndex < 0)
+			{
+				foundIndex = 0;
+			}
 
 			return _serverFarmKeys[_allKeys[foundIndex]];
 		}
