@@ -101,7 +101,8 @@ setting "IsCacheEnabled" to false.
                 <value>True</value>
             </setting>
 Note: This feature only works if you are using the CacheProvider method of access. If you access the 
-InnerCache or ICache directly, you will still be able to access to cache itself.
+InnerCache or ICache directly, you will still be able to access the cache itself and cache operations will work as normal.
+
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
 http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-package.aspx
