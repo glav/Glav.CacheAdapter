@@ -64,13 +64,13 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 					{
 						byte[] readData = new byte[DATA_BUFFER];
 
-						var result = socket.Send(commandBuffer);
+						socket.Send(commandBuffer);
 
 						bool keepReading = true;
 						while (keepReading)
 						{
 							var bytesRead = netStream.Read(readData, 0, DATA_BUFFER);
-							if (bytesRead < DATA_BUFFER || !netStream.CanRead || !netStream.DataAvailable)
+							if (bytesRead < DATA_BUFFER || !netStream.CanRead)
 								keepReading = false;
 
 							var tmpArray = new byte[bytesRead];
@@ -81,6 +81,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				}
 			} catch (Exception ex)
 			{
+				//todo: should log 'ex.Message' somewhere
 				FireCommunicationFailedEvent();
 			}
 

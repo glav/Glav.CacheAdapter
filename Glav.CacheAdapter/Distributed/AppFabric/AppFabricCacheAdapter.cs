@@ -18,7 +18,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         {
         	_logger = logger;
         	var factory = new AppFabricCacheFactory(_logger);
-            _cache = factory.ConstructCache(MainConfig.Default.DistributedCacheServers);
+            _cache = factory.ConstructCache();
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)

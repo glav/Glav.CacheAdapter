@@ -56,7 +56,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             });
             Console.WriteLine("... => SomeData values: SomeText=[{0}], SomeNumber={1}\n", data2.SomeText, data2.SomeNumber);
 
-            // Finally, we wait a period of time so that the cached data expiry time has passed and the data is
+            // Here we wait a period of time so that the cached data expiry time has passed and the data is
             // removed from the cache. We make the same call to retrieve the data using the same cache key, the data
             // is not found in the cache, so once again the anonymous function is executed, whatever is returned is
             // added to the cache, and then returned to the caller.
@@ -73,7 +73,31 @@ namespace Glav.CacheAdapter.ExampleUsage
                 return someData;
             });
             Console.WriteLine("... => SomeData values: SomeText=[{0}], SomeNumber={1}\n", data3.SomeText, data3.SomeNumber);
-        }
+
+
+        	Func<SomeData> getCacheData = new Func<SomeData>(() =>
+        	                                                 	{
+																	// This is the anonymous function which gets called if the data is not in the cache.
+																	// This method is executed and whatever is returned, is added to the cache with the
+																	// passed in expiry time.
+																	Console.WriteLine("... => Adding data to the cache...4th call, with generated cache key - should only see this msg twice, NOT 3 times");
+																	var someData = new SomeData() { SomeText = "cache example4 - generated cache key", SomeNumber = 4 };
+																	return someData;
+
+        	                                                 	});
+			// Here we use the really simple API call to get an item from the cache without a cache key specified.
+			// The cache key is generated from the function we pass in as the delegate used to retrieve the data
+			Console.WriteLine("Getting Some Data which should NOT BE cached.");
+			var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+
+        	System.Threading.Thread.Sleep(1000);
+			Console.WriteLine("Getting Some More Data which should BE cached.");
+			var data5 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+
+			System.Threading.Thread.Sleep(1000);
+			Console.WriteLine("Getting Some More Data which should NOT be cached.");
+			var data6 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+		}
 
     }
 

@@ -17,10 +17,10 @@ namespace Glav.CacheAdapter.Web
         {
         	_logger = logger;
 
-            if (System.Web.HttpContext.Current != null)
-                _cache = System.Web.HttpContext.Current.Cache;
-            else
-                throw new ArgumentNullException("Not in a web context, unable to use the web cache.");
+			if (System.Web.HttpContext.Current != null)
+				_cache = System.Web.HttpContext.Current.Cache;
+			else
+				_cache = System.Web.HttpRuntime.Cache;
         }
 
 		public void Add(string cacheKey, DateTime expiry, object dataToAdd)

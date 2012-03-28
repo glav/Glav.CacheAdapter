@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 {
 	public class GetCommand : GenericCommandProcessor
 	{
-		public GetCommand(string ipAddress, int port)
-			: base(SupportedCommands.Get, ipAddress, port)
+		public GetCommand(ILogging logger,string ipAddress, int port)
+			: base(logger, SupportedCommands.Get, ipAddress, port)
 		{
 		}
 

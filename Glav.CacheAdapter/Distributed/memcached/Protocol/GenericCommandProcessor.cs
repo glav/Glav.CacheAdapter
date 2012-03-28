@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 {
@@ -17,23 +18,29 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		private CommandSocket _cmdSocket;
 		private string _commandToExecute = null;
 		public event EventHandler<CommunicationFailureEventArgs> CommunicationFailure;
+		private ILogging _logger;
 
-		public GenericCommandProcessor(SupportedCommands command, string ipAdress, int port)
+		public GenericCommandProcessor(ILogging logger, SupportedCommands command, string ipAdress, int port)
 		{
 			_command = command;
 			_ipAdress = ipAdress;
 			_port = port;
-			_cmdSocket = new CommandSocket(_ipAdress,_port);
+			_cmdSocket = new CommandSocket(_ipAdress, _port);
 			_cmdSocket.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(_cmdSocket_CommunicationFailure);
+			_logger = logger;
 		}
+
+		protected ILogging Logger { get { return _logger; } }
 
 		protected CommandSocket ProtocolSocket
 		{
 			get { return _cmdSocket; }
 		}
-		
+
 		public byte[] SerialiseData(object data)
 		{
+			_logger.WriteInfoMessage("Serialising data");
+
 			#region Was used for Bianry seriaisation
 			// This code was originally in place for binary serialisation however this requires that
 			// all objects to be serialised are marked with [Serializable] attribute which is 
@@ -63,6 +70,8 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 		public object DeserialiseData(byte[] data)
 		{
+			_logger.WriteInfoMessage("Deserialising data");
+
 			#region Was used for Binary serialisation
 			// This code was originally in place for binary serialisation however this requires that
 			// all objects to be serialised are marked with [Serializable] attribute which is 
@@ -84,7 +93,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 		protected byte[] SetCommandParameters(params string[] args)
 		{
-			string cmdToExecute = null;
+			_logger.WriteInfoMessage("Setting command parameters");
 			if (args != null && args.Length > 0)
 			{
 				_commandToExecute = string.Format(_mapper.GetCommandFormat(_command), args);
@@ -94,6 +103,9 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				_commandToExecute = _mapper.GetCommandFormat(_command);
 			}
 			_commandToExecute += ServerProtocol.Command_Terminator;
+
+			_logger.WriteInfoMessage(string.Format("Cmd To Execute: [{0}]", _commandToExecute));
+
 			return UTF8Encoding.ASCII.GetBytes(_commandToExecute);
 		}
 
@@ -109,8 +121,15 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			{
 				var result = _cmdSocket.Send(_commandToExecute);
 				response = ProcessResponse(result);
-			} catch (Exception ex)
+			}
+			catch (System.Runtime.Serialization.SerializationException srEx)
 			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				//todo: should log ex.Message somewhere
+				_logger.WriteException(ex);
 				response.Status = CommandResponseStatus.Error;
 			}
 			return response;
@@ -118,6 +137,8 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 		protected virtual CommandResponse ProcessResponse(byte[] rawResponse)
 		{
+			_logger.WriteInfoMessage("Processing Response");
+
 			var response = DetermineIfAnyProtocolErrorsOccurred(rawResponse);
 
 			response.RawData = rawResponse;
@@ -125,6 +146,9 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			{
 				response.ResponseText = UTF8Encoding.ASCII.GetString(rawResponse);
 			}
+
+			_logger.WriteInfoMessage(string.Format("Response Text :[{0}], Response Status: [{1}]", response.ResponseText, response.Status));
+
 			return response;
 		}
 
@@ -137,7 +161,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				return response;
 			}
 
-			if (CheckForByteSequenceInArray(rawResponse,ServerProtocol.ServerSuccessEndResponse + ServerProtocol.Command_Terminator))
+			if (CheckForByteSequenceInArray(rawResponse, ServerProtocol.ServerSuccessEndResponse + ServerProtocol.Command_Terminator))
 			{
 				response.Status = CommandResponseStatus.Ok;
 				return response;
@@ -188,10 +212,10 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 			return false;
 		}
-		
+
 		void _cmdSocket_CommunicationFailure(object sender, CommunicationFailureEventArgs e)
 		{
-			FireCommsFailureBubbledEvent(sender,e);
+			FireCommsFailureBubbledEvent(sender, e);
 		}
 
 		public void FireCommsFailureBubbledEvent(object sender, CommunicationFailureEventArgs e)
