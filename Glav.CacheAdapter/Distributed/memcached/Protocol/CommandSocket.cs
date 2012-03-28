@@ -70,7 +70,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 						while (keepReading)
 						{
 							var bytesRead = netStream.Read(readData, 0, DATA_BUFFER);
-							if (bytesRead < DATA_BUFFER || !netStream.CanRead || !netStream.DataAvailable)
+							if (bytesRead < DATA_BUFFER || !netStream.CanRead)
 								keepReading = false;
 
 							var tmpArray = new byte[bytesRead];
