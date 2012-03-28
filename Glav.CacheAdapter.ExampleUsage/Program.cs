@@ -17,6 +17,8 @@ namespace Glav.CacheAdapter.ExampleUsage
         {
             ExampleAddAndRetrieveFromCache();
 
+			//HammerTheCache.StartHammering();
+
             Console.WriteLine("Done.");
             Console.ReadLine();
 

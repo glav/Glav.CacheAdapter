@@ -16,6 +16,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		private int _port;
 		private int _receiveTimeout = 10000;
 
+
 		public event EventHandler<CommunicationFailureEventArgs> CommunicationFailure;
 
 		public CommandSocket(string ipAddress, int port)
@@ -62,20 +63,23 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 					socket.Connect(_ipAddress, _port);
 					using (var netStream = new NetworkStream(socket, true))
 					{
-						byte[] readData = new byte[DATA_BUFFER];
-
-						socket.Send(commandBuffer);
-
-						bool keepReading = true;
-						while (keepReading)
+						if (netStream.CanRead)
 						{
-							var bytesRead = netStream.Read(readData, 0, DATA_BUFFER);
-							if (bytesRead < DATA_BUFFER || !netStream.CanRead)
-								keepReading = false;
+							byte[] readData = new byte[DATA_BUFFER];
 
-							var tmpArray = new byte[bytesRead];
-							Array.Copy(readData, tmpArray, bytesRead);
-							allData.AddRange(tmpArray);
+							socket.Send(commandBuffer);
+
+							bool keepReading = true;
+							while (keepReading)
+							{
+								var bytesRead = netStream.Read(readData, 0, DATA_BUFFER);
+								if (bytesRead < DATA_BUFFER)
+									keepReading = false;
+
+								var tmpArray = new byte[bytesRead];
+								Array.Copy(readData, tmpArray, bytesRead);
+								allData.AddRange(tmpArray);
+							}
 						}
 					}
 				}
