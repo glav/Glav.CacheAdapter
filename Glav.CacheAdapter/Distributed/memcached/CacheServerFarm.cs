@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.memcached.Protocol;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached
 {
@@ -15,17 +16,24 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		Dictionary<uint, ServerNode> _serverFarmKeys = new Dictionary<uint, ServerNode>();
 		private uint[] _allKeys;
 		private List<ServerNode> _nodes;
-		private DeadNodePool _deadNodes= new DeadNodePool();
+		private DeadNodePool _deadNodes;
 		private static object _lockObject = new object();
+		private ILogging _logger;
 
 		public List<ServerNode> NodeList { get { return _nodes; } }
 		public DeadNodePool DeadNodes { get { return _deadNodes; } }
 
-		public void Initialise(List<ServerNode> nodes)
+		public CacheServerFarm(ILogging logger)
+		{
+			_logger = logger;
+			_deadNodes = new DeadNodePool(_logger);
+		}
+
+		public bool Initialise(List<ServerNode> nodes)
 		{
 			_nodes = nodes;
 			_deadNodes.DeadNodesBackAlive += new EventHandler<DeadNodeBackToLifeEventArgs>(_deadNodes_DeadNodesBackAlive);
-			BuildCacheFarmHashKeys();
+			return BuildCacheFarmHashKeys();
 		}
 
 		void _deadNodes_DeadNodesBackAlive(object sender, DeadNodeBackToLifeEventArgs e)
@@ -39,9 +47,13 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			BuildCacheFarmHashKeys();
 		}
 		
-		protected void BuildCacheFarmHashKeys()
+		protected bool BuildCacheFarmHashKeys()
 		{
 			var numberAliveNodes = CheckIfNodesAreAlive(_nodes);
+			if (numberAliveNodes == 0)
+			{
+				return false;
+			}
 			var keys = new uint[numberAliveNodes * NUMBER_OF_KEYS];
 			_serverFarmKeys.Clear();
 
@@ -65,6 +77,8 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 			Array.Sort<uint>(keys);
 			Interlocked.Exchange(ref _allKeys, keys);
+
+			return true;
 		}
 
 		public void SetNodeToDead(ServerNode node)
@@ -88,7 +102,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			{
 				nodes.ForEach(n =>
 				              	{
-				              		var pingCommand = new VersionCommand(n.IPAddressOrHostName, n.Port);
+				              		var pingCommand = new VersionCommand(_logger, n.IPAddressOrHostName, n.Port);
 				              		var response = pingCommand.ExecuteCommand();
 									if (response.Status == CommandResponseStatus.Ok)
 									{
@@ -106,7 +120,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public ServerNode FindCacheServerNodeForKey(string key)
 		{
-			if (_serverFarmKeys.Count == 0) return null;
+			if (_serverFarmKeys.Count == 0)
+			{
+				throw new ArgumentNullException("No cache server nodes found or available");
+			}
 
 			uint itemKeyHash = BitConverter.ToUInt32(new DistributedFNV().ComputeHash(Encoding.UTF8.GetBytes(key)), 0);
 			int foundIndex = Array.BinarySearch<uint>(_serverFarmKeys.Keys.ToArray(), itemKeyHash);
@@ -128,8 +145,15 @@ namespace Glav.CacheAdapter.Distributed.memcached
 				}
 			}
 
-			if (foundIndex < 0 || foundIndex > _serverFarmKeys.Count)
-				return null;
+			if (foundIndex > _serverFarmKeys.Count - 1)
+			{
+				foundIndex = _serverFarmKeys.Count - 1;
+			}
+
+			if (foundIndex < 0)
+			{
+				foundIndex = 0;
+			}
 
 			return _serverFarmKeys[_allKeys[foundIndex]];
 		}
@@ -142,8 +166,6 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		/// <returns></returns>
 		private uint[] GenerateCacheServerKeys(ServerNode node)
 		{
-			const int KeyLength = 4;
-
 			var keyList = new uint[NUMBER_OF_KEYS];
 
 			string address = node.GetFullHostAddress();

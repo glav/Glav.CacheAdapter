@@ -8,34 +8,30 @@ namespace Glav.CacheAdapter.Distributed.memcached
 {
 	public class memcachedCacheFactory : DistributedCacheFactoryBase
 	{
-		private ILogging _logger;
-		private const string DEFAULT_EndpointConfig = "127.0.0.1:11211";
+		private const string DEFAULT_IpAddress = "127.0.0.1";
+		private const int DEFAULT_Port = 11211;
 
-		public memcachedCacheFactory()
+		public memcachedCacheFactory(ILogging logger) : base(logger)
 		{
-			_logger = new Logger();
-		}
-		public memcachedCacheFactory(ILogging logger)
-		{
-			_logger = logger;
 		}
 
-		public CacheServerFarm ConstructCacheFarm(string endPointConfig)
+		public CacheServerFarm ConstructCacheFarm()
 		{
-			if (string.IsNullOrWhiteSpace(endPointConfig))
-				endPointConfig = DEFAULT_EndpointConfig;
-
-			var serverNodes = ParseConfig(endPointConfig);
+			var config = ParseConfig(DEFAULT_IpAddress,DEFAULT_Port);
 
 			try
 			{
-				var serverFarm = new CacheServerFarm();
-				serverFarm.Initialise(serverNodes);
+				var serverFarm = new CacheServerFarm(Logger);
+				if (!serverFarm.Initialise(config.ServerNodes))
+				{
+					throw new ArgumentNullException("There was a problem initialising memcached server pool. No responding nodes found.");
+				}
+
 				return serverFarm;
 			}
 			catch (Exception ex)
 			{
-				_logger.WriteException(ex);
+				Logger.WriteException(ex);
 				throw;
 			}
 		}

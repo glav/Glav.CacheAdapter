@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 {
@@ -10,7 +11,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		private const string FLAGS = "0";
 		private const string CAS = "0";
 
-		public SetCommand(string ipAddress, int port): base(SupportedCommands.Set, ipAddress,port)
+		public SetCommand(ILogging logger, string ipAddress, int port): base(logger, SupportedCommands.Set, ipAddress,port)
 		{
 		}
 
@@ -24,7 +25,8 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			var dataToStore = SerialiseData(Data);
 			
 			var dataLength = dataToStore.Length;
-			var cmdBytes = SetCommandParameters(CacheKey,FLAGS,span.TotalSeconds.ToString(),dataLength.ToString(),CAS);
+			var expiryTimeInSeconds = GetExpiryTimeInSeconds(span);
+			var cmdBytes = SetCommandParameters(CacheKey,FLAGS,expiryTimeInSeconds.ToString(),dataLength.ToString(),CAS);
 			List<byte> cmdSegment = new List<byte>(cmdBytes);
 			cmdSegment.AddRange(dataToStore);
 			cmdSegment.AddRange(UTF8Encoding.ASCII.GetBytes(ServerProtocol.Command_Terminator));
@@ -40,6 +42,25 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				response.Status = CommandResponseStatus.Error;
 			}
 			return response;
+		}
+
+		private long GetExpiryTimeInSeconds(TimeSpan span)
+		{
+			long expiryTimeInSeconds;
+			var roundedExpiryTime = Math.Round(span.TotalSeconds, 0);
+			try
+			{
+				expiryTimeInSeconds = (long)roundedExpiryTime;
+			}
+			catch
+			{
+				expiryTimeInSeconds = 0;
+			}
+			if (expiryTimeInSeconds < 0)
+			{
+				expiryTimeInSeconds = 0;
+			}
+			return expiryTimeInSeconds;
 		}
 
 		protected override CommandResponse ProcessResponse(byte[] rawResponse)
