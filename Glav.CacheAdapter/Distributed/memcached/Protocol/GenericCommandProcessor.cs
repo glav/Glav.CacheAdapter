@@ -25,7 +25,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			_command = command;
 			_ipAdress = ipAdress;
 			_port = port;
-			_cmdSocket = new CommandSocket(_ipAdress,_port);
+			_cmdSocket = new CommandSocket(_ipAdress, _port);
 			_cmdSocket.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(_cmdSocket_CommunicationFailure);
 			_logger = logger;
 		}
@@ -36,7 +36,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		{
 			get { return _cmdSocket; }
 		}
-		
+
 		public byte[] SerialiseData(object data)
 		{
 			_logger.WriteInfoMessage("Serialising data");
@@ -103,7 +103,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				_commandToExecute = _mapper.GetCommandFormat(_command);
 			}
 			_commandToExecute += ServerProtocol.Command_Terminator;
-			
+
 			_logger.WriteInfoMessage(string.Format("Cmd To Execute: [{0}]", _commandToExecute));
 
 			return UTF8Encoding.ASCII.GetBytes(_commandToExecute);
@@ -121,7 +121,12 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			{
 				var result = _cmdSocket.Send(_commandToExecute);
 				response = ProcessResponse(result);
-			} catch (Exception ex)
+			}
+			catch (System.Runtime.Serialization.SerializationException srEx)
+			{
+				throw;
+			}
+			catch (Exception ex)
 			{
 				//todo: should log ex.Message somewhere
 				_logger.WriteException(ex);
@@ -143,7 +148,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			}
 
 			_logger.WriteInfoMessage(string.Format("Response Text :[{0}], Response Status: [{1}]", response.ResponseText, response.Status));
-			
+
 			return response;
 		}
 
@@ -156,7 +161,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 				return response;
 			}
 
-			if (CheckForByteSequenceInArray(rawResponse,ServerProtocol.ServerSuccessEndResponse + ServerProtocol.Command_Terminator))
+			if (CheckForByteSequenceInArray(rawResponse, ServerProtocol.ServerSuccessEndResponse + ServerProtocol.Command_Terminator))
 			{
 				response.Status = CommandResponseStatus.Ok;
 				return response;
@@ -207,10 +212,10 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 			return false;
 		}
-		
+
 		void _cmdSocket_CommunicationFailure(object sender, CommunicationFailureEventArgs e)
 		{
-			FireCommsFailureBubbledEvent(sender,e);
+			FireCommsFailureBubbledEvent(sender, e);
 		}
 
 		public void FireCommsFailureBubbledEvent(object sender, CommunicationFailureEventArgs e)
