@@ -27,9 +27,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public T Get<T>(string cacheKey) where T : class
 		{
-			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
+			var sanitisedKey = SanitiseCacheKey(cacheKey);
+			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
 			var cmd = new GetCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = cacheKey;
+			cmd.CacheKey = sanitisedKey;
 			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
 			var response = cmd.ExecuteCommand();
 			if (response.Status != CommandResponseStatus.Ok)
@@ -43,9 +44,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void Add(string cacheKey, DateTime absoluteExpiry, object dataToAdd)
 		{
-			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
+			var sanitisedKey = SanitiseCacheKey(cacheKey);
+			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
 			var cmd = new SetCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = cacheKey;
+			cmd.CacheKey = sanitisedKey;
 			cmd.ItemExpiry = absoluteExpiry;
 			cmd.Data = dataToAdd;
 			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
@@ -59,16 +61,18 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
 		{
+			var sanitisedKey = SanitiseCacheKey(cacheKey);
 			// memcached does not support sliding windows so we convert it to an absolute expiry
 			var absoluteExpiry = DateTime.Now.AddSeconds(slidingExpiryWindow.TotalSeconds);
-			Add(cacheKey,absoluteExpiry,dataToAdd);
+			Add(sanitisedKey, absoluteExpiry, dataToAdd);
 		}
 
 		public void InvalidateCacheItem(string cacheKey)
 		{
-			var node = _serverFarm.FindCacheServerNodeForKey(cacheKey);
+			var sanitisedKey = SanitiseCacheKey(cacheKey);
+			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
 			var cmd = new DeleteCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = cacheKey;
+			cmd.CacheKey = sanitisedKey;
 			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
 			var response = cmd.ExecuteCommand();
 			if (response.Status != CommandResponseStatus.Ok)
@@ -99,6 +103,15 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		public CacheSetting CacheType
 		{
 			get { return CacheSetting.memcached; }
+		}
+
+		private string SanitiseCacheKey(string cacheKey)
+		{
+			if (string.IsNullOrWhiteSpace(cacheKey))
+			{
+				throw new ArgumentException("Cannot have an empty or NULL cache key");
+			}
+			return cacheKey.Replace(" ", string.Empty);
 		}
 	}
 }
