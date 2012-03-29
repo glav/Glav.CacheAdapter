@@ -12,8 +12,8 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_TASKS = 5000;
-		private const int NUMBER_OPERATIONS_PER_TASK = 200;
+		private const int NUMBER_TASKS = 10000;
+		private const int NUMBER_OPERATIONS_PER_TASK = 10;
 
 		public static void StartHammering()
 		{
@@ -47,7 +47,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 				                         		var dataToCache = GetDataToCache(tCnt);
 												var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff,DateTime.Now.AddMinutes(1),() =>
 				                         		{
-													Console.Write(".");
+													Console.Write(".");  // Only output a '.' when we get a cache miss and need to retrieve it from its 'source'
 				                         			return dataToCache;
 				                         		});
 												if (testData == null)
