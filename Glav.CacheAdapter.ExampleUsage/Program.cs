@@ -17,6 +17,7 @@ namespace Glav.CacheAdapter.ExampleUsage
         {
             ExampleAddAndRetrieveFromCache();
 
+			// Uncomment this line to simulate about 1,000,000 hits to the cache engine
 			//HammerTheCache.StartHammering();
 
             Console.WriteLine("Done.");
