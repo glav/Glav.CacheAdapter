@@ -12,11 +12,12 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_TASKS = 1000;
-		private const int NUMBER_OPERATIONS_PER_TASK = 100;
+		private const int NUMBER_TASKS = 5000;
+		private const int NUMBER_OPERATIONS_PER_TASK = 200;
 
 		public static void StartHammering()
 		{
+			Console.WriteLine();
 			Console.WriteLine("About to perform a simple stress test on the cache.");
 			Console.WriteLine("Press any key to start.");
 			Console.WriteLine(new string('*',40));
@@ -44,7 +45,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 				var storeCacheTask = new Task(() =>
 				                         	{
 				                         		var dataToCache = GetDataToCache(tCnt);
-												var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff,DateTime.Now.AddMinutes(10),() =>
+												var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff,DateTime.Now.AddMinutes(1),() =>
 				                         		{
 													Console.Write(".");
 				                         			return dataToCache;
@@ -54,11 +55,12 @@ namespace Glav.CacheAdapter.ExampleUsage
 													Console.WriteLine("Received NULL for cache retrieval");
 												}
 												
-				                         	});
+				                         	},TaskCreationOptions.PreferFairness);
 				storeTasks.Add(storeCacheTask);
 			}
 
 			storeTasks.ForEach(t => t.Start());
+			Console.WriteLine("All processes started running....");
 			Task.WaitAll(storeTasks.ToArray());
 		}
 

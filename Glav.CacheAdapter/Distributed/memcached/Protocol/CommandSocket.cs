@@ -68,6 +68,7 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 							byte[] readData = new byte[DATA_BUFFER];
 
 							socket.Send(commandBuffer);
+							socket.Shutdown(SocketShutdown.Send);
 
 							bool keepReading = true;
 							while (keepReading)
@@ -80,34 +81,37 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 								Array.Copy(readData, tmpArray, bytesRead);
 								allData.AddRange(tmpArray);
 							}
+							socket.Close(1);
 						}
 					}
 				}
 			} catch (Exception ex)
 			{
 				//todo: should log 'ex.Message' somewhere
-				FireCommunicationFailedEvent();
+				FireCommunicationFailedEvent(ex);
 			}
 
 			return allData.ToArray();
 		}
 
-		private void FireCommunicationFailedEvent()
+		private void FireCommunicationFailedEvent(Exception failureException)
 		{
 			if (CommunicationFailure != null)
 			{
 				ServerNode failedNode = new ServerNode() {IPAddressOrHostName = _ipAddress, Port = _port, IsAlive = false};
-				CommunicationFailure(this,new CommunicationFailureEventArgs(failedNode));
+				CommunicationFailure(this,new CommunicationFailureEventArgs(failedNode,failureException));
 			}
 		}
 	}
 
 	public class CommunicationFailureEventArgs : EventArgs
 	{
-		public CommunicationFailureEventArgs(ServerNode failedNode)
+		public CommunicationFailureEventArgs(ServerNode failedNode, Exception failureException)
 		{
 			FailedNode = failedNode;
+			FailureException = failureException;
 		}
 		public ServerNode FailedNode { get; set; }
+		public Exception FailureException { get; set; }
 	}
 }

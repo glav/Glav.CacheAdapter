@@ -92,6 +92,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		void HandleCommunicationFailureEvent(object sender, CommunicationFailureEventArgs e)
 		{
+			if (e.FailureException != null)
+			{
+				_logger.WriteException(e.FailureException);
+			}
 			if (e.FailedNode != null)
 			{
 				_logger.WriteErrorMessage(string.Format("A memcached node has failed! [{0}:{1}]", e.FailedNode.IPAddressOrHostName,
