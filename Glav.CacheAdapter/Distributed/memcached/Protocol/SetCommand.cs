@@ -21,12 +21,23 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 
 		public override CommandResponse ExecuteCommand()
 		{
-			var span = ItemExpiry - DateTime.Now;
+			long expiryTimeInSeconds = 0;
+			if (ItemExpiry != DateTime.MaxValue)
+			{
+				var now = DateTime.Now;
+				if (ItemExpiry > now)
+				{
+					var span = ItemExpiry - now;
+					expiryTimeInSeconds = GetExpiryTimeInSeconds(span);
+				}
+				else
+				{
+					expiryTimeInSeconds = 1;
+				}
+			}
 			var dataToStore = SerialiseData(Data);
-			
 			var dataLength = dataToStore.Length;
-			var expiryTimeInSeconds = GetExpiryTimeInSeconds(span);
-			var cmdBytes = SetCommandParameters(CacheKey,FLAGS,expiryTimeInSeconds.ToString(),dataLength.ToString(),CAS);
+			var cmdBytes = SetCommandParameters(CacheKey, FLAGS, expiryTimeInSeconds.ToString(), dataLength.ToString(), CAS);
 			List<byte> cmdSegment = new List<byte>(cmdBytes);
 			cmdSegment.AddRange(dataToStore);
 			cmdSegment.AddRange(UTF8Encoding.ASCII.GetBytes(ServerProtocol.Command_Terminator));
