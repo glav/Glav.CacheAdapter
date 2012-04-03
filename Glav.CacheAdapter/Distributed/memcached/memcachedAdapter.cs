@@ -27,35 +27,50 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public T Get<T>(string cacheKey) where T : class
 		{
-			var sanitisedKey = SanitiseCacheKey(cacheKey);
-			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-			var cmd = new GetCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = sanitisedKey;
-			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-			var response = cmd.ExecuteCommand();
-			if (response.Status != CommandResponseStatus.Ok)
+			try
 			{
-				_logger.WriteErrorMessage(string.Format("Unable to Get item from memcached cache: {0},{1}", response.Status, response.ResponseText));
-				return null;
-			}
+				var sanitisedKey = SanitiseCacheKey(cacheKey);
+				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
+				var cmd = new GetCommand(_logger, node.IPAddressOrHostName, node.Port);
+				cmd.CacheKey = sanitisedKey;
+				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
+				var response = cmd.ExecuteCommand();
+				if (response.Status != CommandResponseStatus.Ok)
+				{
+					_logger.WriteErrorMessage(string.Format("Unable to Get item from memcached cache: {0},{1}", response.Status, response.ResponseText));
+					return null;
+				}
 
-			return response.ResponseObject as T;
+				return response.ResponseObject as T;
+			}
+			catch (Exception ex)
+			{
+				_logger.WriteException(ex);
+			}
+			return null;
 		}
 
 		public void Add(string cacheKey, DateTime absoluteExpiry, object dataToAdd)
 		{
-			var sanitisedKey = SanitiseCacheKey(cacheKey);
-			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-			var cmd = new SetCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = sanitisedKey;
-			cmd.ItemExpiry = absoluteExpiry;
-			cmd.Data = dataToAdd;
-			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-			
-			var response = cmd.ExecuteCommand();
-			if (response.Status != CommandResponseStatus.Ok)
+			try
 			{
-				_logger.WriteErrorMessage(string.Format("Unable to Add item to memcached cache: {0},{1}",response.Status,response.ResponseText));
+				var sanitisedKey = SanitiseCacheKey(cacheKey);
+				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
+				var cmd = new SetCommand(_logger, node.IPAddressOrHostName, node.Port);
+				cmd.CacheKey = sanitisedKey;
+				cmd.ItemExpiry = absoluteExpiry;
+				cmd.Data = dataToAdd;
+				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
+
+				var response = cmd.ExecuteCommand();
+				if (response.Status != CommandResponseStatus.Ok)
+				{
+					_logger.WriteErrorMessage(string.Format("Unable to Add item to memcached cache: {0},{1}", response.Status, response.ResponseText));
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.WriteException(ex);
 			}
 		}
 
@@ -69,15 +84,22 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void InvalidateCacheItem(string cacheKey)
 		{
-			var sanitisedKey = SanitiseCacheKey(cacheKey);
-			var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-			var cmd = new DeleteCommand(_logger, node.IPAddressOrHostName, node.Port);
-			cmd.CacheKey = sanitisedKey;
-			cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-			var response = cmd.ExecuteCommand();
-			if (response.Status != CommandResponseStatus.Ok)
+			try
 			{
-				_logger.WriteErrorMessage(string.Format("Unable to Delete item from memcached cache: {0},{1}", response.Status, response.ResponseText));
+				var sanitisedKey = SanitiseCacheKey(cacheKey);
+				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
+				var cmd = new DeleteCommand(_logger, node.IPAddressOrHostName, node.Port);
+				cmd.CacheKey = sanitisedKey;
+				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
+				var response = cmd.ExecuteCommand();
+				if (response.Status != CommandResponseStatus.Ok)
+				{
+					_logger.WriteErrorMessage(string.Format("Unable to Delete item from memcached cache: {0},{1}", response.Status, response.ResponseText));
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.WriteException(ex);
 			}
 		}
 
