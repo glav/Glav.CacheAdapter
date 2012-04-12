@@ -34,14 +34,17 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 			}
 		}
 
-		public int ReceiveTimeOut { get { return _receiveTimeout; } 
+		public int ReceiveTimeOut
+		{
+			get { return _receiveTimeout; }
 			set
 			{
 				if (value > 0)
 				{
 					_receiveTimeout = value;
 				}
-			}}
+			}
+		}
 
 
 		public byte[] Send(string command)
@@ -51,8 +54,6 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		}
 		public byte[] Send(byte[] commandBuffer)
 		{
-			const int DATA_BUFFER = 20;
-
 			List<byte> allData = new List<byte>();
 
 			try
@@ -63,29 +64,26 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 					socket.Connect(_ipAddress, _port);
 					using (var netStream = new NetworkStream(socket, true))
 					{
-						if (netStream.CanRead)
+						socket.Send(commandBuffer);
+						socket.Shutdown(SocketShutdown.Send);
+
+						bool keepReading = true;
+						while (keepReading)
 						{
-							byte[] readData = new byte[DATA_BUFFER];
+							var byteRead = netStream.ReadByte();
+							if (byteRead < 0)
+								keepReading = false;
 
-							socket.Send(commandBuffer);
-							socket.Shutdown(SocketShutdown.Send);
-
-							bool keepReading = true;
-							while (keepReading)
+							if (byteRead >= 0)
 							{
-								var bytesRead = netStream.Read(readData, 0, DATA_BUFFER);
-								if (bytesRead < DATA_BUFFER)
-									keepReading = false;
-
-								var tmpArray = new byte[bytesRead];
-								Array.Copy(readData, tmpArray, bytesRead);
-								allData.AddRange(tmpArray);
+								allData.Add((byte)byteRead);
 							}
-							socket.Close(1);
 						}
+						socket.Close(1);
 					}
 				}
-			} catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				//todo: should log 'ex.Message' somewhere
 				FireCommunicationFailedEvent(ex);
@@ -98,8 +96,8 @@ namespace Glav.CacheAdapter.Distributed.memcached.Protocol
 		{
 			if (CommunicationFailure != null)
 			{
-				ServerNode failedNode = new ServerNode() {IPAddressOrHostName = _ipAddress, Port = _port, IsAlive = false};
-				CommunicationFailure(this,new CommunicationFailureEventArgs(failedNode,failureException));
+				ServerNode failedNode = new ServerNode() { IPAddressOrHostName = _ipAddress, Port = _port, IsAlive = false };
+				CommunicationFailure(this, new CommunicationFailureEventArgs(failedNode, failureException));
 			}
 		}
 	}

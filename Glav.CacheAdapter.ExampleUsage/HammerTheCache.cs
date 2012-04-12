@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Glav.CacheAdapter.Core.DependencyInjection;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Glav.CacheAdapter.ExampleUsage
 {
@@ -12,8 +14,9 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_TASKS = 10000;
-		private const int NUMBER_OPERATIONS_PER_TASK = 10;
+		private const int NUMBER_THREADS = 1000;
+		private const int NUMBER_OPERATIONS_PER_TASK = 200;
+		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(10);
 
 		public static void StartHammering()
 		{
@@ -36,32 +39,49 @@ namespace Glav.CacheAdapter.ExampleUsage
 		private static void StartTestExecution()
 		{
 			Console.WriteLine();
-			Console.WriteLine("Starting {0} tasks, each performing {1} iterations",NUMBER_TASKS,NUMBER_OPERATIONS_PER_TASK);
+			Console.WriteLine("Starting {0} threads, each performing {1} iterations, running for a minimum time of: {2} minutes", NUMBER_THREADS, NUMBER_OPERATIONS_PER_TASK, MINIMUM_TIME_TO_RUN.Minutes);
 
-			System.Threading.Tasks.TaskScheduler.UnobservedTaskException += new EventHandler<UnobservedTaskExceptionEventArgs>(TaskScheduler_UnobservedTaskException);
-			List<Task> storeTasks = new List<Task>(NUMBER_TASKS);
-			for (int tCnt = 0; tCnt < NUMBER_TASKS; tCnt++)
+			Console.WriteLine();
+			Console.Write("Up to iteration: #");
+			int top = Console.CursorTop;
+			int left = Console.CursorLeft;
+			Stopwatch watch = new Stopwatch();
+
+			List<Thread> storeTasks = new List<Thread>(NUMBER_THREADS);
+
+			watch.Start();
+			var currentIterationCount = 0;
+
+			while (watch.Elapsed < MINIMUM_TIME_TO_RUN)
 			{
-				var storeCacheTask = new Task(() =>
-				                         	{
-				                         		var dataToCache = GetDataToCache(tCnt);
-												var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff,DateTime.Now.AddMinutes(1),() =>
-				                         		{
-													Console.Write(".");  // Only output a '.' when we get a cache miss and need to retrieve it from its 'source'
-				                         			return dataToCache;
-				                         		});
-												if (testData == null)
-												{
-													Console.WriteLine("Received NULL for cache retrieval");
-												}
-												
-				                         	},TaskCreationOptions.PreferFairness);
-				storeTasks.Add(storeCacheTask);
-			}
+				currentIterationCount++;
+				Console.CursorTop = top;
+				Console.CursorLeft = left;
+				Console.Write(currentIterationCount);
 
-			storeTasks.ForEach(t => t.Start());
-			Console.WriteLine("All processes started running....");
-			Task.WaitAll(storeTasks.ToArray());
+				for (int tCnt = 0; tCnt < NUMBER_THREADS; tCnt++)
+				{
+					var threadStart = new ThreadStart(() =>
+					                                  	{
+					                                  		var dataToCache = GetDataToCache(tCnt);
+					                                  		var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff, DateTime.Now.AddMinutes(1), () =>
+					                                  		                                                                                                   	{
+					                                  		                                                                                                   		return dataToCache;
+					                                  		                                                                                                   	});
+															if (testData == null)
+					                                  		{
+					                                  			Console.WriteLine("Received NULL for cache retrieval");
+					                                  		}
+
+					                                  	});
+					var cacheThread = new Thread(threadStart);
+					storeTasks.Add(cacheThread);
+				}
+
+				storeTasks.ForEach(t => t.Start());
+				storeTasks.ForEach(t => t.Join());
+				storeTasks.Clear();
+			}
 		}
 
 		private static MoreDummyData GetDataToCache(int tCnt)
