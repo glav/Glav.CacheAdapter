@@ -14,9 +14,9 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_THREADS = 1000;
-		private const int NUMBER_OPERATIONS_PER_TASK = 200;
-		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(10);
+		private const int NUMBER_THREADS = 200;
+		private const int NUMBER_OPERATIONS_PER_TASK = 100;
+		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(2);
 
 		public static void StartHammering()
 		{
@@ -44,8 +44,15 @@ namespace Glav.CacheAdapter.ExampleUsage
 			Console.WriteLine();
 			Console.Write("Up to iteration: #");
 			int top = Console.CursorTop;
+			int infoTop = Console.CursorTop + 4;
 			int left = Console.CursorLeft;
 			Stopwatch watch = new Stopwatch();
+			long shortestTime = long.MaxValue, longestTime = 0;
+			double total = 0;
+			int numTimes = 0;
+			var avgTimes = new List<double>();
+
+
 
 			List<Thread> storeTasks = new List<Thread>(NUMBER_THREADS);
 
@@ -64,10 +71,19 @@ namespace Glav.CacheAdapter.ExampleUsage
 					var threadStart = new ThreadStart(() =>
 					                                  	{
 					                                  		var dataToCache = GetDataToCache(tCnt);
+
+															var timer = new Stopwatch();
+															timer.Start();
 					                                  		var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff, DateTime.Now.AddMinutes(1), () =>
 					                                  		                                                                                                   	{
 					                                  		                                                                                                   		return dataToCache;
 					                                  		                                                                                                   	});
+															timer.Stop();
+															if (timer.ElapsedMilliseconds > longestTime) { longestTime = timer.ElapsedMilliseconds; }
+															if (timer.ElapsedMilliseconds < shortestTime) { shortestTime = timer.ElapsedMilliseconds; }
+															total += timer.ElapsedMilliseconds;
+															numTimes++;
+
 															if (testData == null)
 					                                  		{
 					                                  			Console.WriteLine("Received NULL for cache retrieval");
@@ -81,14 +97,24 @@ namespace Glav.CacheAdapter.ExampleUsage
 				storeTasks.ForEach(t => t.Start());
 				storeTasks.ForEach(t => t.Join());
 				storeTasks.Clear();
+
+				Console.CursorTop = infoTop;
+				Console.CursorLeft = 0;
+				Console.WriteLine("Shortest Time: {0} mseconds", shortestTime);
+				Console.WriteLine("Longest Time: {0} mseconds", longestTime);
+				var avgTime = total / (double)numTimes;
+				avgTimes.Add(avgTime);
+				Console.WriteLine("Avg Time: {0} mseconds", avgTime);
 			}
+
+			avgTimes.ForEach(t => Console.WriteLine("Avg Time: {0}", t));
 		}
 
 		private static MoreDummyData GetDataToCache(int tCnt)
 		{
 			Random rnd = new Random(DateTime.Now.Millisecond);
 			var data = new MoreDummyData();
-			data.Stuff = string.Format("Stuff #{0}", rnd.Next(0,10));
+			data.Stuff = string.Format("Stuff-{0}", rnd.Next(0,10));
 			for (int d = 0; d < NUMBER_OPERATIONS_PER_TASK; d++)
 			{
 				data.ListOfStuff.Add(new ItemStuff()

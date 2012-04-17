@@ -15,10 +15,10 @@ namespace Glav.CacheAdapter.ExampleUsage
     {
         static void Main(string[] args)
         {
-            ExampleAddAndRetrieveFromCache();
+            //ExampleAddAndRetrieveFromCache();
 
 			// Uncomment this line to simulate about 100,000 hits to the cache engine
-			//HammerTheCache.StartHammering();
+			HammerTheCache.StartHammering();
 
             Console.WriteLine("Done.");
             Console.ReadLine();
