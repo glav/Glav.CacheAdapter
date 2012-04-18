@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Enyim.Caching">
+      <HintPath>..\packages\EnyimMemcached.2.11\lib\net35\Enyim.Caching.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client">
       <HintPath>..\Dependencies\Windows AppFabric\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
     </Reference>
@@ -72,6 +75,9 @@
     <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />
     <Compile Include="Distributed\DistributedCacheFactoryBase.cs" />
+    <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
+    <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
+    <Compile Include="Distributed\memcached\memcachedConstants.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="ICacheProvider.cs" />
     <Compile Include="MainConfig.Designer.cs">
@@ -80,19 +86,7 @@
       <DependentUpon>MainConfig.settings</DependentUpon>
     </Compile>
     <Compile Include="Distributed\memcached\memcachedAdapter.cs" />
-    <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
-    <Compile Include="Distributed\memcached\DeadNodePool.cs" />
-    <Compile Include="Distributed\memcached\FnvHash.cs" />
     <Compile Include="Distributed\memcached\memcachedCacheFactory.cs" />
-    <Compile Include="Distributed\memcached\Protocol\CommandResponse.cs" />
-    <Compile Include="Distributed\memcached\Protocol\CommandSocket.cs" />
-    <Compile Include="Distributed\memcached\Protocol\DeleteCommand.cs" />
-    <Compile Include="Distributed\memcached\Protocol\GenericCommandProcessor.cs" />
-    <Compile Include="Distributed\memcached\Protocol\GetCommand.cs" />
-    <Compile Include="Distributed\memcached\Protocol\SetCommand.cs" />
-    <Compile Include="Distributed\memcached\Protocol\StatisticsCommand.cs" />
-    <Compile Include="Distributed\memcached\Protocol\SupportedCommands.cs" />
-    <Compile Include="Distributed\memcached\Protocol\VersionCommand.cs" />
     <Compile Include="Distributed\ServerNode.cs" />
     <Compile Include="MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,6 +100,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MainConfig.Designer.cs</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Copyright.txt" />

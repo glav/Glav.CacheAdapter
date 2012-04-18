@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Enyim.Caching;
+using Enyim.Caching.Memcached;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.memcached.Protocol;
 
 namespace Glav.CacheAdapter.Distributed.memcached
 {
@@ -12,6 +13,11 @@ namespace Glav.CacheAdapter.Distributed.memcached
 	{
 		private CacheServerFarm _serverFarm;
 		private ILogging _logger;
+
+		private static Enyim.Caching.IMemcachedClient _client;
+		private static object _lockRef = new object();
+		private static bool _isInitialised = false;
+
 
 		public memcachedAdapter(ILogging logger)
 		{
@@ -22,6 +28,39 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 			if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
 				throw new ArgumentException("Must specify at least 1 server node to use for memcached");
+
+			Initialise(factory);
+			LogManager.AssignFactory(new LogFactoryAdapter(_logger));
+		}
+
+		private void Initialise(memcachedCacheFactory factory)
+		{
+			if (!_isInitialised)
+			{
+				lock (_lockRef)
+				{
+					if (!_isInitialised)
+					{
+						_isInitialised = true;
+						// If the consumer of this class has passed in a IMemcachedClient
+						//instance, then we use that instead
+						if (_client != null)
+						{
+							return;
+						}
+						var config = new Enyim.Caching.Configuration.MemcachedClientConfiguration();
+						_serverFarm.NodeList.ForEach(n => config.AddServer(n.IPAddressOrHostName,n.Port));
+						config.SocketPool.ConnectionTimeout = factory.ConnectTimeout;
+						config.SocketPool.DeadTimeout = factory.DeadNodeTimeout;
+						config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
+						config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
+						config.Protocol = MemcachedProtocol.Text;
+						config.Transcoder = new DataContractTranscoder();
+						_client = new MemcachedClient(config);
+						_logger.WriteInfoMessage("memcachedAdapter initialised.");
+					}
+				}
+			}
 		}
 
 
@@ -30,18 +69,20 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var sanitisedKey = SanitiseCacheKey(cacheKey);
-				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-				var cmd = new GetCommand(_logger, node.IPAddressOrHostName, node.Port);
-				cmd.CacheKey = sanitisedKey;
-				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-				var response = cmd.ExecuteCommand();
-				if (response.Status != CommandResponseStatus.Ok)
+				// try per request cache first, but only if in a web context
+				if (InWebContext())
 				{
-					_logger.WriteErrorMessage(string.Format("Unable to Get item from memcached cache: {0},{1}", response.Status, response.ResponseText));
-					return null;
+					if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
+					{
+						var data = System.Web.HttpContext.Current.Items[cacheKey];
+						var realData = data as T;
+						if (realData != null)
+						{
+							return realData;
+						}
+					}
 				}
-
-				return response.ResponseObject as T;
+				return _client.Get<T>(sanitisedKey);
 			}
 			catch (Exception ex)
 			{
@@ -55,17 +96,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var sanitisedKey = SanitiseCacheKey(cacheKey);
-				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-				var cmd = new SetCommand(_logger, node.IPAddressOrHostName, node.Port);
-				cmd.CacheKey = sanitisedKey;
-				cmd.ItemExpiry = absoluteExpiry;
-				cmd.Data = dataToAdd;
-				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-
-				var response = cmd.ExecuteCommand();
-				if (response.Status != CommandResponseStatus.Ok)
+				var success = _client.Store(StoreMode.Set, sanitisedKey, dataToAdd, absoluteExpiry);
+				if (!success)
 				{
-					_logger.WriteErrorMessage(string.Format("Unable to Add item to memcached cache: {0},{1}", response.Status, response.ResponseText));
+					_logger.WriteErrorMessage(string.Format("Unable to store item in cache. CacheKey:{0}",sanitisedKey));
 				}
 			}
 			catch (Exception ex)
@@ -76,10 +110,19 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
 		{
-			var sanitisedKey = SanitiseCacheKey(cacheKey);
-			// memcached does not support sliding windows so we convert it to an absolute expiry
-			var absoluteExpiry = DateTime.Now.AddSeconds(slidingExpiryWindow.TotalSeconds);
-			Add(sanitisedKey, absoluteExpiry, dataToAdd);
+			try
+			{
+				var sanitisedKey = SanitiseCacheKey(cacheKey);
+				var success = _client.Store(StoreMode.Set, sanitisedKey, dataToAdd, slidingExpiryWindow);
+				if (!success)
+				{
+					_logger.WriteErrorMessage(string.Format("Unable to store item in cache. CacheKey:{0}", sanitisedKey));
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.WriteException(ex);
+			}
 		}
 
 		public void InvalidateCacheItem(string cacheKey)
@@ -87,14 +130,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var sanitisedKey = SanitiseCacheKey(cacheKey);
-				var node = _serverFarm.FindCacheServerNodeForKey(sanitisedKey);
-				var cmd = new DeleteCommand(_logger, node.IPAddressOrHostName, node.Port);
-				cmd.CacheKey = sanitisedKey;
-				cmd.CommunicationFailure += new EventHandler<CommunicationFailureEventArgs>(HandleCommunicationFailureEvent);
-				var response = cmd.ExecuteCommand();
-				if (response.Status != CommandResponseStatus.Ok)
+				var success = _client.Remove(sanitisedKey);
+				if (!success)
 				{
-					_logger.WriteErrorMessage(string.Format("Unable to Delete item from memcached cache: {0},{1}", response.Status, response.ResponseText));
+					_logger.WriteErrorMessage(string.Format("Unable to remove item from cache. CacheKey:{0}",sanitisedKey));
 				}
 			}
 			catch (Exception ex)
@@ -105,25 +144,20 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
-			// memcached does not have a per request concept nor does it need to since all cache nodes should be in sync
-			// You could simulate this in code with a dependency on the ASP.NET framework and its inbuilt request
-			// objects but we wont do that here. We simply add it into the cache for 1 second.
-			// Its hacky but this behaviour will be specific to the scenario at hand.
-			Add(cacheKey, TimeSpan.FromSeconds(1), dataToAdd);
+			// If not in a web context, do nothing
+			if (InWebContext())
+			{
+				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
+				{
+					System.Web.HttpContext.Current.Items.Remove(cacheKey);
+				}
+				System.Web.HttpContext.Current.Items.Add(cacheKey,dataToAdd);
+			}
 		}
 
-		void HandleCommunicationFailureEvent(object sender, CommunicationFailureEventArgs e)
+		private bool InWebContext()
 		{
-			if (e.FailureException != null)
-			{
-				_logger.WriteException(e.FailureException);
-			}
-			if (e.FailedNode != null)
-			{
-				_logger.WriteErrorMessage(string.Format("A memcached node has failed! [{0}:{1}]", e.FailedNode.IPAddressOrHostName,
-				                                        e.FailedNode.Port));
-			}
-			_serverFarm.SetNodeToDead(e.FailedNode);
+			return (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Items != null);
 		}
 
 		public CacheSetting CacheType
@@ -137,7 +171,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			{
 				throw new ArgumentException("Cannot have an empty or NULL cache key");
 			}
-			return cacheKey.Replace(" ", string.Empty);
+			return cacheKey.Replace(" ", string.Empty).Replace("#","-");
 		}
 	}
 }
