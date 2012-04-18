@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using System.Diagnostics;
 using System.Threading;
+using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.ExampleUsage
 {
@@ -14,8 +15,8 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_THREADS = 200;
-		private const int NUMBER_OPERATIONS_PER_TASK = 100;
+		private const int NUMBER_THREADS = 1000;
+		private const int NUMBER_OPERATIONS_PER_TASK = 300;
 		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(2);
 
 		public static void StartHammering()
@@ -26,6 +27,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 			Console.WriteLine(new string('*',40));
 			Console.ReadKey();
 
+			AppServices.SetLogger(new ConsoleLogger());
 			StartTestExecution();
 
 			Console.WriteLine();
@@ -145,4 +147,24 @@ namespace Glav.CacheAdapter.ExampleUsage
 		public string ItemName;
 		public string ItemIdentifier;
 	}
+
+	public class ConsoleLogger : ILogging
+	{
+		public void WriteInfoMessage(string message)
+		{
+			Trace.WriteLine(message);
+		}
+
+		public void WriteErrorMessage(string message)
+		{
+			Console.WriteLine(message);
+		}
+
+		public void WriteException(Exception ex)
+		{
+			var msg = string.Format("Exception: {0}, Message:[{1}], StackTrace:[{2}]", ex.GetType().ToString(), ex.Message, ex.StackTrace);
+			Console.WriteLine(msg);
+		}
+	}
+
 }

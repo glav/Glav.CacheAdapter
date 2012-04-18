@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Enyim.Caching;
 using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Web;
@@ -15,11 +16,21 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
     	private static ICacheProvider _cacheProvider;
     	private static ICache _cache;
     	private static ILogging _logger;
+    	private static bool _isInitialised = false;
+		private static readonly object _lockRef = new object();
 
     	static AppServices()
     	{
     		PreStartInitialise();
     	}
+
+		public static void SetLogger(ILogging logger)
+		{
+			_logger = logger;
+			_isInitialised = false;
+			PreStartInitialise();
+		}
+
         /// <summary>
         /// Initialise the container with core dependencies. The cache/cache provider should be set to be
         /// singletons if adapting to use with a Dependency Injection mechanism
@@ -32,27 +43,40 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// </remarks>
         public static void PreStartInitialise()
         {
-        	_logger = new Logger();
-			switch (MainConfig.Default.CacheToUse.ToLowerInvariant())
+			if (!_isInitialised)
 			{
-				case CacheTypes.MemoryCache:
-					_cache = new MemoryCacheAdapter(_logger);
-					break;
-				case CacheTypes.WebCache:
-					_cache = new WebCacheAdapter(_logger);
-					break;
-				case CacheTypes.AppFabricCache:
-					_cache = new AppFabricCacheAdapter(_logger);
-					break;
-				case CacheTypes.memcached:
-					_cache = new memcachedAdapter(_logger);
-					break;
-				default:
-					_cache = new MemoryCacheAdapter(_logger);
-					break;
+				lock (_lockRef)
+				{
+					if (!_isInitialised)
+					{
+						_isInitialised = true;
+						if (_logger == null)
+						{
+							_logger = new Logger();
+						}
+						switch (MainConfig.Default.CacheToUse.ToLowerInvariant())
+						{
+							case CacheTypes.MemoryCache:
+								_cache = new MemoryCacheAdapter(_logger);
+								break;
+							case CacheTypes.WebCache:
+								_cache = new WebCacheAdapter(_logger);
+								break;
+							case CacheTypes.AppFabricCache:
+								_cache = new AppFabricCacheAdapter(_logger);
+								break;
+							case CacheTypes.memcached:
+								_cache = new memcachedAdapter(_logger);
+								break;
+							default:
+								_cache = new MemoryCacheAdapter(_logger);
+								break;
+						}
+						_cacheProvider = new CacheProvider(_cache, _logger);
+					}
+				}
 			}
-			_cacheProvider = new CacheProvider(_cache,_logger);
-		}
+        }
 
 		public static ICacheProvider Cache { get { return _cacheProvider; } }
     }

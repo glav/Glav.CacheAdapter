@@ -26,8 +26,6 @@ namespace Glav.CacheAdapter.Core.Diagnostics
             Trace.TraceError(FormatExceptionAsString(ex));
         }
 
-
-
         private string ConstructTraceInfo(string message)
         {
             return string.Format("{0} {1}: {2}{3}",

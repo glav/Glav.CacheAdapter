@@ -53,7 +53,7 @@ namespace Glav.CacheAdapter.ExampleUsage
                 // This is the anonymous function which gets called if the data is not in the cache.
                 // This method is executed and whatever is returned, is added to the cache with the
                 // passed in expiry time.
-                Console.WriteLine("... => Adding data to the cache...2nd call");
+                Console.WriteLine("... => Adding data to the cache...2nd call- should not be displayed!");
                 var someData = new SomeData() { SomeText = "cache example2", SomeNumber = 2 };
                 return someData;
             });
