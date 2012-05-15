@@ -103,6 +103,10 @@ setting "IsCacheEnabled" to false.
 Note: This feature only works if you are using the CacheProvider method of access. If you access the 
 InnerCache or ICache directly, you will still be able to access the cache itself and cache operations will work as normal.
 
+Notes on Version 2.5
+~~~~~~~~~~~~~~~~~~~~
+This version takes a dependency upon enyim memcached. The reason is simply performance. I was doing a lot of performance work only to  realise I was duplicating work already tried and tested in Enyim memcached caching component so have taken a dependency on that. This release is again only has changes related to memcached. The performance of enyim memcached is fantastic so you you should see some really good gains.
+
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
 http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-package.aspx
