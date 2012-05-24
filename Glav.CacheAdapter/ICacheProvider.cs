@@ -15,5 +15,6 @@ namespace Glav.CacheAdapter.Core
     	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd);
 		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
+		ICache InnerCache { get; }
     }
 }
