@@ -26,7 +26,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             if (expiry > DateTime.Now && dataToAdd != null)
             {
 				TimeSpan timeout = expiry - DateTime.Now;
-                _cache.Add(cacheKey, dataToAdd, timeout);
+                _cache.Put(cacheKey, dataToAdd, timeout);
 				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, expiry date {1}", cacheKey, expiry.ToString("yyyy/MM/dd hh:mm:ss")));
             }
         }
@@ -48,7 +48,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			if (dataToAdd != null)
 			{
 				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding window expiry in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
-				_cache.Add(cacheKey, dataToAdd, slidingExpiryWindow);
+				_cache.Put(cacheKey, dataToAdd, slidingExpiryWindow);
 			}
 		}
 
