@@ -35,19 +35,10 @@
       <HintPath>..\packages\EnyimMemcached.2.11\lib\net35\Enyim.Caching.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client">
-      <HintPath>..\Dependencies\Windows AppFabric\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
+      <HintPath>..\packages\ServerAppFabric.Client.1.1.2106\lib\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Core">
-      <HintPath>..\Dependencies\Windows AppFabric\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.DistributedCache">
-      <HintPath>..\Dependencies\Windows AppFabric\Microsoft.Web.DistributedCache.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsFabric.Common">
-      <HintPath>..\Dependencies\Windows AppFabric\Microsoft.WindowsFabric.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsFabric.Data.Common">
-      <HintPath>..\Dependencies\Windows AppFabric\Microsoft.WindowsFabric.Data.Common.dll</HintPath>
+      <HintPath>..\packages\ServerAppFabric.Client.1.1.2106\lib\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
