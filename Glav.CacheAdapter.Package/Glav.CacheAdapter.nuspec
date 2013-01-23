@@ -12,6 +12,7 @@
 		</frameworkAssemblies>
 		<dependencies>
 			<dependency id="EnyimMemcached" version="2.11" />
+			<dependency id="ServerAppFabric.Client" version="1.1.2106" />
 		</dependencies>
 		<tags>Cache Caching memcached AppFabric Asp.Net Web Glav</tags>
 	</metadata>
