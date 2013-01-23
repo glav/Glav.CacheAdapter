@@ -50,29 +50,8 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 					if (!_isInitialised)
 					{
 						_isInitialised = true;
-						if (_logger == null)
-						{
-							_logger = new Logger();
-						}
-						switch (MainConfig.Default.CacheToUse.ToLowerInvariant())
-						{
-							case CacheTypes.MemoryCache:
-								_cache = new MemoryCacheAdapter(_logger);
-								break;
-							case CacheTypes.WebCache:
-								_cache = new WebCacheAdapter(_logger);
-								break;
-							case CacheTypes.AppFabricCache:
-								_cache = new AppFabricCacheAdapter(_logger);
-								break;
-							case CacheTypes.memcached:
-								_cache = new memcachedAdapter(_logger);
-								break;
-							default:
-								_cache = new MemoryCacheAdapter(_logger);
-								break;
-						}
-						_cacheProvider = new CacheProvider(_cache, _logger);
+						_cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger);
+						_cache = _cacheProvider.InnerCache;
 					}
 				}
 			}

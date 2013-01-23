@@ -24,6 +24,8 @@ namespace Glav.CacheAdapter.Core
 		}
 		#region ICacheProvider Members
 
+		public ICache InnerCache { get { return _cache; }}
+
 		public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData) where T : class
 		{
 			//Get data from cache

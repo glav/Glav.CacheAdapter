@@ -60,6 +60,7 @@
     <Compile Include="CacheProvider.cs" />
     <Compile Include="CacheSettingEnumeration.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
+    <Compile Include="DependencyInjection\CacheBinder.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
