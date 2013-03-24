@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Glav.CacheAdapter.Core
 {
+    /// <summary>
+    /// The primary way of dealing with the underlying cache engines. This is a high level interface
+    /// providing value added functions that make working with the cache easy with a lot less code.
+    /// </summary>
     public interface ICacheProvider
     {
         T Get<T>(string cacheKey, DateTime absoluteExpiryDate, Func<T> getData) where T : class;

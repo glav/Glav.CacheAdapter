@@ -6,6 +6,7 @@ using Enyim.Caching;
 using Enyim.Caching.Memcached;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.Distributed.memcached
 {
@@ -13,6 +14,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 	{
 		private CacheServerFarm _serverFarm;
 		private ILogging _logger;
+        private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
 		private static Enyim.Caching.IMemcachedClient _client;
 		private static object _lockRef = new object();
@@ -69,20 +71,14 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var sanitisedKey = SanitiseCacheKey(cacheKey);
-				// try per request cache first, but only if in a web context
-				if (InWebContext())
-				{
-					if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
-					{
-						var data = System.Web.HttpContext.Current.Items[cacheKey];
-						var realData = data as T;
-						if (realData != null)
-						{
-							return realData;
-						}
-					}
-				}
-				return _client.Get<T>(sanitisedKey);
+                // try per request cache first, but only if in a web context
+                var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
+                if (requestCacheData != null)
+                {
+                    return requestCacheData;
+                }
+
+                return _client.Get<T>(sanitisedKey);
 			}
 			catch (Exception ex)
 			{
@@ -144,20 +140,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
-			// If not in a web context, do nothing
-			if (InWebContext())
-			{
-				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
-				{
-					System.Web.HttpContext.Current.Items.Remove(cacheKey);
-				}
-				System.Web.HttpContext.Current.Items.Add(cacheKey,dataToAdd);
-			}
-		}
-
-		private bool InWebContext()
-		{
-			return (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Items != null);
+            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
 		}
 
 		public CacheSetting CacheType
