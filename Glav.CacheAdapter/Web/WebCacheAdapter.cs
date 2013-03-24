@@ -12,6 +12,7 @@ namespace Glav.CacheAdapter.Web
     {
         private System.Web.Caching.Cache _cache;
     	private ILogging _logger;
+        private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
         public WebCacheAdapter(ILogging logger)
         {
@@ -34,15 +35,14 @@ namespace Glav.CacheAdapter.Web
 
     	public T Get<T>(string cacheKey) where T : class
         {
+            // try per request cache first, but only if in a web context
+            var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
+            if (requestCacheData != null)
+            {
+                return requestCacheData;
+            }
+
             T data = _cache.Get(cacheKey) as T;
-			if (data == null)
-			{
-				if (System.Web.HttpContext.Current.Items.Contains(cacheKey))
-				{
-					_logger.WriteInfoMessage(string.Format("Getting data from per request cache with cache key: {0}", cacheKey));
-					return System.Web.HttpContext.Current.Items[cacheKey] as T;
-				}
-			}
             return data;
         }
 
@@ -64,20 +64,7 @@ namespace Glav.CacheAdapter.Web
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
-			if (dataToAdd != null && System.Web.HttpContext.Current != null)
-			{
-				_logger.WriteInfoMessage(string.Format("Adding data to per request cache with cache key: {0}", cacheKey));
-
-				if (!System.Web.HttpContext.Current.Items.Contains(cacheKey))
-				{
-					System.Web.HttpContext.Current.Items.Add(cacheKey,dataToAdd);
-				}
-				else
-				{
-					System.Web.HttpContext.Current.Items[cacheKey] = dataToAdd;
-				}
-				
-			}
+            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
 		}
 
 		public CacheSetting CacheType
