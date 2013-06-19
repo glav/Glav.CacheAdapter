@@ -111,3 +111,8 @@ If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
 http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-package.aspx
 
+
+Notes on Version 2.5.3
+~~~~~~~~~~~~~~~~~~~~~~
+* Fixed bug where setting minpool size and max pool size resulted in an error when minpoolsize > default max pool size of 20. 
+

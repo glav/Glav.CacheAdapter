@@ -54,8 +54,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
 						_serverFarm.NodeList.ForEach(n => config.AddServer(n.IPAddressOrHostName,n.Port));
 						config.SocketPool.ConnectionTimeout = factory.ConnectTimeout;
 						config.SocketPool.DeadTimeout = factory.DeadNodeTimeout;
+
+                        config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
 						config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
-						config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
+						
 						config.Protocol = MemcachedProtocol.Text;
 						config.Transcoder = new DataContractTranscoder();
 						_client = new MemcachedClient(config);
