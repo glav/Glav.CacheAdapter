@@ -86,5 +86,14 @@ namespace Glav.CacheAdapter {
                 return ((bool)(this["IsCachePrefixDependenciesEnabled"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Default")]
+        public string DependencyManagerToUse {
+            get {
+                return ((string)(this["DependencyManagerToUse"]));
+            }
+        }
     }
 }

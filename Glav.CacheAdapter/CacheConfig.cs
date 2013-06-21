@@ -15,7 +15,10 @@ namespace Glav.CacheAdapter
 	    private string _cacheToUse = null;
         public string CacheToUse { get { return _cacheToUse; } set { _cacheToUse = value; } }
 
-		private List<ServerNode> _serverNodes = new List<ServerNode>();
+        private string _dependencyManagerToUse = null;
+        public string DependencyManagerToUse { get { return _dependencyManagerToUse; } set { _dependencyManagerToUse = value; } }
+        
+        private List<ServerNode> _serverNodes = new List<ServerNode>();
 		public List<ServerNode> ServerNodes { get { return _serverNodes; } }
 
 		private Dictionary<string, string> _providerSpecificValues = new Dictionary<string, string>();
@@ -57,6 +60,7 @@ namespace Glav.CacheAdapter
             IsCachePrefixDependenciesEnabled = MainConfig.Default.IsCachePrefixDependenciesEnabled;
             CacheSpecificData = MainConfig.Default.CacheSpecificData;
             CacheToUse = !string.IsNullOrWhiteSpace(MainConfig.Default.CacheToUse) ? MainConfig.Default.CacheToUse.ToLowerInvariant() : string.Empty;
+            DependencyManagerToUse = MainConfig.Default.DependencyManagerToUse;
         }
 
         /// <summary>
@@ -71,6 +75,7 @@ namespace Glav.CacheAdapter
             var isCachePrefixDependenciesKey = string.Format("{0}IsCachePrefixDependenciesEnabled", AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
+            var dependencyMgrToUseKey = string.Format("{0}.DependencyManagerToUse", AppSettingsKeyPrefix);
 
             if (ConfigurationManager.AppSettings[cacheToUseKey].HasValue())
             {
@@ -91,6 +96,10 @@ namespace Glav.CacheAdapter
             if (ConfigurationManager.AppSettings[cacheSpecificDataKey].HasValue())
             {
                 _cacheSpecificData = ConfigurationManager.AppSettings[cacheSpecificDataKey];
+            }
+            if (ConfigurationManager.AppSettings[dependencyMgrToUseKey].HasValue())
+            {
+                _dependencyManagerToUse = ConfigurationManager.AppSettings[dependencyMgrToUseKey];
             }
         }
 	}

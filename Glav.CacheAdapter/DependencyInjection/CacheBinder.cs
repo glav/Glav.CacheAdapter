@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Distributed.AppFabric;
@@ -14,9 +15,8 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 	{
 	    private static CacheConfig _config = new CacheConfig();
 
-        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry=null)
+        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry=null, string dependencyManagerConfigEntry=null)
 		{
-			ICache cache = null;
 			if (logger == null)
 			{
 				logger = new Logger();
@@ -26,29 +26,63 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             {
                 cacheConfigEntry = _config.CacheToUse;
             }
-            switch (cacheConfigEntry)
-			{
-				case CacheTypes.MemoryCache:
-					cache = new MemoryCacheAdapter(logger);
-					break;
-				case CacheTypes.WebCache:
-					cache = new WebCacheAdapter(logger);
-					break;
-				case CacheTypes.AppFabricCache:
-					cache = new AppFabricCacheAdapter(logger);
-					break;
-				case CacheTypes.memcached:
-					cache = new memcachedAdapter(logger);
-					break;
-				default:
-					cache = new MemoryCacheAdapter(logger);
-					break;
-			}
+            if (string.IsNullOrWhiteSpace(dependencyManagerConfigEntry))
+            {
+                dependencyManagerConfigEntry = _config.DependencyManagerToUse;
+            }
 
-			var provider = new CacheProvider(cache, logger);
-			logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine",cacheConfigEntry));
+            ICacheProvider provider = null;
+            var cache = GetCache(cacheConfigEntry, logger);
+            if (_config.IsCacheKeysDependeniesEnabled || _config.IsCachePrefixDependenciesEnabled)
+            {
+                var dependencyManager = GetCacheDependencyManager(dependencyManagerConfigEntry, cache, logger);
+
+                provider = new CacheProvider(cache, logger, dependencyManager);
+            } else
+            {
+                provider = new CacheProvider(cache, logger);
+            }
+            logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine",cacheConfigEntry));
 
 			return provider;
 		}
-	}
+
+        private static ICache GetCache(string cacheConfigEntry, ILogging logger)
+        {
+            ICache cache = null;
+            switch (cacheConfigEntry)
+            {
+                case CacheTypes.MemoryCache:
+                    cache = new MemoryCacheAdapter(logger);
+                    break;
+                case CacheTypes.WebCache:
+                    cache = new WebCacheAdapter(logger);
+                    break;
+                case CacheTypes.AppFabricCache:
+                    cache = new AppFabricCacheAdapter(logger);
+                    break;
+                case CacheTypes.memcached:
+                    cache = new memcachedAdapter(logger);
+                    break;
+                default:
+                    cache = new MemoryCacheAdapter(logger);
+                    break;
+            }
+            return cache;
+        }
+        private static ICacheDependencyManager GetCacheDependencyManager(string dependencyManagerConfigEntry, ICache cache, ILogging logger)
+        {
+            ICacheDependencyManager dependencyMgr = null;
+            switch (dependencyManagerConfigEntry)
+            {
+                case CacheDependencyManagerTypes.Default:
+                    dependencyMgr = new GenericDependencyManager(cache,logger);
+                    break;
+                default:
+                    dependencyMgr = new GenericDependencyManager(cache, logger);
+                    break;
+            }
+            return dependencyMgr;
+        }
+    }
 }

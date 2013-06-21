@@ -18,7 +18,8 @@ namespace Glav.CacheAdapter.DependencyManagement
         /// also removed
         /// </summary>
         /// <param name="prefix"></param>
-        void RegisterDependencyPrefix(string prefix); 
+        void RegisterDependencyPrefix(string prefix);
+        string Name { get;  }
     }
 
     public enum CacheDependencyAction

@@ -23,13 +23,24 @@ namespace Glav.CacheAdapter.Core
 		{
 			_cache = cache;
 			_logger = logger;
-		    _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
+            if (_config.IsCacheKeysDependeniesEnabled || _config.IsCachePrefixDependenciesEnabled)
+            {
+                // Dependencies are enabled but the default constructor was used (without
+                // specifying a dependency manager) so we instantiate the default.
+                _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
+                _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled but no dependency manager specified so using {0}.",_cacheDependencyManager.Name));
+            } else
+            {
+                _cacheDependencyManager = null;  // Dependency Management is disabled
+                _logger.WriteInfoMessage("CacheKey dependency management not enabled.");
+            }
 		}
         public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager)
         {
             _cache = cache;
             _logger = logger;
             _cacheDependencyManager = cacheDependencyManager;
+            _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
         }
         
         #region ICacheProvider Members
