@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>Glav.CacheAdapter</id>
+		<title>.NET CacheAdapter</title>
+		<version>2.5.1</version>
+		<authors>Paul Glavich, Darren Boon</authors>
+		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric and memcached cache mechasnisms. Fully supports AppFabric within Azure.</description>
+		<language>en-US</language>
+		<frameworkAssemblies>
+		  <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net40" />
+		</frameworkAssemblies>
+		<dependencies>
+			<dependency id="EnyimMemcached" version="2.11" />
+			<dependency id="ServerAppFabric.Client" version="1.1.2106" />
+		</dependencies>
+		<tags>Cache Caching memcached AppFabric Asp.Net Web Glav</tags>
+	</metadata>
+	 <files>
+		  <file src="lib\*.dll" target="lib" />
+		  <file src="content\app.config.transform" target="content" />
+		  <file src="content\web.config.transform" target="content" />
+		  <file src="content\Example-CacheAdapterUsage.cs" target="content" />
+		  <file src="content\CacheAdapter-ReadMe.txt" target="content" />
+	  </files>
+</package>
+
