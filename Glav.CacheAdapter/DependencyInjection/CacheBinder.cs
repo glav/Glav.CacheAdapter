@@ -12,7 +12,9 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 {
 	public static class CacheBinder
 	{
-		public static ICacheProvider ResolveCacheFromConfig(ILogging logger)
+	    private static CacheConfig _config = new CacheConfig();
+
+        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry=null)
 		{
 			ICache cache = null;
 			if (logger == null)
@@ -20,8 +22,11 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 				logger = new Logger();
 			}
 
-			var cacheConfigEntry = MainConfig.Default.CacheToUse.ToLowerInvariant();
-			switch (cacheConfigEntry)
+            if (string.IsNullOrWhiteSpace(cacheConfigEntry))
+            {
+                cacheConfigEntry = _config.CacheToUse;
+            }
+            switch (cacheConfigEntry)
 			{
 				case CacheTypes.MemoryCache:
 					cache = new MemoryCacheAdapter(logger);

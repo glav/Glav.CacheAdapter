@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.DependencyManagement;
 
 namespace Glav.CacheAdapter.Core
 {
@@ -13,16 +14,25 @@ namespace Glav.CacheAdapter.Core
 	/// </summary>
 	public class CacheProvider : ICacheProvider
 	{
-		private ICache _cache;
-		private ILogging _logger;
+		private readonly ICache _cache;
+		private readonly ILogging _logger;
 		private CacheConfig _config = new CacheConfig();
+	    private readonly ICacheDependencyManager _cacheDependencyManager;
 
 		public CacheProvider(ICache cache, ILogging logger)
 		{
 			_cache = cache;
 			_logger = logger;
+		    _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
 		}
-		#region ICacheProvider Members
+        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager)
+        {
+            _cache = cache;
+            _logger = logger;
+            _cacheDependencyManager = cacheDependencyManager;
+        }
+        
+        #region ICacheProvider Members
 
 		public ICache InnerCache { get { return _cache; }}
 

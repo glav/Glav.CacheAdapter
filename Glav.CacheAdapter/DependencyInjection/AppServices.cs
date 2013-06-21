@@ -18,6 +18,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
     	private static ILogging _logger;
     	private static bool _isInitialised = false;
 		private static readonly object _lockRef = new object();
+        private static readonly CacheConfig _config = new CacheConfig();
 
     	static AppServices()
     	{
@@ -50,7 +51,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 					if (!_isInitialised)
 					{
 						_isInitialised = true;
-						_cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger);
+						_cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger,_config.CacheToUse);
 						_cache = _cacheProvider.InnerCache;
 					}
 				}

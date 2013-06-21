@@ -41,6 +41,7 @@
       <HintPath>..\packages\ServerAppFabric.Client.1.1.2106\lib\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization">
@@ -61,6 +62,8 @@
     <Compile Include="CacheSettingEnumeration.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
+    <Compile Include="DependencyManagement\GenericDependencyManager.cs" />
+    <Compile Include="DependencyManagement\ICacheDependencyManager.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />
+    <Compile Include="Helpers\ConversionExtensions.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="ICacheProvider.cs" />
     <Compile Include="MainConfig.Designer.cs">
@@ -99,6 +103,7 @@
     <Content Include="Copyright.txt" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

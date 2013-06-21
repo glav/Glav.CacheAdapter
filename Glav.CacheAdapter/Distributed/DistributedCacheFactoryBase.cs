@@ -41,12 +41,12 @@ namespace Glav.CacheAdapter.Distributed
 
 		private void ExtractCacheSpecificConfiguration(CacheConfig config)
 		{
-			if (string.IsNullOrWhiteSpace(MainConfig.Default.CacheSpecificData))
+			if (string.IsNullOrWhiteSpace(config.CacheSpecificData))
 				return;
 
 			try
 			{
-				var configKeyPairs = MainConfig.Default.CacheSpecificData.Split(new char[] {CacheConstants.ConfigItemPairSeparator});
+				var configKeyPairs = config.CacheSpecificData.Split(new char[] {CacheConstants.ConfigItemPairSeparator});
 				if (configKeyPairs.Length == 0)
 					return;
 				foreach (var keyPair in configKeyPairs)

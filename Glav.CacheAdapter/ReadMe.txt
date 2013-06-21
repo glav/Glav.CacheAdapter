@@ -116,3 +116,24 @@ Notes on Version 2.5.3
 ~~~~~~~~~~~~~~~~~~~~~~
 * Fixed bug where setting minpool size and max pool size resulted in an error when minpoolsize > default max pool size of 20. 
 
+Notes on Version 3.0
+~~~~~~~~~~~~~~~~~~~~
+* Feature Addition: Rudimentary support of CacheDependencies
+  Note: Enabling this feature when using the default dependency support, incurs some performance 
+        hit due to more calls being made to the caching engine.
+
+* Modifying configuration to support storing values in AppSettings section using "CacheAdapter." as keyprefix
+  This means you can use the same named config settings in <appSettings> section(or in a separate
+  appSettings file) as long as you prefix the appSetting with 'CacheAdapter.'
+  For example, the main config section has:
+    <Glav.CacheAdapter.MainConfig>
+      <setting name="CacheToUse" serializeAs="String">
+        <value>memcached</value>
+      </setting>
+	</Glav.CacheAdapter.MainConfig>
+  in the appSettings, you could override this by having:
+    <appSettings>
+      <add key="CacheAdapter.CacheToUse" value="memory"/>
+	</appSettings>
+
+
