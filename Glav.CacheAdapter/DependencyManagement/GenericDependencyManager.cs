@@ -47,5 +47,11 @@ namespace Glav.CacheAdapter.DependencyManagement
         {
             throw new NotImplementedException();
         }
+
+
+        public string Name
+        {
+            get { return "Generic/Default"; }
+        }
     }
 }

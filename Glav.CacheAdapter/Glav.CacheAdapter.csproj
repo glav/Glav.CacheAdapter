@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bootstrap\CacheDependencyManagerTypes.cs" />
     <Compile Include="Bootstrap\CacheTypes.cs" />
     <Compile Include="CacheConfig.cs" />
     <Compile Include="CacheConstants.cs" />
