@@ -17,9 +17,9 @@ namespace Glav.CacheAdapter.DependencyManagement
     {
         private ICache _cache;
         private ILogging _logger;
-        private const string CacheKeyPrefix = "__DepMgr_"; // The root cache key prefix we use
-        private const string CacheDependencyEntryPrefix = "DepEntry_"; // The additional prefix for master/child cache key dependency entries
-        private const string CachePrefixKey = "PrefixEntry_";  // the additional prefix for registering cache key prefixes to monitor
+        public const string CacheKeyPrefix = "__DepMgr_"; // The root cache key prefix we use
+        public const string CacheDependencyEntryPrefix = "DepEntry_"; // The additional prefix for master/child cache key dependency entries
+        public const string CachePrefixKey = "PrefixEntry_";  // the additional prefix for registering cache key prefixes to monitor
 
         public GenericDependencyManager(ICache cache, ILogging logger)
         {
@@ -62,6 +62,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                                                                     tempList.Add(d);
                                                                 }
                                                             });
+            _cache.InvalidateCacheItem(cacheKeyForDependency);
             _cache.Add(cacheKeyForDependency, GetMaxAge(), tempList.ToArray());
         }
 
@@ -71,9 +72,10 @@ namespace Glav.CacheAdapter.DependencyManagement
             return _cache.Get<string[]>(cacheKeyForDependency);
         }
 
-        public void ClearDependencies(string cacheKey)
+        public void ClearAssociatedDependencies(string masterCacheKey)
         {
-            throw new NotImplementedException();
+            var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
+            _cache.InvalidateCacheItem(cacheKeyForDependency);
         }
 
         public void RegisterDependencyPrefix(string prefix)

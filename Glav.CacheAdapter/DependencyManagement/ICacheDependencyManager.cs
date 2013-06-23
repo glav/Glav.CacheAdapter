@@ -11,7 +11,7 @@ namespace Glav.CacheAdapter.DependencyManagement
         void AssociateCacheKeyToDependentKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         void AssociateCacheKeyToDependentKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         IEnumerable<string> GetDependentCacheKeysForMasterCacheKey(string cacheKey);
-        void ClearDependencies(string cacheKey);
+        void ClearAssociatedDependencies(string masterCacheKey);
         /// <summary>
         /// Register a cache key prefix such that when an item with a specific prefix
         /// is removed, everything the cache knows about with the prefix in the key is
