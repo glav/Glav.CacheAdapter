@@ -115,12 +115,15 @@ http://weblogs.asp.net/pglavich/archive/2011/05/31/cacheadapter-now-a-nuget-pack
 Notes on Version 2.5.3
 ~~~~~~~~~~~~~~~~~~~~~~
 * Fixed bug where setting minpool size and max pool size resulted in an error when minpoolsize > default max pool size of 20. 
+* Rewrite of adding per request cache dependency. Always uses web cache for this purpose if available, otherwise does nothing.
 
 Notes on Version 3.0
 ~~~~~~~~~~~~~~~~~~~~
 * Feature Addition: Rudimentary support of CacheDependencies
   Note: Enabling this feature when using the default dependency support, incurs some performance 
         hit due to more calls being made to the caching engine.
+  Includes a generic cache dependency mechanism which acts as a common base. Not the most efficient but intent is to
+  later introduce cache dependency managers which utilise specific features of the cache engine to maximise performance.
 
 * Modifying configuration to support storing values in AppSettings section using "CacheAdapter." as keyprefix
   This means you can use the same named config settings in <appSettings> section(or in a separate
