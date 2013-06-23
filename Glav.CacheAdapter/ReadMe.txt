@@ -120,8 +120,11 @@ Notes on Version 2.5.3
 Notes on Version 3.0
 ~~~~~~~~~~~~~~~~~~~~
 * Feature Addition: Rudimentary support of CacheDependencies
-  Note: Enabling this feature when using the default dependency support, incurs some performance 
-        hit due to more calls being made to the caching engine.
+  Note: * Enabling this feature when using the default dependency support, incurs some performance 
+        hit due to more calls being made to the caching engine
+		* This feature (and all advanced features) are only available when using the CacheProvider
+		  interface implementation. This is by design. The ICache abstraction is a raw abstraction over
+		  the basic cache engine.
   Includes a generic cache dependency mechanism which acts as a common base. Not the most efficient but intent is to
   later introduce cache dependency managers which utilise specific features of the cache engine to maximise performance.
 
