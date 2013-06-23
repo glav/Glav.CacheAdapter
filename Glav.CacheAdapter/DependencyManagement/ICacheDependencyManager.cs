@@ -19,6 +19,8 @@ namespace Glav.CacheAdapter.DependencyManagement
         /// </summary>
         /// <param name="prefix"></param>
         void RegisterDependencyPrefix(string prefix);
+        void ClearDependencyPrefix(string prefix);
+        DateTime? GetDependencyPrefix(string prefix);
         string Name { get;  }
     }
 
