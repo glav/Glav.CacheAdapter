@@ -85,6 +85,23 @@ namespace Glav.CacheAdapter.DependencyManagement
             _cache.Add(cacheKeyForPrefix, maxAge, DateTime.Now);
         }
 
+        public DateTime? GetDependencyPrefix(string prefix)
+        {
+            var cacheKeyForPrefix = string.Format("{0}{1}{2}", CacheKeyPrefix, CachePrefixKey, prefix);
+            var maxAge = GetMaxAge();
+            var entry = _cache.Get<object>(cacheKeyForPrefix);
+            if (entry is DateTime)
+            {
+                return (DateTime)entry;
+            }
+            return null;
+        }
+
+        public void ClearDependencyPrefix(string prefix)
+        {
+            var cacheKeyForPrefix = string.Format("{0}{1}{2}", CacheKeyPrefix, CachePrefixKey, prefix);
+            _cache.InvalidateCacheItem(cacheKeyForPrefix);
+        }
 
         public string Name
         {
