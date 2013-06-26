@@ -8,8 +8,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 {
     public interface ICacheDependencyManager
     {
-        void AssociateCacheKeyToDependentKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
-        void AssociateCacheKeyToDependentKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
+        void AssociateDependentKeyToMasterCacheKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
+        void AssociateDependentKeysToMasterCacheKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         IEnumerable<DependencyItem> GetDependentCacheKeysForMasterCacheKey(string cacheKey);
         void ClearAssociatedDependencyList(string masterCacheKey);
         
