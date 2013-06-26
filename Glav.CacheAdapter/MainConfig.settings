@@ -20,7 +20,7 @@
     <Setting Name="IsCacheKeyDependenciesEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="IsCachePrefixDependenciesEnabled" Type="System.Boolean" Scope="Application">
+    <Setting Name="IsCacheGroupDependenciesEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DependencyManagerToUse" Type="System.String" Scope="Application">

@@ -33,7 +33,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 
             ICacheProvider provider = null;
             var cache = GetCache(cacheConfigEntry, logger);
-            if (_config.IsCacheKeysDependeniesEnabled || _config.IsCachePrefixDependenciesEnabled)
+            if (_config.IsCacheKeysDependenciesEnabled || _config.IsCacheGroupDependenciesEnabled)
             {
                 var dependencyManager = GetCacheDependencyManager(dependencyManagerConfigEntry, cache, logger);
 

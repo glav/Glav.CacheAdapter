@@ -10,18 +10,21 @@ namespace Glav.CacheAdapter.DependencyManagement
     {
         void AssociateCacheKeyToDependentKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         void AssociateCacheKeyToDependentKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
-        IEnumerable<string> GetDependentCacheKeysForMasterCacheKey(string cacheKey);
-        void ClearAssociatedDependencies(string masterCacheKey);
+        IEnumerable<DependencyItem> GetDependentCacheKeysForMasterCacheKey(string cacheKey);
+        void ClearAssociatedDependencyList(string masterCacheKey);
+        
         /// <summary>
-        /// Register a cache key prefix such that when an item with a specific prefix
-        /// is removed, everything the cache knows about with the prefix in the key is
-        /// also removed
+        /// Register a cache key group name such that items can be associated with
+        /// a group. When the group is signalled to be removed everything the cache 
+        /// knows about associated with the group is also removed
         /// </summary>
-        /// <param name="prefix"></param>
-        void RegisterDependencyPrefix(string prefix);
-        void ClearDependencyPrefix(string prefix);
-        DateTime? GetDependencyPrefix(string prefix);
+        void RegisterDependencyGroup(string groupName, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
+        void RemoveDependencyGroup(string groupName);
+        IEnumerable<DependencyItem> GetDependencyGroup(string groupName);
+        void AddCacheKeyToDependencyGroup(string groupName, string cacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         string Name { get;  }
+        void CheckGroupDependenciesAndPerformAction(string groupName);
+        void CheckAssociatedDependenciesAndPerformAction(string masterCacheKey);
     }
 
     public enum CacheDependencyAction
