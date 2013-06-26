@@ -36,7 +36,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                 _config = config;
             }
         }
-        public void AssociateCacheKeyToDependentKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
+        public void AssociateDependentKeyToMasterCacheKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
@@ -58,7 +58,7 @@ namespace Glav.CacheAdapter.DependencyManagement
             _cache.Add(cacheKeyForDependency, GetMaxAge(), tempList.ToArray());
         }
 
-        public void AssociateCacheKeyToDependentKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
+        public void AssociateDependentKeysToMasterCacheKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
@@ -67,7 +67,9 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 tempList.AddRange(currentEntry);
             }
-            ((List<string>)dependentCacheKeys).ForEach(d =>
+
+            var keysList = new List<string>(dependentCacheKeys);
+            keysList.ForEach(d =>
                                                             {
                                                                 if (!tempList.Any(c => c.CacheKeyOrCacheGroup == d))
                                                                 {

@@ -18,7 +18,7 @@ namespace Glav.CacheAdapter.Tests
             // Make sure we start out with nothing
             mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
 
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, "Child");
+            mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child");
 
             var dependencies = mgr.GetDependentCacheKeysForMasterCacheKey(MASTERCACHEKEY);
             Assert.IsNotNull(dependencies, "Did not get any dependencies");
@@ -37,7 +37,7 @@ namespace Glav.CacheAdapter.Tests
             dependenciesToAdd.Add("Child1");
             dependenciesToAdd.Add("Child2");
             dependenciesToAdd.Add("Child3");
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, dependenciesToAdd);
+            mgr.AssociateDependentKeysToMasterCacheKey(MASTERCACHEKEY, dependenciesToAdd);
 
             var dependencies = mgr.GetDependentCacheKeysForMasterCacheKey(MASTERCACHEKEY);
             Assert.IsNotNull(dependencies, "Did not get any dependencies");
@@ -59,14 +59,14 @@ namespace Glav.CacheAdapter.Tests
             dependenciesToAdd.Add("Child1");
             dependenciesToAdd.Add("Child2");
             dependenciesToAdd.Add("Child3");
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, dependenciesToAdd);
+            mgr.AssociateDependentKeysToMasterCacheKey(MASTERCACHEKEY, dependenciesToAdd);
 
             // Now add some more items, some that are already added,some not.
             dependenciesToAdd.Clear();
             dependenciesToAdd.Add("Child10");  // should add
             dependenciesToAdd.Add("Child2");  // should not add
             dependenciesToAdd.Add("Child11");  // should add
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, dependenciesToAdd);
+            mgr.AssociateDependentKeysToMasterCacheKey(MASTERCACHEKEY, dependenciesToAdd);
 
             var dependencies = mgr.GetDependentCacheKeysForMasterCacheKey(MASTERCACHEKEY);
             Assert.IsNotNull(dependencies, "Did not get any dependencies");
@@ -88,7 +88,7 @@ namespace Glav.CacheAdapter.Tests
             mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
 
             // Associate a dependent cachekey
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, "Child");
+            mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child");
 
             // Addin the master item
             cache.Add(MASTERCACHEKEY, DateTime.Now.AddDays(1), "DataBlob");
@@ -111,9 +111,36 @@ namespace Glav.CacheAdapter.Tests
             mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
 
             // Associate a dependent cachekey
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, "Child1");
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, "Child2");
-            mgr.AssociateCacheKeyToDependentKey(MASTERCACHEKEY, "Child3");
+            mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child1");
+            mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child2");
+            mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child3");
+
+            // Addin the master item
+            cache.Add(MASTERCACHEKEY, DateTime.Now.AddDays(1), "DataBlob");
+            // Add in the dependent items
+            cache.Add("Child1", DateTime.Now.AddDays(1), "DataBlob2");
+            cache.Add("Child2", DateTime.Now.AddDays(1), "DataBlob3");
+            cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
+
+            // Now clear the dependencies for the master
+            mgr.CheckAssociatedDependenciesAndPerformAction(MASTERCACHEKEY);
+
+            // And finally check its existence
+            Assert.IsNull(cache.Get<string>("Child1"));
+            Assert.IsNull(cache.Get<string>("Child2"));
+            Assert.IsNull(cache.Get<string>("Child3"));
+        }
+        [TestMethod]
+        public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCacheUsingBatchAssociation()
+        {
+            var cache = TestHelper.GetCacheFromConfig();
+            var mgr = TestHelper.GetDependencyManager();
+            // Make sure we start out with nothing
+            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+
+            // Associate a dependent cachekey
+            var dependencyList = new string[3] {"Child1", "Child2", "Child3"};
+            mgr.AssociateDependentKeysToMasterCacheKey(MASTERCACHEKEY, dependencyList);
 
             // Addin the master item
             cache.Add(MASTERCACHEKEY, DateTime.Now.AddDays(1), "DataBlob");
