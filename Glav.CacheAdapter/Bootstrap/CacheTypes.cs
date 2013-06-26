@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Glav.CacheAdapter.Bootstrap
 {
-    internal static class CacheTypes
+    public static class CacheTypes
     {
         public const string MemoryCache = "memory";
         public const string WebCache = "web";

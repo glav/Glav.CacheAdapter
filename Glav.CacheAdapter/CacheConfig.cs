@@ -71,7 +71,7 @@ namespace Glav.CacheAdapter
         private void OverrideSettingsWithAppSettingsIfPresent()
         {
             var cacheEnabledKey = string.Format("{0}IsCacheEnabled", AppSettingsKeyPrefix);
-            var isCacheKeysDependenciesKey = string.Format("{0}IsCacheKeysDependeniesEnabled",AppSettingsKeyPrefix);
+            var isCacheKeysDependenciesKey = string.Format("{0}IsCacheKeysDependenciesEnabled",AppSettingsKeyPrefix);
             var isCachePrefixDependenciesKey = string.Format("{0}IsCacheGroupDependenciesEnabled", AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);

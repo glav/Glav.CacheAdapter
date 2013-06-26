@@ -13,7 +13,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldAddSingleDependencyItem()
         {
-            var mgr = new GenericDependencyManager(new MemoryCacheAdapter(), new MockLogger());
+            var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.ClearAssociatedDependencyList("Test");
 
@@ -28,7 +28,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldAddMultipleDependencyItems()
         {
-            var mgr = new GenericDependencyManager(new MemoryCacheAdapter(), new MockLogger());
+            var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.ClearAssociatedDependencyList("Test");
 
@@ -50,7 +50,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldAddMultipleDependencyItemsWithNoConflict()
         {
-            var mgr = new GenericDependencyManager(new MemoryCacheAdapter(), new MockLogger());
+            var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.ClearAssociatedDependencyList("Test");
 
@@ -81,8 +81,8 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearAssociatedDependency()
         {
-            var cacheAdapter = new MemoryCacheAdapter();
-            var mgr = new GenericDependencyManager(cacheAdapter, new MockLogger());
+            var cache = TestHelper.GetCacheFromConfig();
+            var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.ClearAssociatedDependencyList("Test");
 
@@ -90,15 +90,15 @@ namespace Glav.CacheAdapter.Tests
             mgr.AssociateCacheKeyToDependentKey("Test", "Child");
 
             // Addin the master item
-            cacheAdapter.Add("Test", DateTime.Now.AddDays(1), "DataBlob");
+            cache.Add("Test", DateTime.Now.AddDays(1), "DataBlob");
             // Add in the dependent item
-            cacheAdapter.Add("Child", DateTime.Now.AddDays(1), "DataBlob2");
+            cache.Add("Child", DateTime.Now.AddDays(1), "DataBlob2");
 
             // Now clear the dependencies for the master
             mgr.CheckAssociatedDependenciesAndPerformAction("Test");
 
             // And finally check its existence
-            Assert.IsNull(cacheAdapter.Get<string>("Child"));
+            Assert.IsNull(cache.Get<string>("Child"));
         }
     }
 }
