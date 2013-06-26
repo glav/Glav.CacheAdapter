@@ -40,10 +40,9 @@ namespace Glav.CacheAdapter.DependencyManagement
         {
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
-            List<DependencyItem> tempList = null;
+            List<DependencyItem> tempList = new List<DependencyItem>();
             if (currentEntry == null || currentEntry.Length == 0)
             {
-                tempList = new List<DependencyItem>();
                 tempList.Add(new DependencyItem { CacheKeyOrCacheGroup = dependentCacheKey, Action = actionToPerform });
                 //currentEntry = new string[] {dependentCacheKey};
             }
