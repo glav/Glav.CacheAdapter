@@ -63,6 +63,7 @@
     <Compile Include="CacheSettingEnumeration.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
+    <Compile Include="DependencyManagement\DependencyItem.cs" />
     <Compile Include="DependencyManagement\GenericDependencyManager.cs" />
     <Compile Include="DependencyManagement\ICacheDependencyManager.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />

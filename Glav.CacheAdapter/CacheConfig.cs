@@ -10,7 +10,7 @@ namespace Glav.CacheAdapter
 {
 	public class CacheConfig
 	{
-        public const string AppSettingsKeyPrefix = "CacheAdapter.";
+        public const string AppSettingsKeyPrefix = "Cache.";
 
 	    private string _cacheToUse = null;
         public string CacheToUse { get { return _cacheToUse; } set { _cacheToUse = value; } }
@@ -34,18 +34,18 @@ namespace Glav.CacheAdapter
         /// </summary>
         /// <remarks>This can require extra calls to the cache engine and so can incur a
         /// performance degradation due to extra network cache calls</remarks>
-        public bool IsCacheKeysDependeniesEnabled { get { return _isCacheKeysDependenciesEnabled; } set { _isCacheKeysDependenciesEnabled = value; } }
+        public bool IsCacheKeysDependenciesEnabled { get { return _isCacheKeysDependenciesEnabled; } set { _isCacheKeysDependenciesEnabled = value; } }
         
         private string _cacheSpecificData = null;
         public string CacheSpecificData { get { return _cacheSpecificData; } set { _cacheSpecificData=value; } }
         
-        private bool _isCachePrefixDependenciesEnabled = false;
+        private bool _isCacheGroupDependenciesEnabled = false;
         /// <summary>
         /// Enables support of cache dependencies using cache key prefix
         /// </summary>
         /// <remarks>This can require extra calls to the cache engine and so can incur a
         /// performance degradation due to extra network cache calls</remarks>
-        public bool IsCachePrefixDependenciesEnabled { get { return _isCachePrefixDependenciesEnabled; } set { _isCachePrefixDependenciesEnabled = value; } }
+        public bool IsCacheGroupDependenciesEnabled { get { return _isCacheGroupDependenciesEnabled; } set { _isCacheGroupDependenciesEnabled = value; } }
        
         public CacheConfig()
         {
@@ -56,8 +56,8 @@ namespace Glav.CacheAdapter
         private void ApplySettingsFromDefaultConfig()
         {
             IsCacheEnabled = MainConfig.Default.IsCacheEnabled;
-            IsCacheKeysDependeniesEnabled = MainConfig.Default.IsCacheKeyDependenciesEnabled;
-            IsCachePrefixDependenciesEnabled = MainConfig.Default.IsCachePrefixDependenciesEnabled;
+            IsCacheKeysDependenciesEnabled = MainConfig.Default.IsCacheKeyDependenciesEnabled;
+            IsCacheGroupDependenciesEnabled = MainConfig.Default.IsCacheGroupDependenciesEnabled;
             CacheSpecificData = MainConfig.Default.CacheSpecificData;
             CacheToUse = !string.IsNullOrWhiteSpace(MainConfig.Default.CacheToUse) ? MainConfig.Default.CacheToUse.ToLowerInvariant() : string.Empty;
             DependencyManagerToUse = MainConfig.Default.DependencyManagerToUse;
@@ -72,7 +72,7 @@ namespace Glav.CacheAdapter
         {
             var cacheEnabledKey = string.Format("{0}IsCacheEnabled", AppSettingsKeyPrefix);
             var isCacheKeysDependenciesKey = string.Format("{0}IsCacheKeysDependeniesEnabled",AppSettingsKeyPrefix);
-            var isCachePrefixDependenciesKey = string.Format("{0}IsCachePrefixDependenciesEnabled", AppSettingsKeyPrefix);
+            var isCachePrefixDependenciesKey = string.Format("{0}IsCacheGroupDependenciesEnabled", AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
             var dependencyMgrToUseKey = string.Format("{0}.DependencyManagerToUse", AppSettingsKeyPrefix);
@@ -91,7 +91,7 @@ namespace Glav.CacheAdapter
             }
             if (ConfigurationManager.AppSettings[isCachePrefixDependenciesKey].HasValue())
             {
-                _isCachePrefixDependenciesEnabled = ConfigurationManager.AppSettings[isCachePrefixDependenciesKey].ToBoolean();
+                _isCacheGroupDependenciesEnabled = ConfigurationManager.AppSettings[isCachePrefixDependenciesKey].ToBoolean();
             }
             if (ConfigurationManager.AppSettings[cacheSpecificDataKey].HasValue())
             {

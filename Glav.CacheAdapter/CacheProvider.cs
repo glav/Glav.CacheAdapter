@@ -23,7 +23,7 @@ namespace Glav.CacheAdapter.Core
 		{
 			_cache = cache;
 			_logger = logger;
-            if (_config.IsCacheKeysDependeniesEnabled || _config.IsCachePrefixDependenciesEnabled)
+            if (_config.IsCacheKeysDependenciesEnabled || _config.IsCacheGroupDependenciesEnabled)
             {
                 // Dependencies are enabled but the default constructor was used (without
                 // specifying a dependency manager) so we instantiate the default.

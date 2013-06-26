@@ -128,9 +128,13 @@ Notes on Version 3.0
   Includes a generic cache dependency mechanism which acts as a common base. Not the most efficient but intent is to
   later introduce cache dependency managers which utilise specific features of the cache engine to maximise performance.
 
-* Modifying configuration to support storing values in AppSettings section using "CacheAdapter." as keyprefix
+  2 Forms of cache dependencies are initially supported.
+  1. Associated Cache depndency items
+  2. Cache groups
+
+* Modifying configuration to support storing values in AppSettings section using "Cache." as keyprefix
   This means you can use the same named config settings in <appSettings> section(or in a separate
-  appSettings file) as long as you prefix the appSetting with 'CacheAdapter.'
+  appSettings file) as long as you prefix the appSetting with 'Cache.'
   For example, the main config section has:
     <Glav.CacheAdapter.MainConfig>
       <setting name="CacheToUse" serializeAs="String">
@@ -139,7 +143,7 @@ Notes on Version 3.0
 	</Glav.CacheAdapter.MainConfig>
   in the appSettings, you could override this by having:
     <appSettings>
-      <add key="CacheAdapter.CacheToUse" value="memory"/>
+      <add key="Cache.CacheToUse" value="memory"/>
 	</appSettings>
 
 

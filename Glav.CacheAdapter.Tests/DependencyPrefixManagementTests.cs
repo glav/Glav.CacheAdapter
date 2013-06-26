@@ -15,13 +15,14 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = new GenericDependencyManager(new MemoryCacheAdapter(), new MockLogger());
             // Make sure we start out with nothing
-            mgr.ClearDependencyPrefix("TestCacheKeyPrefix");
+            mgr.RemoveDependencyGroup("TestCacheKeyGroup");
 
-            mgr.RegisterDependencyPrefix("TestCacheKeyPrefix");
+            mgr.RegisterDependencyGroup("TestCacheKeyGroup");
 
-            var prefixEntry = mgr.GetDependencyPrefix("TestCacheKeyPrefix");
-            Assert.IsNotNull(prefixEntry, "Did not get a prefix entry");
-            Assert.AreEqual<Type>(typeof(DateTime), prefixEntry.GetType());
+            var groupEntry = mgr.GetDependencyGroup("TestCacheKeyGroup");
+            Assert.IsNotNull(groupEntry, "Did not get a group entry");
+            Assert.AreEqual<int>(1,groupEntry.Count());
+            Assert.AreEqual<string>("TestCacheKeyGroup", groupEntry.First().CacheKeyOrCacheGroup);
         }
 
     }
