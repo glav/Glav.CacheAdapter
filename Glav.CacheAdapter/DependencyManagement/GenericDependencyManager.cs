@@ -30,7 +30,8 @@ namespace Glav.CacheAdapter.DependencyManagement
             if (config == null)
             {
                 _config = new CacheConfig();
-            } else
+            }
+            else
             {
                 _config = config;
             }
@@ -43,14 +44,15 @@ namespace Glav.CacheAdapter.DependencyManagement
             if (currentEntry == null || currentEntry.Length == 0)
             {
                 tempList = new List<DependencyItem>();
-                tempList.Add(new DependencyItem {CacheKeyOrCacheGroup = dependentCacheKey, Action = actionToPerform});
+                tempList.Add(new DependencyItem { CacheKeyOrCacheGroup = dependentCacheKey, Action = actionToPerform });
                 //currentEntry = new string[] {dependentCacheKey};
-            } else
+            }
+            else
             {
                 tempList.AddRange(currentEntry);
                 if (!tempList.Any(d => d.CacheKeyOrCacheGroup == dependentCacheKey))
                 {
-                    tempList.Add(new DependencyItem {CacheKeyOrCacheGroup= dependentCacheKey, Action = actionToPerform});
+                    tempList.Add(new DependencyItem { CacheKeyOrCacheGroup = dependentCacheKey, Action = actionToPerform });
                 }
             }
             _cache.InvalidateCacheItem(cacheKeyForDependency);
@@ -66,11 +68,11 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 tempList.AddRange(currentEntry);
             }
-            ((List<string>) dependentCacheKeys).ForEach(d =>
+            ((List<string>)dependentCacheKeys).ForEach(d =>
                                                             {
                                                                 if (!tempList.Any(c => c.CacheKeyOrCacheGroup == d))
                                                                 {
-                                                                    tempList.Add(new DependencyItem{ CacheKeyOrCacheGroup=d, Action= actionToPerform});
+                                                                    tempList.Add(new DependencyItem { CacheKeyOrCacheGroup = d, Action = actionToPerform });
                                                                 }
                                                             });
             _cache.InvalidateCacheItem(cacheKeyForDependency);
@@ -94,8 +96,8 @@ namespace Glav.CacheAdapter.DependencyManagement
             var cacheKeyForPrefix = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheGroupKey, groupName);
             if (_cache.Get<DependencyItem[]>(cacheKeyForPrefix) == null)
             {
-                var item = new DependencyItem {CacheKeyOrCacheGroup = groupName, Action = actionToPerform};
-                var depList = new DependencyItem[] {item};
+                var item = new DependencyItem { CacheKeyOrCacheGroup = groupName, Action = actionToPerform };
+                var depList = new DependencyItem[] { item };
                 _cache.InvalidateCacheItem(cacheKeyForPrefix);
                 _cache.Add(cacheKeyForPrefix, GetMaxAge(), depList);
             }
@@ -115,7 +117,7 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public void AddCacheKeyToDependencyGroup(string groupName, string cacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
-            var cacheGroup = (List<DependencyItem>)GetDependencyGroup(groupName);
+            var cacheGroup = GetDependencyGroup(groupName);
             if (cacheGroup.Any(d => d.CacheKeyOrCacheGroup == cacheKey))
             {
                 //Already exists in group so do nothing
@@ -123,9 +125,10 @@ namespace Glav.CacheAdapter.DependencyManagement
             }
 
             var cacheKeyForGroup = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheGroupKey, groupName);
-            cacheGroup.Add(new DependencyItem {CacheKeyOrCacheGroup = cacheKey, Action = actionToPerform});
+            var tempGroup = new List<DependencyItem>(cacheGroup);
+            tempGroup.Add(new DependencyItem { CacheKeyOrCacheGroup = cacheKey, Action = actionToPerform });
             _cache.InvalidateCacheItem(cacheKeyForGroup);
-            _cache.Add(cacheKeyForGroup, GetMaxAge(), cacheGroup);
+            _cache.Add(cacheKeyForGroup, GetMaxAge(), tempGroup.ToArray());
         }
 
         public void RemoveDependencyGroup(string groupName)
@@ -161,21 +164,26 @@ namespace Glav.CacheAdapter.DependencyManagement
                 return;
             }
 
-            ((List<DependencyItem>) cacheGroup).ForEach(item =>
-                                                            {
-                                                                switch (item.Action)
-                                                                {
-                                                                    case CacheDependencyAction.ClearDependentItems:
-                                                                        _cache.InvalidateCacheItem(item.CacheKeyOrCacheGroup);
-                                                                        break;
-                                                                    case CacheDependencyAction.ClearDependentItemsAndRaiseEvent:
-                                                                        //do nothing-not supported yet
-                                                                        break;
-                                                                    case CacheDependencyAction.RaiseEvent:
-                                                                        //do nothing-not supported yet
-                                                                        break;
-                                                                }
-                                                            });
+            var tempList = new List<DependencyItem>(cacheGroup);
+            tempList.ForEach(item =>
+                                    {
+                                        if (item.CacheKeyOrCacheGroup == groupName)
+                                        {
+                                            return;
+                                        }
+                                        switch (item.Action)
+                                        {
+                                            case CacheDependencyAction.ClearDependentItems:
+                                                _cache.InvalidateCacheItem(item.CacheKeyOrCacheGroup);
+                                                break;
+                                            case CacheDependencyAction.ClearDependentItemsAndRaiseEvent:
+                                                //do nothing-not supported yet
+                                                break;
+                                            case CacheDependencyAction.RaiseEvent:
+                                                //do nothing-not supported yet
+                                                break;
+                                        }
+                                    });
 
         }
 
@@ -186,7 +194,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                 return;
             }
 
-            if (_config.IsCacheKeysDependenciesEnabled)
+            if (!_config.IsCacheKeysDependenciesEnabled)
             {
                 return;
             }
@@ -199,7 +207,7 @@ namespace Glav.CacheAdapter.DependencyManagement
             var items = GetDependentCacheKeysForMasterCacheKey(masterCacheKey);
             if (items != null && items.Count() > 0)
             {
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     switch (item.Action)
                     {
@@ -222,7 +230,8 @@ namespace Glav.CacheAdapter.DependencyManagement
                 //Note: memcached has a 'bug' where if you store something >= 30 days, it doesn't work
                 //      so we use 29 days as the max.
                 return DateTime.Now.AddDays(29);
-            } else
+            }
+            else
             {
                 return DateTime.Now.AddYears(99);
             }
