@@ -96,7 +96,7 @@ namespace Glav.CacheAdapter.Tests
             cache.Add("Child", DateTime.Now.AddDays(1), "DataBlob2");
 
             // Now clear the dependencies for the master
-            mgr.CheckAssociatedDependenciesAndPerformAction(MASTERCACHEKEY);
+            mgr.PerformActionForAssociatedDependencyKeys(MASTERCACHEKEY);
 
             // And finally check its existence
             Assert.IsNull(cache.Get<string>("Child"));
@@ -123,7 +123,7 @@ namespace Glav.CacheAdapter.Tests
             cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
 
             // Now clear the dependencies for the master
-            mgr.CheckAssociatedDependenciesAndPerformAction(MASTERCACHEKEY);
+            mgr.PerformActionForAssociatedDependencyKeys(MASTERCACHEKEY);
 
             // And finally check its existence
             Assert.IsNull(cache.Get<string>("Child1"));
@@ -150,7 +150,7 @@ namespace Glav.CacheAdapter.Tests
             cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
 
             // Now clear the dependencies for the master
-            mgr.CheckAssociatedDependenciesAndPerformAction(MASTERCACHEKEY);
+            mgr.PerformActionForAssociatedDependencyKeys(MASTERCACHEKEY);
 
             // And finally check its existence
             Assert.IsNull(cache.Get<string>("Child1"));
