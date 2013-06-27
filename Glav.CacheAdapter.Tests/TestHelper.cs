@@ -41,6 +41,12 @@ namespace Glav.CacheAdapter.Tests
         {
             return new GenericDependencyManager(GetCacheFromConfig(), new MockLogger());
         }
+
+        public static ICacheProvider GetCacheProvider()
+        {
+            ICacheProvider provider = new CacheProvider(GetCacheFromConfig(), new MockLogger(), GetDependencyManager());
+            return provider;
+        }
     }
 
 }
