@@ -165,22 +165,17 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public void PerformActionForGroupDependencies(string groupName)
         {
-            if (string.IsNullOrWhiteSpace(groupName))
-            {
-                return;
-            }
-
-            if (!_config.IsCacheEnabled)
-            {
-                return;
-            }
-
-            if (!_config.IsCacheGroupDependenciesEnabled)
-            {
-                return;
-            }
-
             _logger.WriteInfoMessage(string.Format("Performing required action for dependency group:[{0}]", groupName));
+
+            ExecuteDefaultOrSuppliedActionForGroupDependencies(groupName);
+        }
+
+        private void ExecuteDefaultOrSuppliedActionForGroupDependencies(string groupName, CacheDependencyAction? forcedAction = null)
+        {
+            if (!IsOkToActOnGroupDependency(groupName))
+            {
+                return;
+            }
 
             var cacheGroup = GetDependencyGroup(groupName);
             if (cacheGroup == null)
@@ -190,52 +185,78 @@ namespace Glav.CacheAdapter.DependencyManagement
 
             var tempList = new List<DependencyItem>(cacheGroup);
             tempList.ForEach(item =>
-                                    {
-                                        if (item.CacheKeyOrCacheGroup == groupName)
-                                        {
-                                            return;
-                                        }
-                                        switch (item.Action)
-                                        {
-                                            case CacheDependencyAction.ClearDependentItems:
-                                                _cache.InvalidateCacheItem(item.CacheKeyOrCacheGroup);
-                                                break;
-                                            case CacheDependencyAction.ClearDependentItemsAndRaiseEvent:
-                                                //do nothing-not supported yet
-                                                break;
-                                            case CacheDependencyAction.RaiseEvent:
-                                                //do nothing-not supported yet
-                                                break;
-                                        }
-                                    });
+            {
+                if (item.CacheKeyOrCacheGroup == groupName)
+                {
+                    return;
+                }
+                var cacheItemAction = item.Action;
+                // if a forced action was supplied, use that instead of the 
+                // stored cache items action
+                if (forcedAction.HasValue)
+                {
+                    cacheItemAction = forcedAction.Value;
+                }
+                switch (cacheItemAction)
+                {
+                    case CacheDependencyAction.ClearDependentItems:
+                        _cache.InvalidateCacheItem(item.CacheKeyOrCacheGroup);
+                        break;
+                    case CacheDependencyAction.ClearDependentItemsAndRaiseEvent:
+                        //do nothing-not supported yet
+                        break;
+                    case CacheDependencyAction.RaiseEvent:
+                        //do nothing-not supported yet
+                        break;
+                }
+            });
+            
+        }
 
+        private bool IsOkToActOnGroupDependency(string groupName)
+        {
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                return false;
+            }
+
+            if (!_config.IsCacheEnabled)
+            {
+                return false;
+            }
+
+            if (!_config.IsCacheGroupDependenciesEnabled)
+            {
+                return false;
+            }
+            return true;   
         }
 
         public void PerformActionForAssociatedDependencyKeys(string masterCacheKey)
         {
-            if (!_config.IsCacheEnabled)
-            {
-                return;
-            }
-
-            if (!_config.IsCacheKeysDependenciesEnabled)
-            {
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(masterCacheKey))
-            {
-                return;
-            }
-
             _logger.WriteInfoMessage(string.Format("Performing required actions on associated dependency cache keys for master cache key:[{0}]", masterCacheKey));
+
+            ExecuteDefaultOrSuppliedActionForMasterCacheKeyAssociatedDependencies(masterCacheKey);
+        }
+
+        private void ExecuteDefaultOrSuppliedActionForMasterCacheKeyAssociatedDependencies(string masterCacheKey, CacheDependencyAction? forcedAction=null)
+        {
+            if (!IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(masterCacheKey))
+            {
+                return;
+            }
 
             var items = GetDependentCacheKeysForMasterCacheKey(masterCacheKey);
             if (items != null && items.Count() > 0)
             {
                 foreach (var item in items)
                 {
-                    switch (item.Action)
+                    var cacheItemAction = item.Action;
+                    if (forcedAction.HasValue)
+                    {
+                        cacheItemAction = forcedAction.Value;
+                    }
+                    switch (cacheItemAction)
                     {
                         case CacheDependencyAction.ClearDependentItems:
                             _cache.InvalidateCacheItem(item.CacheKeyOrCacheGroup);
@@ -245,7 +266,26 @@ namespace Glav.CacheAdapter.DependencyManagement
                     }
                 }
             }
+            
+        }
 
+        private bool IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(string masterCacheKey)
+        {
+            if (!_config.IsCacheEnabled)
+            {
+                return false;
+            }
+
+            if (!_config.IsCacheKeysDependenciesEnabled)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(masterCacheKey))
+            {
+                return false;
+            }
+            return true;
         }
 
         private DateTime GetMaxAge()
@@ -261,6 +301,19 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 return DateTime.Now.AddYears(99);
             }
+        }
+
+
+        public void ForceActionForGroupDependencies(string groupName, CacheDependencyAction forcedAction)
+        {
+            _logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on items in dependency group:[{1}]", forcedAction.ToString(), groupName));
+            ExecuteDefaultOrSuppliedActionForGroupDependencies(groupName, forcedAction);
+        }
+
+        public void ForceActionForAssociatedDependencyKeys(string masterCacheKey, CacheDependencyAction forcedAction)
+        {
+            _logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on associated dependency cache keys for master cache key:[{1}]", forcedAction.ToString(), masterCacheKey));
+            ExecuteDefaultOrSuppliedActionForMasterCacheKeyAssociatedDependencies(masterCacheKey, forcedAction);
         }
     }
 }
