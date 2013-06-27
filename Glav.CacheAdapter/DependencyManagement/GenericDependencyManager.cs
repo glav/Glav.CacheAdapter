@@ -38,11 +38,15 @@ namespace Glav.CacheAdapter.DependencyManagement
         }
         public void AssociateDependentKeyToMasterCacheKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
+            _logger.WriteInfoMessage(string.Format("Associating cache key:[{0}] to master cache key:[{0}]", dependentCacheKey, masterCacheKey));
+
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
             List<DependencyItem> tempList = new List<DependencyItem>();
             if (currentEntry == null || currentEntry.Length == 0)
             {
+                _logger.WriteInfoMessage(string.Format("Creating new associated dependency list for master cache key:[{0}]", masterCacheKey));
+
                 tempList.Add(new DependencyItem { CacheKeyOrCacheGroup = dependentCacheKey, Action = actionToPerform });
                 //currentEntry = new string[] {dependentCacheKey};
             }
@@ -60,11 +64,15 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public void AssociateDependentKeysToMasterCacheKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
+            _logger.WriteInfoMessage(string.Format("Associating list of cache keys to master cache key:[{0}]", masterCacheKey));
+
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
             var tempList = new List<DependencyItem>();
             if (currentEntry != null && currentEntry.Length > 0)
             {
+                _logger.WriteInfoMessage(string.Format("Creating new associated dependency list for master cache key:[{0}]", masterCacheKey));
+
                 tempList.AddRange(currentEntry);
             }
 
@@ -82,18 +90,24 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public IEnumerable<DependencyItem> GetDependentCacheKeysForMasterCacheKey(string masterCacheKey)
         {
+            _logger.WriteInfoMessage(string.Format("Retrieving associated cache key dependency list master cache key:[{0}]", masterCacheKey));
+
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             return _cache.Get<DependencyItem[]>(cacheKeyForDependency);
         }
 
         public void ClearAssociatedDependencyList(string masterCacheKey)
         {
+            _logger.WriteInfoMessage(string.Format("Clearing associated dependency list for master cache key:[{0}]", masterCacheKey));
+
             var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, masterCacheKey);
             _cache.InvalidateCacheItem(cacheKeyForDependency);
         }
 
         public void RegisterDependencyGroup(string groupName, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
+            _logger.WriteInfoMessage(string.Format("Registering dependency group:[{0}]", groupName));
+
             var cacheKeyForPrefix = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheGroupKey, groupName);
             if (_cache.Get<DependencyItem[]>(cacheKeyForPrefix) == null)
             {
@@ -106,6 +120,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public IEnumerable<DependencyItem> GetDependencyGroup(string groupName)
         {
+            _logger.WriteInfoMessage(string.Format("Retrieving dependency group:[{0}]", groupName));
+
             var cacheKeyForGroup = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheGroupKey, groupName);
             var cacheDependencyGroup = _cache.Get<DependencyItem[]>(cacheKeyForGroup);
             if (cacheDependencyGroup == null)
@@ -118,6 +134,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public void AddCacheKeyToDependencyGroup(string groupName, string cacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
+            _logger.WriteInfoMessage(string.Format("Adding cache key:[{0}] to dependency group:[{1}]", cacheKey, groupName));
+
             var cacheGroup = GetDependencyGroup(groupName);
             if (cacheGroup.Any(d => d.CacheKeyOrCacheGroup == cacheKey))
             {
@@ -134,6 +152,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public void RemoveDependencyGroup(string groupName)
         {
+            _logger.WriteInfoMessage(string.Format("Removing dependency group:[{0}]", groupName));
+
             var cacheKeyForGroup = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheGroupKey, groupName);
             _cache.InvalidateCacheItem(cacheKeyForGroup);
         }
@@ -159,6 +179,9 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 return;
             }
+
+            _logger.WriteInfoMessage(string.Format("Performing required action for dependency group:[{0}]", groupName));
+
             var cacheGroup = GetDependencyGroup(groupName);
             if (cacheGroup == null)
             {
@@ -204,6 +227,8 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 return;
             }
+
+            _logger.WriteInfoMessage(string.Format("Performing required actions on associated dependency cache keys for master cache key:[{0}]", masterCacheKey));
 
             var items = GetDependentCacheKeysForMasterCacheKey(masterCacheKey);
             if (items != null && items.Count() > 0)

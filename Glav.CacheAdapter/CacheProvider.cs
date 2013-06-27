@@ -39,7 +39,10 @@ namespace Glav.CacheAdapter.Core
         {
             _cache = cache;
             _logger = logger;
-            _cacheDependencyManager = cacheDependencyManager;
+            if (_config.IsCacheKeysDependenciesEnabled || _config.IsCacheGroupDependenciesEnabled)
+            {
+                _cacheDependencyManager = cacheDependencyManager;
+            }
             _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
         }
         
