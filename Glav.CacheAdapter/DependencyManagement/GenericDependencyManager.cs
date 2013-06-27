@@ -96,7 +96,7 @@ namespace Glav.CacheAdapter.DependencyManagement
             return _cache.Get<DependencyItem[]>(cacheKeyForDependency);
         }
 
-        public void ClearAssociatedDependencyList(string masterCacheKey)
+        public void ClearDependencyListForMasterCacheKey(string masterCacheKey)
         {
             _logger.WriteInfoMessage(string.Format("Clearing associated dependency list for master cache key:[{0}]", masterCacheKey));
 

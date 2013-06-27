@@ -11,7 +11,7 @@ namespace Glav.CacheAdapter.DependencyManagement
         void AssociateDependentKeyToMasterCacheKey(string masterCacheKey, string dependentCacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         void AssociateDependentKeysToMasterCacheKey(string masterCacheKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         IEnumerable<DependencyItem> GetDependentCacheKeysForMasterCacheKey(string cacheKey);
-        void ClearAssociatedDependencyList(string masterCacheKey);
+        void ClearDependencyListForMasterCacheKey(string masterCacheKey);
         
         /// <summary>
         /// Register a cache key group name such that items can be associated with

@@ -42,15 +42,19 @@ namespace Glav.CacheAdapter.Core
             if (_config.IsCacheKeysDependenciesEnabled || _config.IsCacheGroupDependenciesEnabled)
             {
                 _cacheDependencyManager = cacheDependencyManager;
+                _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
             }
-            _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
+            else
+            {
+                _cacheDependencyManager = null;  // Dependency Management is disabled
+                _logger.WriteInfoMessage("CacheKey dependency management not enabled.");
+            }
         }
         
-        #region ICacheProvider Members
 
 		public ICache InnerCache { get { return _cache; }}
 
-		public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData) where T : class
+		public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			//Get data from cache
 			T data = GetData(cacheKey, getData);
@@ -64,7 +68,7 @@ namespace Glav.CacheAdapter.Core
 			return data;
 		}
 
-		public T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData) where T : class
+		public T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			//Get data from cacheif it is enabled
 			T data = GetData(cacheKey, getData);
@@ -79,7 +83,7 @@ namespace Glav.CacheAdapter.Core
 			return data;
 		}
 
-		private T GetData<T>(string cacheKey, Func<T> getData) where T : class
+		private T GetData<T>(string cacheKey, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			T data = _config.IsCacheEnabled ? _cache.Get<T>(cacheKey) : null;
 			if (data == null)
@@ -104,10 +108,7 @@ namespace Glav.CacheAdapter.Core
 			_cache.InvalidateCacheItem(cacheKey);
 		}
 
-		#endregion
-
-
-		public void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd)
+		public void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems)
 		{
 			if (!_config.IsCacheEnabled)
 			{
@@ -116,7 +117,7 @@ namespace Glav.CacheAdapter.Core
 			_cache.Add(cacheKey, absoluteExpiryDate, dataToAdd);
 		}
 
-		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
+		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems)
 		{
 			if (!_config.IsCacheEnabled)
 			{
@@ -135,12 +136,12 @@ namespace Glav.CacheAdapter.Core
 		}
 
 
-		public T Get<T>(DateTime absoluteExpiryDate, Func<T> getData) where T : class
+		public T Get<T>(DateTime absoluteExpiryDate, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			return Get<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData);
 		}
 
-		public T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData) where T : class
+		public T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			return Get<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData);
 		}
@@ -149,5 +150,11 @@ namespace Glav.CacheAdapter.Core
 		{
 			return getData.Method.DeclaringType.FullName + "-" + getData.Method.Name;
 		}
-	}
+
+
+        public ICacheDependencyManager InnerDependencyManager
+        {
+            get { return _cacheDependencyManager; }
+        }
+    }
 }

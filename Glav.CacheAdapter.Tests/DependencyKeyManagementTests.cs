@@ -16,7 +16,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child");
 
@@ -31,7 +31,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             var dependenciesToAdd = new List<string>();
             dependenciesToAdd.Add("Child1");
@@ -53,7 +53,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             var dependenciesToAdd = new List<string>();
             dependenciesToAdd.Add("Child1");
@@ -85,7 +85,7 @@ namespace Glav.CacheAdapter.Tests
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             // Associate a dependent cachekey
             mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child");
@@ -108,7 +108,7 @@ namespace Glav.CacheAdapter.Tests
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             // Associate a dependent cachekey
             mgr.AssociateDependentKeyToMasterCacheKey(MASTERCACHEKEY, "Child1");
@@ -136,7 +136,7 @@ namespace Glav.CacheAdapter.Tests
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearAssociatedDependencyList(MASTERCACHEKEY);
+            mgr.ClearDependencyListForMasterCacheKey(MASTERCACHEKEY);
 
             // Associate a dependent cachekey
             var dependencyList = new string[3] {"Child1", "Child2", "Child3"};
