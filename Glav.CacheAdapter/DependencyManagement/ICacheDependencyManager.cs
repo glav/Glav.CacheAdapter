@@ -23,8 +23,8 @@ namespace Glav.CacheAdapter.DependencyManagement
         IEnumerable<DependencyItem> GetDependencyGroup(string groupName);
         void AddCacheKeyToDependencyGroup(string groupName, string cacheKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         string Name { get;  }
-        void CheckGroupDependenciesAndPerformAction(string groupName);
-        void CheckAssociatedDependenciesAndPerformAction(string masterCacheKey);
+        void PerformActionForGroupDependencies(string groupName);
+        void PerformActionForAssociatedDependencyKeys(string masterCacheKey);
     }
 
     public enum CacheDependencyAction

@@ -129,7 +129,7 @@ namespace Glav.CacheAdapter.Tests
             Assert.AreEqual<string>("Data3", cache.Get<string>("Key3"));
 
             //Now clear the dependencies
-            mgr.CheckGroupDependenciesAndPerformAction(GROUPNAME);
+            mgr.PerformActionForGroupDependencies(GROUPNAME);
 
             // All items in group should be cleared from cache
             Assert.IsNull(cache.Get<string>("Key1"));

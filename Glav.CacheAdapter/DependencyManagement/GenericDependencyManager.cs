@@ -143,7 +143,7 @@ namespace Glav.CacheAdapter.DependencyManagement
             get { return "Generic/Default"; }
         }
 
-        public void CheckGroupDependenciesAndPerformAction(string groupName)
+        public void PerformActionForGroupDependencies(string groupName)
         {
             if (string.IsNullOrWhiteSpace(groupName))
             {
@@ -188,7 +188,7 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         }
 
-        public void CheckAssociatedDependenciesAndPerformAction(string masterCacheKey)
+        public void PerformActionForAssociatedDependencyKeys(string masterCacheKey)
         {
             if (!_config.IsCacheEnabled)
             {
