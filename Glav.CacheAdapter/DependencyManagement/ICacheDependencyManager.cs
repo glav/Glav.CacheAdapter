@@ -27,6 +27,8 @@ namespace Glav.CacheAdapter.DependencyManagement
         void ForceActionForGroupDependencies(string groupName, CacheDependencyAction forcedAction);
         void PerformActionForAssociatedDependencyKeys(string masterCacheKey);
         void ForceActionForAssociatedDependencyKeys(string masterCacheKey, CacheDependencyAction forcedAction);
+        bool IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(string masterCacheKey);
+        bool IsOkToActOnGroupDependency(string groupName);
     }
 
     public enum CacheDependencyAction
