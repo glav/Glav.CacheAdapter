@@ -173,7 +173,7 @@ namespace Glav.CacheAdapter.Core
         {
             if (_cacheDependencyManager.IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(masterCacheKey) && dataToAdd != null)
             {
-                _cacheDependencyManager.AssociateDependentKeyToMasterCacheKey(cacheKey, masterCacheKey,action);
+                _cacheDependencyManager.AssociateDependentKeyToMasterCacheKey(masterCacheKey, cacheKey,action);
             }
             if (_cacheDependencyManager.IsOkToActOnGroupDependency(groupName) && dataToAdd != null)
             {
