@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CacheProviderDependencyManagementTests.cs" />
     <Compile Include="CacheProviderTests.cs" />
     <Compile Include="DependencyGroupManagementTests.cs" />
     <Compile Include="DependencyKeyManagementTests.cs" />
