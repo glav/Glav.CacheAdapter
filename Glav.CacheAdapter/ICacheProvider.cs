@@ -28,5 +28,8 @@ namespace Glav.CacheAdapter.Core
 
         // Dependency Management API
         ICacheDependencyManager InnerDependencyManager { get;  }
+        // Convenience methods for dependency management
+        void InvalidateDependenciesForGroup(string groupName);
+        void InvalidateDependenciesForMasterCacheKey(string masterCacheKey);
     }
 }

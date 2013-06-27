@@ -57,21 +57,22 @@ namespace Glav.CacheAdapter.Core
 		public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			//Get data from cache
-			T data = GetData(cacheKey, getData);
+			T data = GetData(cacheKey, getData,dependencyGroupName,masterCacheKeyToAssociateTo,actionForDependency);
 			//only add non null data to the cache.
 			if (data != null)
 			{
 				_cache.Add(cacheKey, expiryDate, data);
 				_logger.WriteInfoMessage(string.Format("Adding item [{0}] to cache with expiry date/time of [{1}].", cacheKey,
 													   expiryDate.ToString("dd/MM/yyyy hh:mm:ss")));
-			}
+
+            }
 			return data;
 		}
 
 		public T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
 			//Get data from cacheif it is enabled
-			T data = GetData(cacheKey, getData);
+            T data = GetData(cacheKey, getData, dependencyGroupName, masterCacheKeyToAssociateTo, actionForDependency);
 			//only add non null data to the cache.
 			if (data != null && _config.IsCacheEnabled)
 			{
@@ -96,6 +97,8 @@ namespace Glav.CacheAdapter.Core
 				_logger.WriteInfoMessage(string.Format("Retrieving item [{0}] from cache.", cacheKey));
 			}
 
+            ManageCacheDependenciesForCacheItem(data, cacheKey, masterCacheKeyToAssociateTo, dependencyGroupName, actionForDependency);
+
 			return data;
 		}
 
@@ -106,6 +109,11 @@ namespace Glav.CacheAdapter.Core
 				return;
 			}
 			_cache.InvalidateCacheItem(cacheKey);
+
+            if (_cacheDependencyManager.IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(cacheKey))
+            {
+                _cacheDependencyManager.PerformActionForAssociatedDependencyKeys(cacheKey);
+            }
 		}
 
 		public void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems)
@@ -115,6 +123,8 @@ namespace Glav.CacheAdapter.Core
 				return;
 			}
 			_cache.Add(cacheKey, absoluteExpiryDate, dataToAdd);
+
+            ManageCacheDependenciesForCacheItem(dataToAdd, cacheKey, masterCacheKeyToAssociateTo, dependencyGroupName, actionForDependency);
 		}
 
 		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems)
@@ -124,7 +134,9 @@ namespace Glav.CacheAdapter.Core
 				return;
 			}
 			_cache.Add(cacheKey, slidingExpiryWindow, dataToAdd);
-		}
+
+            ManageCacheDependenciesForCacheItem(dataToAdd, cacheKey, masterCacheKeyToAssociateTo, dependencyGroupName, actionForDependency);
+        }
 
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
@@ -138,12 +150,12 @@ namespace Glav.CacheAdapter.Core
 
 		public T Get<T>(DateTime absoluteExpiryDate, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
-			return Get<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData);
+            return Get<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData, dependencyGroupName, masterCacheKeyToAssociateTo, actionForDependency);
 		}
 
 		public T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
-			return Get<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData);
+            return Get<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData, dependencyGroupName, masterCacheKeyToAssociateTo, actionForDependency);
 		}
 
 		private string GetCacheKeyFromFuncDelegate<T>(Func<T> getData) where T : class
@@ -155,6 +167,30 @@ namespace Glav.CacheAdapter.Core
         public ICacheDependencyManager InnerDependencyManager
         {
             get { return _cacheDependencyManager; }
+        }
+
+        private void ManageCacheDependenciesForCacheItem(object dataToAdd, string cacheKey, string masterCacheKey, string groupName,CacheDependencyAction action)
+        {
+            if (_cacheDependencyManager.IsOkToActOnAssociatedDependencyKeysForMasterCacheKey(masterCacheKey) && dataToAdd != null)
+            {
+                _cacheDependencyManager.AssociateDependentKeyToMasterCacheKey(cacheKey, masterCacheKey,action);
+            }
+            if (_cacheDependencyManager.IsOkToActOnGroupDependency(groupName) && dataToAdd != null)
+            {
+                _cacheDependencyManager.AddCacheKeyToDependencyGroup(groupName, cacheKey,action);
+            }
+            
+        }
+
+
+        public void InvalidateDependenciesForGroup(string groupName)
+        {
+            _cacheDependencyManager.ForceActionForGroupDependencies(groupName, CacheDependencyAction.ClearDependentItems);
+        }
+
+        public void InvalidateDependenciesForMasterCacheKey(string masterCacheKey)
+        {
+            _cacheDependencyManager.ForceActionForAssociatedDependencyKeys(masterCacheKey, CacheDependencyAction.ClearDependentItems);
         }
     }
 }
