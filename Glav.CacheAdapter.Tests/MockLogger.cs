@@ -11,14 +11,17 @@ namespace Glav.CacheAdapter.Tests
     {
         public void WriteInfoMessage(string message)
         {
+            System.Diagnostics.Trace.WriteLine(message);
         }
 
         public void WriteErrorMessage(string message)
         {
+            System.Diagnostics.Trace.WriteLine("ERROR:"+message);
         }
 
         public void WriteException(Exception ex)
         {
+            System.Diagnostics.Trace.WriteLine(ex.GetBaseException().Message);
         }
     }
 }

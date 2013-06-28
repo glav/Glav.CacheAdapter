@@ -27,8 +27,10 @@ namespace Glav.CacheAdapter
 		private bool _isCacheEnabled = true;
 		public bool IsCacheEnabled { get { return _isCacheEnabled; } set { _isCacheEnabled = value; } }
 
-        
-        bool _isCacheKeysDependenciesEnabled = false;
+        private string _distributedCacheServers = null;
+	    public string DistributedCacheServers { get { return _distributedCacheServers; } set { _distributedCacheServers = value; }}
+
+	    bool _isCacheKeysDependenciesEnabled = false;
         /// <summary>
         /// Enables support of cache dependencies using master and child/associated cache keys
         /// </summary>
@@ -61,6 +63,7 @@ namespace Glav.CacheAdapter
             CacheSpecificData = MainConfig.Default.CacheSpecificData;
             CacheToUse = !string.IsNullOrWhiteSpace(MainConfig.Default.CacheToUse) ? MainConfig.Default.CacheToUse.ToLowerInvariant() : string.Empty;
             DependencyManagerToUse = MainConfig.Default.DependencyManagerToUse;
+            DistributedCacheServers = MainConfig.Default.DistributedCacheServers;
         }
 
         /// <summary>
@@ -75,7 +78,8 @@ namespace Glav.CacheAdapter
             var isCachePrefixDependenciesKey = string.Format("{0}IsCacheGroupDependenciesEnabled", AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
-            var dependencyMgrToUseKey = string.Format("{0}.DependencyManagerToUse", AppSettingsKeyPrefix);
+            var dependencyMgrToUseKey = string.Format("{0}DependencyManagerToUse", AppSettingsKeyPrefix);
+            var distributedCacheServersKey = string.Format("{0}DistributedCacheServers", AppSettingsKeyPrefix);
 
             if (ConfigurationManager.AppSettings[cacheToUseKey].HasValue())
             {
@@ -100,6 +104,10 @@ namespace Glav.CacheAdapter
             if (ConfigurationManager.AppSettings[dependencyMgrToUseKey].HasValue())
             {
                 _dependencyManagerToUse = ConfigurationManager.AppSettings[dependencyMgrToUseKey];
+            }
+            if (ConfigurationManager.AppSettings[distributedCacheServersKey].HasValue())
+            {
+                _distributedCacheServers = ConfigurationManager.AppSettings[distributedCacheServersKey];
             }
         }
 	}
