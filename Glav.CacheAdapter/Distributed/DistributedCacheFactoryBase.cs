@@ -26,7 +26,7 @@ namespace Glav.CacheAdapter.Distributed
 		{
 			CacheConfig config = new CacheConfig();
 
-			if (String.IsNullOrWhiteSpace(MainConfig.Default.DistributedCacheServers))
+            if (String.IsNullOrWhiteSpace(config.DistributedCacheServers))
 				return config;
 
 			ExtractServerNodesFromConfig(config);
@@ -77,11 +77,11 @@ namespace Glav.CacheAdapter.Distributed
 			// Here we test to see if the old separator char is used.If not, we use the
 			// preferred one, otherwise we revert to the obsolete one (for backwards compatibility)
 			char separator = CacheConstants.ConfigDistributedServerSeparator;
-			if (MainConfig.Default.DistributedCacheServers.Contains(CacheConstants.ConfigDistributedServerSeparatorObsolete))
+			if (config.DistributedCacheServers.Contains(CacheConstants.ConfigDistributedServerSeparatorObsolete))
 			{
 				separator = CacheConstants.ConfigDistributedServerSeparatorObsolete;
 			}
-			var endPointList = MainConfig.Default.DistributedCacheServers.Split(separator);
+            var endPointList = config.DistributedCacheServers.Split(separator);
 			if (endPointList.Length == 0)
 				return;
 
