@@ -9,7 +9,7 @@ using System.Linq;
 namespace Glav.CacheAdapter.Tests
 {
     [TestClass]
-    public class DependencyKeyManagementTests
+    public class DependencyManagementTests
     {
         private const string PARENTKEYNAME = "TestCacheKeyGroup";
 
@@ -91,5 +91,30 @@ namespace Glav.CacheAdapter.Tests
 
         }
 
+        [TestMethod]
+        public void ShouldNotClearParentItemDefinitionWhenInvalidatingDependentItems()
+        {
+            var mgr = TestHelper.GetDependencyManager();
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+
+            // Make sure we start out with nothing
+            mgr.RemoveParentDependencyDefinition(PARENTKEYNAME);
+
+            var data1 = cacheProvider.Get<string>("Key1", DateTime.Now.AddDays(1), () => "Key1Data", PARENTKEYNAME);
+            var data2 = cacheProvider.Get<string>("Key2", DateTime.Now.AddDays(1), () => "Key2Data", PARENTKEYNAME);
+            var data3 = cacheProvider.Get<string>("Key3", DateTime.Now.AddDays(1), () => "Key3Data", PARENTKEYNAME);
+            Assert.IsNotNull(cache.Get<string>("Key1"));
+            Assert.IsNotNull(cache.Get<string>("Key2"));
+            Assert.IsNotNull(cache.Get<string>("Key3"));
+
+            cacheProvider.InvalidateCacheItem(PARENTKEYNAME);
+            Assert.IsNull(cache.Get<string>("Key1"));
+            Assert.IsNull(cache.Get<string>("Key2"));
+            Assert.IsNull(cache.Get<string>("Key3"));
+
+            var cacheKeyForParent = string.Format("{0}{1}{2}", GenericDependencyManager.CacheKeyPrefix, GenericDependencyManager.CacheDependencyEntryPrefix, PARENTKEYNAME);
+            Assert.IsNotNull(cache.Get<DependencyItem[]>(cacheKeyForParent));
+        }
     }
 }
