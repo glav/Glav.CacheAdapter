@@ -130,9 +130,32 @@ Notes on Version 3.0
   Includes a generic cache dependency mechanism which acts as a common base. Not the most efficient but intent is to
   later introduce cache dependency managers which utilise specific features of the cache engine to maximise performance.
 
-  2 Forms of cache dependencies are initially supported.
-  1. Associated Cache dependency items
-  2. Cache groups
+  The cache dependency implementation works as a parent/child mechanism.
+  You can register or associate one or more child cache keys to a parent item. The
+  cache key can actually be the key of an item in the cache but it doesn't have to be.
+  So the parent key can be an arbitrary name or the key of an item in the cache.If it
+  is an item in the cache, it will get invalidated when instructed as normal.
+  Additionally, a child key of a parent key, can itself act as the parent for other
+  cache keys. When the top level parent is invalidated, all its dependent children,
+  and any further nested dependent children will also be invalidated.
+  For example:
+    // Gets some data from main store and implicitly adds it to cache with key 'ParentKey'
+    cacheProvider.Get<string>("ParentKey",DateTime.Now.AddDays(1),() => "Data");
+	// Gets some data from main store and implicitly adds it to cache with key 'FirstChildKey' 
+	// and as a dependency to parent item with key "ParentKey"
+    cacheProvider.Get<string>("FirstChildKey",DateTime.Now.AddDays(1),() => "Data","ParentKey");
+	// Gets some data from main store and implicitly adds it to cache with key 'ChildOfFirstChildKey' 
+	// and as a dependency to parent item with key "FirstChildKey" which itself is a dependency to item with key "ParentKey"
+    cacheProvider.Get<string>("ChildOfFirstChildKey",DateTime.Now.AddDays(1),() => "FirstChildKey");
+
+	// At this point, the cache item relationship looks like
+	// ParentKey
+	//    +-----> FirstChildKey
+	//                   +-------> ChildOfFirstChildKey
+
+	// Invalidate the top level Parent, which clears all depenedent keys, included nested items
+	cacheProvider.InvalidateCacheItem("ParentKey");
+
 
 * Modifying configuration to support storing values in AppSettings section using "Cache." as keyprefix
   This means you can use the same named config settings in <appSettings> section(or in a separate

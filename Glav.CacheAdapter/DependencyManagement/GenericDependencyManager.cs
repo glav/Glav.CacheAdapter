@@ -157,6 +157,8 @@ namespace Glav.CacheAdapter.DependencyManagement
                     {
                         case CacheDependencyAction.ClearDependentItems:
                             _cache.InvalidateCacheItem(item.CacheKey);
+                            // Recursively clear any dependencies as this key itself might be a parent
+                            // to other items
                             ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey);
                             break;
                         default:
