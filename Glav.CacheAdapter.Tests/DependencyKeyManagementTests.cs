@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.DependencyManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
@@ -10,150 +11,83 @@ namespace Glav.CacheAdapter.Tests
     [TestClass]
     public class DependencyKeyManagementTests
     {
-        private const string PARENTKEY = "TestParentKey";
+        private const string PARENTKEYNAME = "TestCacheKeyGroup";
+
         [TestMethod]
-        public void ShouldAddSingleDependencyItem()
+        public void ShouldRegisterParentKey()
         {
             var mgr = TestHelper.GetDependencyManager();
+
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentItem(PARENTKEYNAME);
 
-            mgr.AssociateDependentKeysToParent(PARENTKEY, new string[1] { "Child"});
+            mgr.RegisterParentItem(PARENTKEYNAME);
 
-            var dependencies = mgr.GetDependentCacheKeysForParent(PARENTKEY);
-            Assert.IsNotNull(dependencies, "Did not get any dependencies");
-            Assert.AreEqual<int>(1, dependencies.Count());
-            Assert.AreEqual<string>("Child", dependencies.FirstOrDefault().CacheKey);
+            var groupEntry = mgr.GetDependentCacheKeysForParent(PARENTKEYNAME);
+            Assert.IsNotNull(groupEntry, "Did not get a parent entry");
+            Assert.AreEqual<int>(1,groupEntry.Count());
+            Assert.AreEqual<string>(PARENTKEYNAME, groupEntry.First().CacheKey);
         }
 
         [TestMethod]
-        public void ShouldAddMultipleDependencyItems()
+        public void ShouldRemoveParentKeyButReturnOneWhenRequested()
         {
             var mgr = TestHelper.GetDependencyManager();
+
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentItem(PARENTKEYNAME);
 
-            var dependenciesToAdd = new List<string>();
-            dependenciesToAdd.Add("Child1");
-            dependenciesToAdd.Add("Child2");
-            dependenciesToAdd.Add("Child3");
-            mgr.AssociateDependentKeysToParent(PARENTKEY, dependenciesToAdd);
+            mgr.RegisterParentItem(PARENTKEYNAME);
 
-            var dependencies = mgr.GetDependentCacheKeysForParent(PARENTKEY);
-            Assert.IsNotNull(dependencies, "Did not get any dependencies");
-            var dependenciesAsArray = dependencies.ToArray();
-            Assert.AreEqual<int>(3, dependenciesAsArray.Length);
-            Assert.AreEqual<string>("Child1", dependenciesAsArray[0].CacheKey);
-            Assert.AreEqual<string>("Child2", dependenciesAsArray[1].CacheKey);
-            Assert.AreEqual<string>("Child3", dependenciesAsArray[2].CacheKey);
+            var groupEntry = mgr.GetDependentCacheKeysForParent(PARENTKEYNAME);
+            Assert.IsNotNull(groupEntry, "Did not get a parent entry");
+            Assert.AreEqual<int>(1, groupEntry.Count());
+            Assert.AreEqual<string>(PARENTKEYNAME, groupEntry.First().CacheKey);
+
+            mgr.RemoveParentItem(PARENTKEYNAME);
+            groupEntry = mgr.GetDependentCacheKeysForParent(PARENTKEYNAME);
+            Assert.IsNotNull(groupEntry);
         }
 
         [TestMethod]
-        public void ShouldAddMultipleDependencyItemsWithNoConflict()
-        {
-            var mgr = TestHelper.GetDependencyManager();
-            // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
-
-            var dependenciesToAdd = new List<string>();
-            dependenciesToAdd.Add("Child1");
-            dependenciesToAdd.Add("Child2");
-            dependenciesToAdd.Add("Child3");
-            mgr.AssociateDependentKeysToParent(PARENTKEY, dependenciesToAdd);
-
-            // Now add some more items, some that are already added,some not.
-            dependenciesToAdd.Clear();
-            dependenciesToAdd.Add("Child10");  // should add
-            dependenciesToAdd.Add("Child2");  // should not add
-            dependenciesToAdd.Add("Child11");  // should add
-            mgr.AssociateDependentKeysToParent(PARENTKEY, dependenciesToAdd);
-
-            var dependencies = mgr.GetDependentCacheKeysForParent(PARENTKEY);
-            Assert.IsNotNull(dependencies, "Did not get any dependencies");
-            var dependenciesAsArray = dependencies.ToArray();
-            Assert.AreEqual<int>(5, dependenciesAsArray.Length);
-            Assert.AreEqual<string>("Child1", dependenciesAsArray[0].CacheKey);
-            Assert.AreEqual<string>("Child2", dependenciesAsArray[1].CacheKey);
-            Assert.AreEqual<string>("Child3", dependenciesAsArray[2].CacheKey);
-            Assert.AreEqual<string>("Child10", dependenciesAsArray[3].CacheKey);
-            Assert.AreEqual<string>("Child11", dependenciesAsArray[4].CacheKey);
-        }
-
-        [TestMethod]
-        public void ShouldClearAssociatedCacheItemDependencyFromCache()
+        public void ShouldRemoveCacheItemsInGroupFromCache()
         {
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
+
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentItem(PARENTKEYNAME);
 
-            // Associate a dependent cachekey
-            mgr.AssociateDependentKeysToParent(PARENTKEY, new string[1] { "Child"});
+            mgr.RegisterParentItem(PARENTKEYNAME);
 
-            // Addin the master item
-            cache.Add(PARENTKEY, DateTime.Now.AddDays(1), "DataBlob");
-            // Add in the dependent item
-            cache.Add("Child", DateTime.Now.AddDays(1), "DataBlob2");
+            // Define our cache dependency groupmembers
+            mgr.AssociateDependentKeysToParent(PARENTKEYNAME, new string[3] {"Key1","Key2","Key3"});
 
-            // Now clear the dependencies for the master
-            mgr.PerformActionForDependenciesAssociatedWithParent(PARENTKEY);
+            // Add items to cache with same keys as per dependency group
+            cache.Add("Key1", DateTime.Now.AddDays(1),"Data1");
+            cache.Add("Key2", DateTime.Now.AddDays(1), "Data2");
+            cache.Add("Key3", DateTime.Now.AddDays(1), "Data3");
 
-            // And finally check its existence
-            Assert.IsNull(cache.Get<string>("Child"));
-        }
+            // Assert that the group is defined
+            var groupEntry = mgr.GetDependentCacheKeysForParent(PARENTKEYNAME);
+            Assert.IsNotNull(groupEntry, "Did not get a parent entry");
+            Assert.AreEqual<int>(4, groupEntry.Count());
 
-        [TestMethod]
-        public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCache()
-        {
-            var cache = TestHelper.GetCacheFromConfig();
-            var mgr = TestHelper.GetDependencyManager();
-            // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            // Assert we have the items actually in the cache
+            Assert.IsNotNull(cache.Get<string>("Key1"));
+            Assert.AreEqual<string>("Data1", cache.Get<string>("Key1"));
+            Assert.IsNotNull(cache.Get<string>("Key2"));
+            Assert.AreEqual<string>("Data2", cache.Get<string>("Key2"));
+            Assert.IsNotNull(cache.Get<string>("Key3"));
+            Assert.AreEqual<string>("Data3", cache.Get<string>("Key3"));
 
-            // Associate a dependent cachekey
-            mgr.AssociateDependentKeysToParent(PARENTKEY,new string[3] { "Child1","Child2","Child3"});
+            //Now clear the dependencies
+            mgr.PerformActionForDependenciesAssociatedWithParent(PARENTKEYNAME);
 
-            // Addin the master item
-            cache.Add(PARENTKEY, DateTime.Now.AddDays(1), "DataBlob");
-            // Add in the dependent items
-            cache.Add("Child1", DateTime.Now.AddDays(1), "DataBlob2");
-            cache.Add("Child2", DateTime.Now.AddDays(1), "DataBlob3");
-            cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
-
-            // Now clear the dependencies for the master
-            mgr.PerformActionForDependenciesAssociatedWithParent(PARENTKEY);
-
-            // And finally check its existence
-            Assert.IsNull(cache.Get<string>("Child1"));
-            Assert.IsNull(cache.Get<string>("Child2"));
-            Assert.IsNull(cache.Get<string>("Child3"));
-        }
-        [TestMethod]
-        public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCacheUsingBatchAssociation()
-        {
-            var cache = TestHelper.GetCacheFromConfig();
-            var mgr = TestHelper.GetDependencyManager();
-            // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
-
-            // Associate a dependent cachekey
-            var dependencyList = new string[3] {"Child1", "Child2", "Child3"};
-            mgr.AssociateDependentKeysToParent(PARENTKEY, dependencyList);
-
-            // Addin the master item
-            cache.Add(PARENTKEY, DateTime.Now.AddDays(1), "DataBlob");
-            // Add in the dependent items
-            cache.Add("Child1", DateTime.Now.AddDays(1), "DataBlob2");
-            cache.Add("Child2", DateTime.Now.AddDays(1), "DataBlob3");
-            cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
-
-            // Now clear the dependencies for the master
-            mgr.PerformActionForDependenciesAssociatedWithParent(PARENTKEY);
-
-            // And finally check its existence
-            Assert.IsNull(cache.Get<string>("Child1"));
-            Assert.IsNull(cache.Get<string>("Child2"));
-            Assert.IsNull(cache.Get<string>("Child3"));
+            // All items in group should be cleared from cache
+            Assert.IsNull(cache.Get<string>("Key1"));
+            Assert.IsNull(cache.Get<string>("Key2"));
+            Assert.IsNull(cache.Get<string>("Key3"));
         }
     }
 }
