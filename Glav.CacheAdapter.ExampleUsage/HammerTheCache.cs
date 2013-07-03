@@ -15,14 +15,15 @@ namespace Glav.CacheAdapter.ExampleUsage
 	/// </summary>
 	public static class HammerTheCache
 	{
-		private const int NUMBER_THREADS = 1000;
-		private const int NUMBER_OPERATIONS_PER_TASK = 300;
-		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(2);
-
+		private const int NUMBER_THREADS = 5;
+		private const int NUMBER_OPERATIONS_PER_TASK = 100;
+		private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromMinutes(1);
+	    private static readonly CacheConfig _config = new CacheConfig();
 		public static void StartHammering()
 		{
 			Console.WriteLine();
 			Console.WriteLine("About to perform a simple stress test on the cache.");
+		    Console.WriteLine("Cache Dependencies enabled:{0}", _config.IsCacheDependencyManagementEnabled);
 			Console.WriteLine("Press any key to start.");
 			Console.WriteLine(new string('*',40));
 			Console.ReadKey();
@@ -70,28 +71,33 @@ namespace Glav.CacheAdapter.ExampleUsage
 
 				for (int tCnt = 0; tCnt < NUMBER_THREADS; tCnt++)
 				{
+				    var seed = tCnt;
 					var threadStart = new ThreadStart(() =>
-					                                  	{
-					                                  		var dataToCache = GetDataToCache(tCnt);
+					                                      {
+					                                          var key = string.Format("Key-{0}", currentIterationCount*seed);
 
 															var timer = new Stopwatch();
 															timer.Start();
-					                                  		var testData = AppServices.Cache.Get<MoreDummyData>(dataToCache.Stuff, DateTime.Now.AddMinutes(1), () =>
-					                                  		                                                                                                   	{
-					                                  		                                                                                                   		return dataToCache;
-					                                  		                                                                                                   	});
-															timer.Stop();
-															if (timer.ElapsedMilliseconds > longestTime) { longestTime = timer.ElapsedMilliseconds; }
-															if (timer.ElapsedMilliseconds < shortestTime) { shortestTime = timer.ElapsedMilliseconds; }
-															total += timer.ElapsedMilliseconds;
-															numTimes++;
+                                                              // get the data, which then also adds it
+					                                  		var testData = AppServices.Cache.Get<MoreDummyData>(key, DateTime.Now.AddMinutes(10), () =>
+					                                  		                                                                            {
+                                                                                                                                            return GetDataToCache(seed);
+					                                  		                                                                            });
 
 															if (testData == null)
 					                                  		{
 					                                  			Console.WriteLine("Received NULL for cache retrieval");
 					                                  		}
 
-					                                  	});
+                                                              // Now Clear it
+					                                          AppServices.Cache.InvalidateCacheItem(key);
+
+                                                            timer.Stop();
+                                                            if (timer.ElapsedMilliseconds > longestTime) { longestTime = timer.ElapsedMilliseconds; }
+                                                            if (timer.ElapsedMilliseconds < shortestTime) { shortestTime = timer.ElapsedMilliseconds; }
+                                                            total += timer.ElapsedMilliseconds;
+                                                            numTimes++;
+                                                          });
 					var cacheThread = new Thread(threadStart);
 					storeTasks.Add(cacheThread);
 				}

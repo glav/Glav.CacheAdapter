@@ -72,18 +72,9 @@ namespace Glav.CacheAdapter {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsCacheKeyDependenciesEnabled {
+        public bool IsCacheDependencyManagementEnabled {
             get {
-                return ((bool)(this["IsCacheKeyDependenciesEnabled"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsCacheGroupDependenciesEnabled {
-            get {
-                return ((bool)(this["IsCacheGroupDependenciesEnabled"]));
+                return ((bool)(this["IsCacheDependencyManagementEnabled"]));
             }
         }
         
