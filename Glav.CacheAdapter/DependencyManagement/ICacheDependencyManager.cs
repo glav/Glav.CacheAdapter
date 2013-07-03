@@ -14,13 +14,13 @@ namespace Glav.CacheAdapter.DependencyManagement
         /// </summary>
         /// <param name="parentKey"></param>
         /// <param name="actionToPerform"></param>
-        void RegisterParentItem(string parentKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
+        void RegisterParentDependencyDefinition(string parentKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         /// <summary>
         /// Remove a parent key definition and means no dependency actions are
         /// fired when the parent key is invalidated
         /// </summary>
         /// <param name="parentKey"></param>
-        void RemoveParentItem(string parentKey);
+        void RemoveParentDependencyDefinition(string parentKey);
         /// <summary>
         /// Associates a series of child or dependent keys to a parent key
         /// </summary>
@@ -30,17 +30,12 @@ namespace Glav.CacheAdapter.DependencyManagement
         void AssociateDependentKeysToParent(string parentKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
         /// <summary>
         /// Retrieves the list of dependent keys for a parent key. If no parent
-        /// key exists, oneis created an a new list is returned
+        /// key exists, oneis created an a new list is returned.Can optionally also return
+        /// the parent node definition as part of the list
         /// </summary>
         /// <param name="parentKey"></param>
         /// <returns></returns>
-        IEnumerable<DependencyItem> GetDependentCacheKeysForParent(string parentKey);
-        /// <summary>
-        /// Clears the list of child or dependent items in the list for a parent
-        /// key but does not remove the parent key itself
-        /// </summary>
-        /// <param name="parentKey"></param>
-        void ClearDependencyListForParent(string parentKey);
+        IEnumerable<DependencyItem> GetDependentCacheKeysForParent(string parentKey, bool includeParentNode = false);
         
         string Name { get;  }
         /// <summary>

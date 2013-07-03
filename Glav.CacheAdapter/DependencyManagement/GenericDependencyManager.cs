@@ -39,7 +39,7 @@ namespace Glav.CacheAdapter.DependencyManagement
         {
             _logger.WriteInfoMessage(string.Format("Associating list of cache keys to parent key:[{0}]", parentKey));
 
-            var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
+            var cacheKeyForDependency = GetParentItemCacheKey(parentKey);
             var currentEntry = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
             var tempList = new List<DependencyItem>();
             if (currentEntry != null && currentEntry.Length > 0)
@@ -47,6 +47,10 @@ namespace Glav.CacheAdapter.DependencyManagement
                 _logger.WriteInfoMessage(string.Format("Creating new associated dependency list for parent key:[{0}]", parentKey));
 
                 tempList.AddRange(currentEntry);
+            } else
+            {
+                RegisterParentDependencyDefinition(parentKey, actionToPerform);
+                tempList.AddRange(_cache.Get<DependencyItem[]>(cacheKeyForDependency));
             }
 
             var keysList = new List<string>(dependentCacheKeys);
@@ -61,47 +65,57 @@ namespace Glav.CacheAdapter.DependencyManagement
             _cache.Add(cacheKeyForDependency, GetMaxAge(), tempList.ToArray());
         }
 
-        public virtual IEnumerable<DependencyItem> GetDependentCacheKeysForParent(string parentKey)
+        public virtual IEnumerable<DependencyItem> GetDependentCacheKeysForParent(string parentKey, bool includeParentNode = false)
         {
             _logger.WriteInfoMessage(string.Format("Retrieving associated cache key dependency list parent key:[{0}]", parentKey));
 
-            var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
+            var cacheKeyForDependency = GetParentItemCacheKey(parentKey);
             var keyList = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
             if (keyList == null)
             {
-                RegisterParentItem(parentKey);
+                RegisterParentDependencyDefinition(parentKey);
+                return FilterDependencyListForParentNode(_cache.Get<DependencyItem[]>(cacheKeyForDependency),includeParentNode);
             }
-            return _cache.Get<DependencyItem[]>(cacheKeyForDependency);
+
+            return FilterDependencyListForParentNode(keyList,includeParentNode);
         }
 
-        public virtual void ClearDependencyListForParent(string parentKey)
+        private DependencyItem[] FilterDependencyListForParentNode(DependencyItem[] dependencyList, bool includeParentNode)
         {
-            _logger.WriteInfoMessage(string.Format("Clearing associated dependency list for parent key:[{0}]", parentKey));
+            var depList = new List<DependencyItem>();
+            if (dependencyList != null)
+            {
+                depList.AddRange(dependencyList);
+            }
 
-            var cacheKeyForDependency = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
-            _cache.InvalidateCacheItem(cacheKeyForDependency);
+            if (!includeParentNode)
+            {
+                var item = depList.FirstOrDefault(d => d.IsParentNode);
+                if (item != null)
+                {
+                    depList.Remove(item);
+                }
+            }
+            return depList.ToArray();
         }
 
-        public void RegisterParentItem(string parentKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
+        public void RegisterParentDependencyDefinition(string parentKey, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
             _logger.WriteInfoMessage(string.Format("Registering parent item:[{0}]", parentKey));
 
-            var cacheKeyForPrefix = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
-            if (_cache.Get<DependencyItem[]>(cacheKeyForPrefix) == null)
-            {
-                var item = new DependencyItem { CacheKey = parentKey, Action = actionToPerform };
-                var depList = new DependencyItem[] { item };
-                _cache.InvalidateCacheItem(cacheKeyForPrefix);
-                _cache.Add(cacheKeyForPrefix, GetMaxAge(), depList);
-            }
+            var cacheKeyForParent = GetParentItemCacheKey(parentKey);
+            var item = new DependencyItem { CacheKey = parentKey, Action = actionToPerform, IsParentNode = true };
+            var depList = new DependencyItem[] { item };
+            _cache.InvalidateCacheItem(cacheKeyForParent);
+            _cache.Add(cacheKeyForParent, GetMaxAge(), depList);
         }
 
 
-        public virtual void RemoveParentItem(string parentKey)
+        public virtual void RemoveParentDependencyDefinition(string parentKey)
         {
             _logger.WriteInfoMessage(string.Format("Removing parent key:[{0}]", parentKey));
 
-            var cacheKeyForParent = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
+            var cacheKeyForParent = GetParentItemCacheKey(parentKey);
             _cache.InvalidateCacheItem(cacheKeyForParent);
         }
 
@@ -186,6 +200,13 @@ namespace Glav.CacheAdapter.DependencyManagement
         {
             _logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction.ToString(), parentKey));
             ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, forcedAction);
+        }
+
+        private string GetParentItemCacheKey(string parentKey)
+        {
+            var cacheKeyForParent = string.Format("{0}{1}{2}", CacheKeyPrefix, CacheDependencyEntryPrefix, parentKey);
+            return cacheKeyForParent;
+
         }
     }
 }

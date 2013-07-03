@@ -16,7 +16,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             mgr.AssociateDependentKeysToParent(PARENTKEY, new string[1] { "Child"});
 
@@ -31,7 +31,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             var dependenciesToAdd = new List<string>();
             dependenciesToAdd.Add("Child1");
@@ -53,7 +53,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             var dependenciesToAdd = new List<string>();
             dependenciesToAdd.Add("Child1");
@@ -85,7 +85,7 @@ namespace Glav.CacheAdapter.Tests
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             // Associate a dependent cachekey
             mgr.AssociateDependentKeysToParent(PARENTKEY, new string[1] { "Child"});
@@ -108,7 +108,7 @@ namespace Glav.CacheAdapter.Tests
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             // Associate a dependent cachekey
             mgr.AssociateDependentKeysToParent(PARENTKEY,new string[3] { "Child1","Child2","Child3"});
@@ -128,13 +128,14 @@ namespace Glav.CacheAdapter.Tests
             Assert.IsNull(cache.Get<string>("Child2"));
             Assert.IsNull(cache.Get<string>("Child3"));
         }
+
         [TestMethod]
         public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCacheUsingBatchAssociation()
         {
             var cache = TestHelper.GetCacheFromConfig();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
-            mgr.ClearDependencyListForParent(PARENTKEY);
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
 
             // Associate a dependent cachekey
             var dependencyList = new string[3] {"Child1", "Child2", "Child3"};
