@@ -143,6 +143,11 @@ namespace Glav.CacheAdapter.DependencyManagement
             {
                 foreach (var item in items)
                 {
+                    // Dont allow recursion
+                    if (item.CacheKey == parentKey)
+                    {
+                        continue;
+                    }
                     var cacheItemAction = item.Action;
                     if (forcedAction.HasValue)
                     {
@@ -152,6 +157,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                     {
                         case CacheDependencyAction.ClearDependentItems:
                             _cache.InvalidateCacheItem(item.CacheKey);
+                            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey);
                             break;
                         default:
                             throw new NotSupportedException(string.Format("Action [{0}] not supported at this time",cacheItemAction));

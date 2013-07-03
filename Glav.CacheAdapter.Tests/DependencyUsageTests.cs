@@ -8,7 +8,7 @@ using System.Linq;
 namespace Glav.CacheAdapter.Tests
 {
     [TestClass]
-    public class DependencyKeyUsageTests
+    public class DependencyUsageTests
     {
         private const string PARENTKEY = "TestParentKey";
         [TestMethod]
@@ -155,6 +155,57 @@ namespace Glav.CacheAdapter.Tests
             Assert.IsNull(cache.Get<string>("Child1"));
             Assert.IsNull(cache.Get<string>("Child2"));
             Assert.IsNull(cache.Get<string>("Child3"));
+        }
+
+        [TestMethod]
+        public void ShouldClearNestedDependenciesFromCacheAsWellAsImmediateDependencies()
+        {
+            var cache = TestHelper.GetCacheFromConfig();
+            var mgr = TestHelper.GetDependencyManager();
+            // Make sure we start out with nothing
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
+
+            // Associate a dependent cachekey
+            var dependencyList = new string[3] { "Child1", "Child2", "Child3" };
+            mgr.AssociateDependentKeysToParent(PARENTKEY, dependencyList);
+
+            // We have PARENTKEY as a parent, but also defined Child1 as the parent of these keys
+            var nestedDependencyList1 = new string[3] { "Child1-Child1", "Child1-Child2", "Child1-Child3" };
+            mgr.AssociateDependentKeysToParent("Child1", nestedDependencyList1);
+
+            // We have PARENTKEY as a parent, but also defined Child2 as the parent of these keys
+            var nestedDependencyList2 = new string[3] { "Child2-Child1", "Child2-Child2", "Child2-Child3" };
+            mgr.AssociateDependentKeysToParent("Child2", nestedDependencyList2);
+
+            // Addin the master item
+            cache.Add(PARENTKEY, DateTime.Now.AddDays(1), "DataBlob");
+            
+            // Add in the dependent items
+            cache.Add("Child1", DateTime.Now.AddDays(1), "DataBlob2");
+            cache.Add("Child2", DateTime.Now.AddDays(1), "DataBlob3");
+            cache.Add("Child3", DateTime.Now.AddDays(1), "DataBlob4");
+
+            // Add in the dependent items of the children
+            cache.Add("Child1-Child1", DateTime.Now.AddDays(1), "DataBlob1-1");
+            cache.Add("Child1-Child2", DateTime.Now.AddDays(1), "DataBlob1-2");
+            cache.Add("Child1-Child3", DateTime.Now.AddDays(1), "DataBlob1-3");
+            cache.Add("Child2-Child1", DateTime.Now.AddDays(1), "DataBlob2-1");
+            cache.Add("Child2-Child2", DateTime.Now.AddDays(1), "DataBlob2-2");
+            cache.Add("Child2-Child3", DateTime.Now.AddDays(1), "DataBlob2-3");
+
+            // Now clear the dependencies for the master
+            mgr.PerformActionForDependenciesAssociatedWithParent(PARENTKEY);
+
+            // And finally check for the dependencies existence
+            Assert.IsNull(cache.Get<string>("Child1"));
+            Assert.IsNull(cache.Get<string>("Child2"));
+            Assert.IsNull(cache.Get<string>("Child3"));
+            Assert.IsNull(cache.Get<string>("Child1-Child1"));
+            Assert.IsNull(cache.Get<string>("Child1-Child2"));
+            Assert.IsNull(cache.Get<string>("Child1-Child3"));
+            Assert.IsNull(cache.Get<string>("Child2-Child1"));
+            Assert.IsNull(cache.Get<string>("Child2-Child2"));
+            Assert.IsNull(cache.Get<string>("Child2-Child3"));
         }
     }
 }
