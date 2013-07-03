@@ -17,10 +17,7 @@
     <Setting Name="IsCacheEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="IsCacheKeyDependenciesEnabled" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="IsCacheGroupDependenciesEnabled" Type="System.Boolean" Scope="Application">
+    <Setting Name="IsCacheDependencyManagementEnabled" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DependencyManagerToUse" Type="System.String" Scope="Application">

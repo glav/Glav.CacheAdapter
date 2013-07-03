@@ -11,15 +11,15 @@ namespace Glav.CacheAdapter.Tests
     public class CacheProviderDependencyManagementTests
     {
         [TestMethod]
-        public void ShouldImplicitlyAddAssociatedDependentKeysToDependencyListForMasterCacheKeyAndClearThem()
+        public void ShouldImplicitlyAddAssociatedDependentKeysToDependencyListForParentKeyAndClearThem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
             var cache = TestHelper.GetCacheFromConfig();
 
             // Add items to cache that are dependent upon a master key
-            cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1),() => "ChildData1", null, "MasterKey");
-            cacheProvider.Get<string>("ChildKey2", DateTime.Now.AddDays(1), () => "ChildData2", null, "MasterKey");
-            cacheProvider.Get<string>("ChildKey3", DateTime.Now.AddDays(1), () => "ChildData3", null, "MasterKey");
+            cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1),() => "ChildData1", "MasterKey");
+            cacheProvider.Get<string>("ChildKey2", DateTime.Now.AddDays(1), () => "ChildData2", "MasterKey");
+            cacheProvider.Get<string>("ChildKey3", DateTime.Now.AddDays(1), () => "ChildData3", "MasterKey");
 
             // Assert the child items exist in the cache
             Assert.AreEqual<string>("ChildData1", cache.Get<string>("ChildKey1"));
@@ -37,15 +37,15 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
-        public void ShouldAddCacheItemsToDependencyGroupAndClearThem()
+        public void ShouldAddCacheItemsToParentGroupAndClearThem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
             var cache = TestHelper.GetCacheFromConfig();
 
             // Add items to cache that are dependent upon a master key
-            cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1), () => "ChildData1", "Group1", null);
-            cacheProvider.Get<string>("ChildKey2", DateTime.Now.AddDays(1), () => "ChildData2", "Group2", null);
-            cacheProvider.Get<string>("ChildKey3", DateTime.Now.AddDays(1), () => "ChildData3", "Group1", null);
+            cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1), () => "ChildData1", "Group1");
+            cacheProvider.Get<string>("ChildKey2", DateTime.Now.AddDays(1), () => "ChildData2", "Group2");
+            cacheProvider.Get<string>("ChildKey3", DateTime.Now.AddDays(1), () => "ChildData3", "Group1");
 
             // Assert the child items exist in the cache
             Assert.AreEqual<string>("ChildData1", cache.Get<string>("ChildKey1"));
@@ -53,7 +53,7 @@ namespace Glav.CacheAdapter.Tests
             Assert.AreEqual<string>("ChildData3", cache.Get<string>("ChildKey3"));
 
             // Invalidate the master cache key
-            cacheProvider.InvalidateDependenciesForGroup("Group1");
+            cacheProvider.InvalidateDependenciesForParent("Group1");
 
             // Assert that the dependent items have been removed from the cache
             Assert.IsNull(cache.Get<string>("ChildKey1"));

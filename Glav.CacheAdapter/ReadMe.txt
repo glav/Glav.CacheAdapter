@@ -121,7 +121,9 @@ Notes on Version 3.0
 ~~~~~~~~~~~~~~~~~~~~
 * Feature Addition: Rudimentary support of CacheDependencies
   Note: * Enabling this feature when using the default dependency support, incurs some performance 
-        hit due to more calls being made to the caching engine
+        hit due to more calls being made to the caching engine. This can result in a more "chatty"
+		interface to the cache engine,and higher cache usage, therefore more memory and connections 
+		to the cache.
 		* This feature (and all advanced features) are only available when using the CacheProvider
 		  interface implementation. This is by design. The ICache abstraction is a raw abstraction over
 		  the basic cache engine.
@@ -129,13 +131,13 @@ Notes on Version 3.0
   later introduce cache dependency managers which utilise specific features of the cache engine to maximise performance.
 
   2 Forms of cache dependencies are initially supported.
-  1. Associated Cache depndency items
+  1. Associated Cache dependency items
   2. Cache groups
 
 * Modifying configuration to support storing values in AppSettings section using "Cache." as keyprefix
   This means you can use the same named config settings in <appSettings> section(or in a separate
   appSettings file) as long as you prefix the appSetting with 'Cache.'
-  For example, the main config section has:
+  For example, normally the main config section has:
     <Glav.CacheAdapter.MainConfig>
       <setting name="CacheToUse" serializeAs="String">
         <value>memcached</value>
@@ -145,5 +147,6 @@ Notes on Version 3.0
     <appSettings>
       <add key="Cache.CacheToUse" value="memory"/>
 	</appSettings>
-
+  In other words, you no longer need a <Glav.CacheAdapter.MainConfig> section. You can
+  use the <appSettings> section only if you choose.
 

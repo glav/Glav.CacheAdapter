@@ -12,24 +12,19 @@ namespace Glav.CacheAdapter.Core
     /// </summary>
     public interface ICacheProvider
     {
-        T Get<T>(string cacheKey, DateTime absoluteExpiryDate, Func<T> getData, 
-                    string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class;
-		T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData,
-                    string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class;
-		T Get<T>(DateTime absoluteExpiryDate, Func<T> getData,
-                    string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class;
-		T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,
-                    string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class;
-		void InvalidateCacheItem(string cacheKey);
-    	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
-		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd, string dependencyGroupName=null, string masterCacheKeyToAssociateTo=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
+        T Get<T>(string cacheKey, DateTime absoluteExpiryDate, Func<T> getData, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class;
+		T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+        T Get<T>(DateTime absoluteExpiryDate, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+        T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+        void InvalidateCacheItem(string cacheKey);
+    	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
+		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
 		ICache InnerCache { get; }
 
         // Dependency Management API
         ICacheDependencyManager InnerDependencyManager { get;  }
         // Convenience methods for dependency management
-        void InvalidateDependenciesForGroup(string groupName);
-        void InvalidateDependenciesForMasterCacheKey(string masterCacheKey);
+        void InvalidateDependenciesForParent(string parentKey);
     }
 }

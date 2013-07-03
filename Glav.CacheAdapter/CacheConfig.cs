@@ -30,24 +30,17 @@ namespace Glav.CacheAdapter
         private string _distributedCacheServers = null;
 	    public string DistributedCacheServers { get { return _distributedCacheServers; } set { _distributedCacheServers = value; }}
 
-	    bool _isCacheKeysDependenciesEnabled = false;
+	    bool _isCacheDependencyManagementEnabled = false;
         /// <summary>
-        /// Enables support of cache dependencies using master and child/associated cache keys
+        /// Enables support of cache dependencies using parent and child/associated cache keys
         /// </summary>
         /// <remarks>This can require extra calls to the cache engine and so can incur a
         /// performance degradation due to extra network cache calls</remarks>
-        public bool IsCacheKeysDependenciesEnabled { get { return _isCacheKeysDependenciesEnabled; } set { _isCacheKeysDependenciesEnabled = value; } }
+        public bool IsCacheDependencyManagementEnabled { get { return _isCacheDependencyManagementEnabled; } set { _isCacheDependencyManagementEnabled = value; } }
         
         private string _cacheSpecificData = null;
         public string CacheSpecificData { get { return _cacheSpecificData; } set { _cacheSpecificData=value; } }
         
-        private bool _isCacheGroupDependenciesEnabled = false;
-        /// <summary>
-        /// Enables support of cache dependencies using cache key prefix
-        /// </summary>
-        /// <remarks>This can require extra calls to the cache engine and so can incur a
-        /// performance degradation due to extra network cache calls</remarks>
-        public bool IsCacheGroupDependenciesEnabled { get { return _isCacheGroupDependenciesEnabled; } set { _isCacheGroupDependenciesEnabled = value; } }
        
         public CacheConfig()
         {
@@ -58,8 +51,7 @@ namespace Glav.CacheAdapter
         private void ApplySettingsFromDefaultConfig()
         {
             IsCacheEnabled = MainConfig.Default.IsCacheEnabled;
-            IsCacheKeysDependenciesEnabled = MainConfig.Default.IsCacheKeyDependenciesEnabled;
-            IsCacheGroupDependenciesEnabled = MainConfig.Default.IsCacheGroupDependenciesEnabled;
+            IsCacheDependencyManagementEnabled = MainConfig.Default.IsCacheDependencyManagementEnabled;
             CacheSpecificData = MainConfig.Default.CacheSpecificData;
             CacheToUse = !string.IsNullOrWhiteSpace(MainConfig.Default.CacheToUse) ? MainConfig.Default.CacheToUse.ToLowerInvariant() : string.Empty;
             DependencyManagerToUse = MainConfig.Default.DependencyManagerToUse;
@@ -74,8 +66,7 @@ namespace Glav.CacheAdapter
         private void OverrideSettingsWithAppSettingsIfPresent()
         {
             var cacheEnabledKey = string.Format("{0}IsCacheEnabled", AppSettingsKeyPrefix);
-            var isCacheKeysDependenciesKey = string.Format("{0}IsCacheKeysDependenciesEnabled",AppSettingsKeyPrefix);
-            var isCachePrefixDependenciesKey = string.Format("{0}IsCacheGroupDependenciesEnabled", AppSettingsKeyPrefix);
+            var isCacheDependencyManagementKey = string.Format("{0}IsCacheDependencyManagementEnabled",AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
             var dependencyMgrToUseKey = string.Format("{0}DependencyManagerToUse", AppSettingsKeyPrefix);
@@ -89,13 +80,9 @@ namespace Glav.CacheAdapter
             {
                 _isCacheEnabled = ConfigurationManager.AppSettings[cacheEnabledKey].ToBoolean();
             }
-            if (ConfigurationManager.AppSettings[isCacheKeysDependenciesKey].HasValue())
+            if (ConfigurationManager.AppSettings[isCacheDependencyManagementKey].HasValue())
             {
-                _isCacheKeysDependenciesEnabled = ConfigurationManager.AppSettings[isCacheKeysDependenciesKey].ToBoolean();
-            }
-            if (ConfigurationManager.AppSettings[isCachePrefixDependenciesKey].HasValue())
-            {
-                _isCacheGroupDependenciesEnabled = ConfigurationManager.AppSettings[isCachePrefixDependenciesKey].ToBoolean();
+                _isCacheDependencyManagementEnabled = ConfigurationManager.AppSettings[isCacheDependencyManagementKey].ToBoolean();
             }
             if (ConfigurationManager.AppSettings[cacheSpecificDataKey].HasValue())
             {
