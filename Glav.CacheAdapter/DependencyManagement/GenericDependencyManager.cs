@@ -131,11 +131,16 @@ namespace Glav.CacheAdapter.DependencyManagement
             ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey);
         }
 
-        private void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, CacheDependencyAction? forcedAction=null)
+        private void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, List<string> alreadyProcessedKeys = null, CacheDependencyAction? forcedAction=null)
         {
             if (!IsOkToActOnDependencyKeysForParent(parentKey))
             {
                 return;
+            }
+
+            if (alreadyProcessedKeys == null)
+            {
+                alreadyProcessedKeys = new List<string>();
             }
 
             var items = GetDependentCacheKeysForParent(parentKey);
@@ -145,6 +150,10 @@ namespace Glav.CacheAdapter.DependencyManagement
                 {
                     // Dont allow recursion
                     if (item.CacheKey == parentKey)
+                    {
+                        continue;
+                    }
+                    if (alreadyProcessedKeys.Contains(item.CacheKey))
                     {
                         continue;
                     }
@@ -159,11 +168,13 @@ namespace Glav.CacheAdapter.DependencyManagement
                             _cache.InvalidateCacheItem(item.CacheKey);
                             // Recursively clear any dependencies as this key itself might be a parent
                             // to other items
-                            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey);
                             break;
                         default:
                             throw new NotSupportedException(string.Format("Action [{0}] not supported at this time",cacheItemAction));
                     }
+                    alreadyProcessedKeys.Add(item.CacheKey);
+                    ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey,alreadyProcessedKeys);
+
                 }
             }
             
@@ -207,7 +218,7 @@ namespace Glav.CacheAdapter.DependencyManagement
         public virtual void ForceActionForDependenciesAssociatedWithParent(string parentKey, CacheDependencyAction forcedAction)
         {
             _logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction.ToString(), parentKey));
-            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, forcedAction);
+            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, null,forcedAction);
         }
 
         private string GetParentItemCacheKey(string parentKey)
