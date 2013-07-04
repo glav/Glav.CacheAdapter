@@ -207,5 +207,65 @@ namespace Glav.CacheAdapter.Tests
             Assert.IsNull(cache.Get<string>("Child2-Child2"));
             Assert.IsNull(cache.Get<string>("Child2-Child3"));
         }
+
+        [TestMethod]
+        public void ShouldNotCrashWhenCircularDependenciesAreEncountered()
+        {
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var mgr = TestHelper.GetDependencyManager();
+            // Make sure we start out with nothing
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
+
+            // Associate a series of child dependent cachekeys to a parent
+            var dependencyList = new string[3] { "Child1", "Child2", "Child3" };
+            mgr.AssociateDependentKeysToParent(PARENTKEY, dependencyList);
+
+            // Associate some child cache keys to one of the previous child keys - Child1
+            var dependencyList2 = new string[2] { "SubChild1","SubChild2" };
+            mgr.AssociateDependentKeysToParent("Child1", dependencyList2);
+
+            // Now associate one of the 2nd level child keys - SubChild1 
+            // as a parent of the original top level parent key tocreate a circular
+            //dependency loop. 
+            var dependencyList3 = new string[1] { PARENTKEY };
+            mgr.AssociateDependentKeysToParent("SubChild1", dependencyList3);
+
+            // All cache keys should be cleared but the recursion should not create
+            //an infinite loop and thus a stack overflow
+            cacheProvider.InvalidateCacheItem(PARENTKEY);
+        }
+
+        [TestMethod]
+        public void ShouldNotCreateInifniteLoopWhenCircularDependenciesAreEncounteredButStillClearCacheItems()
+        {
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+            var mgr = TestHelper.GetDependencyManager();
+            // Make sure we start out with nothing
+            mgr.RemoveParentDependencyDefinition(PARENTKEY);
+
+            // Associate parent key to its parent of "SubChild1" 
+            var parentData = cacheProvider.Get<String>(PARENTKEY, DateTime.Now.AddDays(1), () => "ParentBlob", "SubChild1");
+            // Associate child1 to its parent of parentkey
+            var child1Data = cacheProvider.Get<String>("Child1", DateTime.Now.AddDays(1), () => "Child1Blob", PARENTKEY);
+           // Associate "SubChild1" as a parent of child1
+            var subChildData = cacheProvider.Get<String>("SubChild1", DateTime.Now.AddDays(1), () => "SubChildBlob", "Child1");
+            // At this point we have the following heirarchy:
+            // SubChild1 -> PARENTKEY -> Child1 -> SubChild1 -> PARENTKEY -> Child1.... etc
+
+            // Make sure data is all in the cache
+            Assert.IsNotNull(cache.Get<string>(PARENTKEY));
+            Assert.IsNotNull(cache.Get<string>("Child1"));
+            Assert.IsNotNull(cache.Get<string>("SubChild1"));
+
+            // All cache keys should be cleared but the recursion should not create
+            //an infinite loop and thus a stack overflow
+            cacheProvider.InvalidateCacheItem(PARENTKEY);
+
+            // Ensure the data is removed from the cache
+            Assert.IsNull(cache.Get<string>(PARENTKEY));
+            Assert.IsNull(cache.Get<string>("Child1"));
+            Assert.IsNull(cache.Get<string>("SUbChild1"));
+        }
     }
 }
