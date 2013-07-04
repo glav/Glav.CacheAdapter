@@ -156,6 +156,11 @@ Notes on Version 3.0
 	// Invalidate the top level Parent, which clears all depenedent keys, included nested items
 	cacheProvider.InvalidateCacheItem("ParentKey");
 
+	Note: A Parent can have a child key(s) that are themselves parents of the top
+	level key causing recursion. This is fully supported by the code and no infinite loops
+	are created.All relevant cache keys are cleared/actioned as normal within the
+	collective set of dependent keys
+
 
 * Modifying configuration to support storing values in AppSettings section using "Cache." as keyprefix
   This means you can use the same named config settings in <appSettings> section(or in a separate
