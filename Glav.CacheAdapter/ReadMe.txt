@@ -119,6 +119,13 @@ Notes on Version 2.5.3
 
 Notes on Version 3.0
 ~~~~~~~~~~~~~~~~~~~~
+Summary of changes in version 3.0:
+1. New Feature: Addition of new Cache Dependency Feature to provide initial support to associate cache items to other cache
+   items so that when one is invalidated, all related items are automatically invalidated.
+2. Modification to configuration system to support storing configuration overrides for all settings in the
+   <appSettings> element in config.
+
+Details:
 * Feature Addition: Rudimentary support of CacheDependencies
   Note: * Enabling this feature when using the default dependency support, incurs some performance 
         hit due to more calls being made to the caching engine. This can result in a more "chatty"
