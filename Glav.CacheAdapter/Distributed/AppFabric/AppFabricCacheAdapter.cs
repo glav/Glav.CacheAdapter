@@ -7,6 +7,7 @@ using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Web;
+using System.Reflection;
 
 namespace Glav.CacheAdapter.Distributed.AppFabric
 {
@@ -15,13 +16,19 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         private DataCache _cache;
     	private ILogging _logger;
         private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
-
+        private string _regionName = null;
 
         public AppFabricCacheAdapter(ILogging logger)
         {
         	_logger = logger;
         	var factory = new AppFabricCacheFactory(_logger);
             _cache = factory.ConstructCache();
+            setRegionName();
+        }
+
+        private void setRegionName()
+        {
+            _regionName = Assembly.GetEntryAssembly().FullName;
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)
@@ -29,7 +36,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             if (expiry > DateTime.Now && dataToAdd != null)
             {
 				TimeSpan timeout = expiry - DateTime.Now;
-                _cache.Put(cacheKey, dataToAdd, timeout);
+                _cache.Put(cacheKey, dataToAdd, timeout,_regionName);
 				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, expiry date {1}", cacheKey, expiry.ToString("yyyy/MM/dd hh:mm:ss")));
             }
         }
@@ -43,13 +50,13 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 return requestCacheData;
             }
 
-            T data = _cache.Get(cacheKey) as T;
+            T data = _cache.Get(cacheKey,_regionName) as T;
             return data;
         }
 
         public void InvalidateCacheItem(string cacheKey)
         {
-            _cache.Remove(cacheKey);
+            _cache.Remove(cacheKey,_regionName);
         }
 
 
@@ -58,7 +65,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 			if (dataToAdd != null)
 			{
 				_logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding window expiry in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
-				_cache.Put(cacheKey, dataToAdd, slidingExpiryWindow);
+				_cache.Put(cacheKey, dataToAdd, slidingExpiryWindow,_regionName);
 			}
 		}
 
@@ -72,5 +79,11 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 		{
 			get { return CacheSetting.AppFabric; }
 		}
-	}
+
+
+        public void ClearAll()
+        {
+            _cache.ClearRegion(_regionName);
+        }
+    }
 }

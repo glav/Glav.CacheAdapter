@@ -158,5 +158,18 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			}
 			return cacheKey.Replace(" ", string.Empty).Replace("#","-");
 		}
-	}
+
+
+        public void ClearAll()
+        {
+            _logger.WriteInfoMessage("Clearing the cache");
+            try
+            {
+                _client.FlushAll();
+            } catch (Exception ex)
+            {
+                _logger.WriteErrorMessage("Error flushing the cache:" + ex.Message);
+            }
+        }
+    }
 }

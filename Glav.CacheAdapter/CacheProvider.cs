@@ -196,5 +196,11 @@ namespace Glav.CacheAdapter.Core
             }
             _cacheDependencyManager.ForceActionForDependenciesAssociatedWithParent(parentKey, CacheDependencyAction.ClearDependentItems);
         }
+
+
+        public void ClearAll()
+        {
+            _cache.ClearAll();
+        }
     }
 }

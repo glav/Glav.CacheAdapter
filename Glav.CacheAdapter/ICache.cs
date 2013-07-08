@@ -14,5 +14,6 @@ namespace Glav.CacheAdapter.Core
         void InvalidateCacheItem(string cacheKey);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
     	CacheSetting CacheType { get; }
+        void ClearAll();
     }
 }

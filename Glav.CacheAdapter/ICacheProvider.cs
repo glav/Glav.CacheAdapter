@@ -20,6 +20,7 @@ namespace Glav.CacheAdapter.Core
     	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
 		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
+        void ClearAll();  // pass through
 		ICache InnerCache { get; }
 
         // Dependency Management API
