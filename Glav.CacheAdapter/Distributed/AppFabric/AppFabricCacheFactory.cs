@@ -34,7 +34,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command
             	string cacheName;
-				// Prefer the new config mechanismover the explicit entry but still support it. So we
+				// Prefer the new config mechanism over the explicit entry but still support it. So we
 				// try and extract config from the ProviderSpecificValues first.
 				if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
 				{

@@ -91,6 +91,35 @@ namespace Glav.CacheAdapter.Tests
             Assert.AreEqual<string>("TestData", data);
         }
 
+        [TestMethod]
+        public void ShouldClearCache()
+        {
+            const int NumDataItems = 100;
+            var cache = TestHelper.GetCacheFromConfig();
+            var cacheProvider = TestHelper.GetCacheProvider();
+
+            // Add data to cache
+            for (var cnt = 0; cnt < NumDataItems; cnt++ )
+            {
+                cache.Add(string.Format("Key{0}", cnt), DateTime.Now.AddDays(1), string.Format("Data-{0}", cnt));
+            }
+
+            // Assert data is in cache
+            for (var cnt = 0; cnt < NumDataItems; cnt++)
+            {
+                Assert.IsNotNull(cache.Get<string>(string.Format("Key{0}", cnt)));
+            }
+
+            // Clear it
+            cacheProvider.ClearAll();
+
+            // Assert data is cleared from cache
+            for (var cnt = 0; cnt < NumDataItems; cnt++)
+            {
+                Assert.IsNull(cache.Get<string>(string.Format("Key{0}", cnt)));
+            }
+        }
+
         private string GetTestItemFromCache(ICacheProvider cacheProvider, string dataToReturnFromDelegate)
         {
             return cacheProvider.Get<string>(DateTime.Now.AddDays(1), () =>
