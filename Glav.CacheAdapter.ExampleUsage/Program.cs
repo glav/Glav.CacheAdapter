@@ -90,6 +90,8 @@ namespace Glav.CacheAdapter.ExampleUsage
             }
 
             Console.WriteLine("All dependencies worked as expected.");
+
+            cacheProvider.ClearAll();
         }
 
         private static void ExampleAddAndRetrieveFromCache()

@@ -117,6 +117,23 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 					DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.Transport,DataCacheProtectionLevel.None);
 					factoryConfig.SecurityProperties = securityProps;
 				}
+
+                // Set the channel open timeout if required - useful for debugging
+                string channelOpenTimeout = null;
+                if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_ChannelOpenTimeout))
+                {
+                    channelOpenTimeout = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ChannelOpenTimeout];
+                    int channelOpenTimeoutValue;
+                    if (int.TryParse(channelOpenTimeout,out channelOpenTimeoutValue))
+                    {
+                        factoryConfig.ChannelOpenTimeout = TimeSpan.FromSeconds(channelOpenTimeoutValue);
+                        Logger.WriteInfoMessage(string.Format("Setting AppFabric ChannelOpenTimeout to {0} seconds",channelOpenTimeoutValue));
+                    } else
+                    {
+                        Logger.WriteInfoMessage(string.Format("AppFabric ChannelOpenTimeout set to invalid value of [{0}]. Not setting",channelOpenTimeout));
+                    }
+                }
+
 			}
 		}
 
