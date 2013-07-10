@@ -124,6 +124,12 @@ Summary of changes in version 3.0:
    items so that when one is invalidated, all related items are automatically invalidated.
 2. Modification to configuration system to support storing configuration overrides for all settings in the
    <appSettings> element in config.
+3. New API Feature: Support for clearing the cache programmatically. You can now call the ClearAll API method to clear the entire contents
+   of the cache programmatically.
+4. Support of ChannelOpenTimeout configuration value for Windows Azure and Appfabric caching (in seconds). This allows easier debugging when having
+   connection issues as sometimes the client can forcibly disconnect early and not get an valid exception. Setting this value to much higher
+   allows the client to wait longer for a valid error from the server. An example which sets the ChannelOpenTimeout to 2 minutes(120 seconds) is:
+   <add key="Cache.CacheSpecificData" value="UseSsl=false;ChannelOpenTimeout=120;SecurityMode=Message;MessageSecurityAuthorizationInfo={your_security_token}"/>
 
 Details:
 * Feature Addition: Rudimentary support of CacheDependencies

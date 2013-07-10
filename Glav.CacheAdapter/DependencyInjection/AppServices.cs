@@ -62,7 +62,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                                 _logger = new Logger();
                             }
 
-                            _logger.WriteErrorMessage(string.Format("Error initialising cache:{0}", ex.Message));
+                            _logger.WriteException(ex);
                             throw;
                         }
 					}
