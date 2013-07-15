@@ -92,6 +92,18 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 				Logger.WriteInfoMessage(string.Format("AppFabric Use Ssl: [{0}]",useSslValue));
 			}
 
+            int maxConnectionsToServer;
+            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_MaxConnectionsToServer))
+            {
+                if (int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_MaxConnectionsToServer],out maxConnectionsToServer))
+                {
+                    factoryConfig.MaxConnectionsToServer = maxConnectionsToServer;
+                    Logger.WriteInfoMessage(string.Format("AppFabric MaxConnectionsToServer: [{0}]", maxConnectionsToServer));
+                }
+                
+            }
+
+
 			var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
 			var normalisedSslValue = string.IsNullOrWhiteSpace(useSslValue) ? string.Empty : useSslValue.ToLowerInvariant();
 			if (!string.IsNullOrWhiteSpace(securityAuthValue))

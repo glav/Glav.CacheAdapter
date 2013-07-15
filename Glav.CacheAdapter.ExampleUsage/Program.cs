@@ -103,7 +103,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             // the item is automatically added to the cache and returned.
 
             Console.WriteLine("Getting Some Data.");
-            var data1 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(3), () =>
+            var data1 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(5), () =>
             {
                 // This is the anonymous function which gets called if the data is not in the cache.
                 // This method is executed and whatever is returned, is added to the cache with the
@@ -144,7 +144,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             // is not found in the cache, so once again the anonymous function is executed, whatever is returned is
             // added to the cache, and then returned to the caller.
 
-            System.Threading.Thread.Sleep(4000);
+            System.Threading.Thread.Sleep(5000);
             Console.WriteLine("Getting Some More Data which should not be cached.");
             var data3 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(5), () =>
             {

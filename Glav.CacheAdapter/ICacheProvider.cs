@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.DependencyManagement;
+using Glav.CacheAdapter.Features;
 
 namespace Glav.CacheAdapter.Core
 {
@@ -27,5 +28,7 @@ namespace Glav.CacheAdapter.Core
         ICacheDependencyManager InnerDependencyManager { get;  }
         // Convenience methods for dependency management
         void InvalidateDependenciesForParent(string parentKey);
+
+        ICacheFeatureSupport FeatureSupport { get;  }
     }
 }

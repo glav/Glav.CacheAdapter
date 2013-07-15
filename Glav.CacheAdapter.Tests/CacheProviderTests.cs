@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Glav.CacheAdapter.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Glav.CacheAdapter.Bootstrap;
+using Glav.CacheAdapter.Features;
 
 namespace Glav.CacheAdapter.Tests
 {
@@ -94,6 +96,8 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearCache()
         {
+            var cacheConfig = new CacheConfig();
+
             const int NumDataItems = 100;
             var cache = TestHelper.GetCacheFromConfig();
             var cacheProvider = TestHelper.GetCacheProvider();
@@ -110,13 +114,19 @@ namespace Glav.CacheAdapter.Tests
                 Assert.IsNotNull(cache.Get<string>(string.Format("Key{0}", cnt)));
             }
 
-            // Clear it
-            cacheProvider.ClearAll();
-
-            // Assert data is cleared from cache
-            for (var cnt = 0; cnt < NumDataItems; cnt++)
+            if (cacheProvider.FeatureSupport.SupportsClearingCacheContents())
             {
-                Assert.IsNull(cache.Get<string>(string.Format("Key{0}", cnt)));
+                // Clear it
+                cacheProvider.ClearAll();
+
+                // Assert data is cleared from cache
+                for (var cnt = 0; cnt < NumDataItems; cnt++)
+                {
+                    Assert.IsNull(cache.Get<string>(string.Format("Key{0}", cnt)));
+                }
+            } else
+            {
+                Assert.Inconclusive("Cache does not support cleating contents.");
             }
         }
 

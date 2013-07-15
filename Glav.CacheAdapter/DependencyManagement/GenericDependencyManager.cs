@@ -50,7 +50,11 @@ namespace Glav.CacheAdapter.DependencyManagement
             } else
             {
                 RegisterParentDependencyDefinition(parentKey, actionToPerform);
-                tempList.AddRange(_cache.Get<DependencyItem[]>(cacheKeyForDependency));
+                var items = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
+                if (items != null)
+                {
+                    tempList.AddRange(items);
+                }
             }
 
             var keysList = new List<string>(dependentCacheKeys);

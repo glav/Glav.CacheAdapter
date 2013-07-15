@@ -21,6 +21,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         {
             _logger = logger;
             var factory = new AppFabricCacheFactory(_logger);
+
             _cache = factory.ConstructCache();
         }
 
@@ -76,10 +77,21 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
         public void ClearAll()
         {
-            foreach (string regionName in _cache.GetSystemRegions())
+            try
             {
-                _cache.ClearRegion(regionName);
-            } 
+                // if in Azure, currently this throws an exception and therefore clear the cache is
+                // not available currently in Azure.
+                var regions = _cache.GetSystemRegions();
+                foreach (string regionName in regions)
+                {
+                    _cache.ClearRegion(regionName);
+                } 
+                
+            } catch (Exception ex)
+            {
+                _logger.WriteException(ex);
+                _logger.WriteInfoMessage("Clearing the cache cannot be performed, not currently support by Windows Azure");
+            }
         }
     }
 }

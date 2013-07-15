@@ -15,26 +15,34 @@ namespace Glav.CacheAdapter.Tests
     public static class TestHelper
     {
         private static CacheConfig _config = new CacheConfig();
+        private static ICache _cache = null;
 
         public static ICache GetCacheFromConfig()
         {
+            if (_cache != null)
+            {
+                return _cache;
+            }
             switch (_config.CacheToUse)
             {
                 case CacheTypes.MemoryCache:
-                    return new MemoryCacheAdapter(new MockLogger());
+                    _cache = new MemoryCacheAdapter(new MockLogger());
                     break;
                 case CacheTypes.memcached:
-                    return new memcachedAdapter(new MockLogger());
+                    _cache = new memcachedAdapter(new MockLogger());
                     break;
                 case CacheTypes.WebCache:
-                    return new WebCacheAdapter(new MockLogger());
+                    _cache = new WebCacheAdapter(new MockLogger());
                     break;
                 case CacheTypes.AppFabricCache:
-                    return new AppFabricCacheAdapter(new MockLogger());
+                    _cache = new AppFabricCacheAdapter(new MockLogger());
                     break;
                 default:
-                    return new MemoryCacheAdapter(new MockLogger());
+                    _cache = new MemoryCacheAdapter(new MockLogger());
+                    break;
             }
+
+            return _cache;
         }
 
         public static ICacheDependencyManager GetDependencyManager()

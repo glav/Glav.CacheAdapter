@@ -126,10 +126,17 @@ Summary of changes in version 3.0:
    <appSettings> element in config.
 3. New API Feature: Support for clearing the cache programmatically. You can now call the ClearAll API method to clear the entire contents
    of the cache programmatically.
-4. Support of ChannelOpenTimeout configuration value for Windows Azure and Appfabric caching (in seconds). This allows easier debugging when having
-   connection issues as sometimes the client can forcibly disconnect early and not get an valid exception. Setting this value to much higher
-   allows the client to wait longer for a valid error from the server. An example which sets the ChannelOpenTimeout to 2 minutes(120 seconds) is:
+4. Support of ChannelOpenTimeout and MaxConnectionsToServer configuration value for Windows Azure and Appfabric caching (in seconds). 
+   The ChannelOpenTimeout value allows easier debugging when having connection issues as sometimes the client can forcibly disconnect 
+   early and not get an valid exception. Setting this value to much higher allows the client to wait longer for a valid error from the server.
+   An example which sets the ChannelOpenTimeout to 2 minutes(120 seconds) is:
    <add key="Cache.CacheSpecificData" value="UseSsl=false;ChannelOpenTimeout=120;SecurityMode=Message;MessageSecurityAuthorizationInfo={your_security_token}"/>
+   MaxConnectionsToServer allows fine tuning performance for the number of concurrent connections to the cache service. Currently, the
+   Azure client defaults to 1.
+5. Supports an ICacheFeatureSupport interface and base implementation. This is provided as a property on the
+   ICacheProvider allowing basic feature detection. Currently this only supports identifying if a cache can be cleared
+   but this will be expanded in the future.
+   eg. cacheProvider.FeatureSupport.SupportsClearingCacheContents()
 
 Details:
 * Feature Addition: Rudimentary support of CacheDependencies
