@@ -82,5 +82,15 @@ namespace Glav.CacheAdapter.Core
 		{
 			get { return CacheSetting.Memory; }
 		}
-	}
+
+
+        public void ClearAll()
+        {
+            _logger.WriteInfoMessage("Clearing the cache");
+            _cache.ToList().ForEach(i =>
+                                        {
+                                            _cache.Remove(i.Key);
+                                        });
+        }
+    }
 }

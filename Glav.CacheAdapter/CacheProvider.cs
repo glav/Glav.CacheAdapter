@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyManagement;
+using Glav.CacheAdapter.Features;
 
 namespace Glav.CacheAdapter.Core
 {
@@ -18,11 +19,13 @@ namespace Glav.CacheAdapter.Core
 		private readonly ILogging _logger;
 		private CacheConfig _config = new CacheConfig();
 	    private readonly ICacheDependencyManager _cacheDependencyManager;
+	    private ICacheFeatureSupport _featureSupport;
 
 		public CacheProvider(ICache cache, ILogging logger)
 		{
 			_cache = cache;
 			_logger = logger;
+		    _featureSupport = new CacheFeatureSupport(cache);
             if (_config.IsCacheDependencyManagementEnabled)
             {
                 // Dependencies are enabled but the default constructor was used (without
@@ -39,6 +42,7 @@ namespace Glav.CacheAdapter.Core
         {
             _cache = cache;
             _logger = logger;
+            _featureSupport = new CacheFeatureSupport(cache);
             if (_config.IsCacheDependencyManagementEnabled)
             {
                 _cacheDependencyManager = cacheDependencyManager;
@@ -49,6 +53,12 @@ namespace Glav.CacheAdapter.Core
                 _cacheDependencyManager = null;  // Dependency Management is disabled
                 _logger.WriteInfoMessage("CacheKey dependency management not enabled.");
             }
+        }
+
+        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager, ICacheFeatureSupport featureSupport) : this(cache,logger,cacheDependencyManager)
+        {
+            _featureSupport = featureSupport;
+            _featureSupport.Cache = cache;
         }
         
 
@@ -195,6 +205,18 @@ namespace Glav.CacheAdapter.Core
                 return;
             }
             _cacheDependencyManager.ForceActionForDependenciesAssociatedWithParent(parentKey, CacheDependencyAction.ClearDependentItems);
+        }
+
+
+        public void ClearAll()
+        {
+            _cache.ClearAll();
+        }
+
+
+        public Features.ICacheFeatureSupport FeatureSupport
+        {
+            get { return _featureSupport; }
         }
     }
 }

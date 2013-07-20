@@ -48,6 +48,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Workflow.Runtime" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -75,6 +76,8 @@
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />
+    <Compile Include="Features\CacheFeatureSupport.cs" />
+    <Compile Include="Features\ICacheFeatureSupport.cs" />
     <Compile Include="Helpers\ConversionExtensions.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="ICacheProvider.cs" />
