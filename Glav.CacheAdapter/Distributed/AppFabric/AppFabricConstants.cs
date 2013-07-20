@@ -12,6 +12,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 		public const string CONFIG_SecurityModeKey = "SecurityMode";
 		public const string CONFIG_SecurityMessageAuthorisationKey = "MessageSecurityAuthorizationInfo";
 		public const string CONFIG_UseSslKey = "UseSsl";
+	    public const string CONFIG_ChannelOpenTimeout = "ChannelOpenTimeout";
+	    public const string CONFIG_MaxConnectionsToServer = "MaxConnectionsToServer";
 
 		public const string CONFIG_SecurityMode_Message = "message";
 		public const string CONFIG_SecurityMode_None = "none";

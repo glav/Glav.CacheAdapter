@@ -50,9 +50,21 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 				{
 					if (!_isInitialised)
 					{
-						_isInitialised = true;
-						_cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger,_config.CacheToUse);
-						_cache = _cacheProvider.InnerCache;
+                        try
+                        {
+                            _isInitialised = true;
+                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger, _config.CacheToUse);
+                            _cache = _cacheProvider.InnerCache;
+                        } catch (Exception ex)
+                        {
+                            if (_logger == null)
+                            {
+                                _logger = new Logger();
+                            }
+
+                            _logger.WriteException(ex);
+                            throw;
+                        }
 					}
 				}
 			}

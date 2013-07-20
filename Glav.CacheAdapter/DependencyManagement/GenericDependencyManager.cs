@@ -47,10 +47,15 @@ namespace Glav.CacheAdapter.DependencyManagement
                 _logger.WriteInfoMessage(string.Format("Creating new associated dependency list for parent key:[{0}]", parentKey));
 
                 tempList.AddRange(currentEntry);
-            } else
+            }
+            else
             {
                 RegisterParentDependencyDefinition(parentKey, actionToPerform);
-                tempList.AddRange(_cache.Get<DependencyItem[]>(cacheKeyForDependency));
+                var items = _cache.Get<DependencyItem[]>(cacheKeyForDependency);
+                if (items != null)
+                {
+                    tempList.AddRange(items);
+                }
             }
 
             var keysList = new List<string>(dependentCacheKeys);
@@ -74,10 +79,10 @@ namespace Glav.CacheAdapter.DependencyManagement
             if (keyList == null)
             {
                 RegisterParentDependencyDefinition(parentKey);
-                return FilterDependencyListForParentNode(_cache.Get<DependencyItem[]>(cacheKeyForDependency),includeParentNode);
+                return FilterDependencyListForParentNode(_cache.Get<DependencyItem[]>(cacheKeyForDependency), includeParentNode);
             }
 
-            return FilterDependencyListForParentNode(keyList,includeParentNode);
+            return FilterDependencyListForParentNode(keyList, includeParentNode);
         }
 
         private DependencyItem[] FilterDependencyListForParentNode(DependencyItem[] dependencyList, bool includeParentNode)
@@ -131,7 +136,7 @@ namespace Glav.CacheAdapter.DependencyManagement
             ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey);
         }
 
-        private void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, List<string> alreadyProcessedKeys = null, CacheDependencyAction? forcedAction=null)
+        private void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, List<string> alreadyProcessedKeys = null, CacheDependencyAction? forcedAction = null)
         {
             if (!IsOkToActOnDependencyKeysForParent(parentKey))
             {
@@ -170,14 +175,14 @@ namespace Glav.CacheAdapter.DependencyManagement
                             // to other items
                             break;
                         default:
-                            throw new NotSupportedException(string.Format("Action [{0}] not supported at this time",cacheItemAction));
+                            throw new NotSupportedException(string.Format("Action [{0}] not supported at this time", cacheItemAction));
                     }
                     alreadyProcessedKeys.Add(item.CacheKey);
-                    ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey,alreadyProcessedKeys);
+                    ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey, alreadyProcessedKeys);
 
                 }
             }
-            
+
         }
 
         public virtual bool IsOkToActOnDependencyKeysForParent(string parentKey)
@@ -201,24 +206,14 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         private DateTime GetMaxAge()
         {
-            var usingMemcached = _cache is memcachedAdapter;
-            if (usingMemcached)
-            {
-                //Note: memcached has a 'bug' where if you store something >= 30 days, it doesn't work
-                //      so we use 29 days as the max.
-                return DateTime.Now.AddDays(29);
-            }
-            else
-            {
-                return DateTime.Now.AddYears(99);
-            }
+            return DateTime.Now.AddYears(99);
         }
 
 
         public virtual void ForceActionForDependenciesAssociatedWithParent(string parentKey, CacheDependencyAction forcedAction)
         {
             _logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction.ToString(), parentKey));
-            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, null,forcedAction);
+            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, null, forcedAction);
         }
 
         private string GetParentItemCacheKey(string parentKey)

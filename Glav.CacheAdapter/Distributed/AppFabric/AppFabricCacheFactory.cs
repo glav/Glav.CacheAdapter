@@ -34,7 +34,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
 				// Note: When setting up AppFabric. The configured cache needs to be created by the admin using the New-Cache powershell command
             	string cacheName;
-				// Prefer the new config mechanismover the explicit entry but still support it. So we
+				// Prefer the new config mechanism over the explicit entry but still support it. So we
 				// try and extract config from the ProviderSpecificValues first.
 				if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
 				{
@@ -92,6 +92,18 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 				Logger.WriteInfoMessage(string.Format("AppFabric Use Ssl: [{0}]",useSslValue));
 			}
 
+            int maxConnectionsToServer;
+            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_MaxConnectionsToServer))
+            {
+                if (int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_MaxConnectionsToServer],out maxConnectionsToServer))
+                {
+                    factoryConfig.MaxConnectionsToServer = maxConnectionsToServer;
+                    Logger.WriteInfoMessage(string.Format("AppFabric MaxConnectionsToServer: [{0}]", maxConnectionsToServer));
+                }
+                
+            }
+
+
 			var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
 			var normalisedSslValue = string.IsNullOrWhiteSpace(useSslValue) ? string.Empty : useSslValue.ToLowerInvariant();
 			if (!string.IsNullOrWhiteSpace(securityAuthValue))
@@ -117,6 +129,23 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 					DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.Transport,DataCacheProtectionLevel.None);
 					factoryConfig.SecurityProperties = securityProps;
 				}
+
+                // Set the channel open timeout if required - useful for debugging
+                string channelOpenTimeout = null;
+                if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_ChannelOpenTimeout))
+                {
+                    channelOpenTimeout = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ChannelOpenTimeout];
+                    int channelOpenTimeoutValue;
+                    if (int.TryParse(channelOpenTimeout,out channelOpenTimeoutValue))
+                    {
+                        factoryConfig.ChannelOpenTimeout = TimeSpan.FromSeconds(channelOpenTimeoutValue);
+                        Logger.WriteInfoMessage(string.Format("Setting AppFabric ChannelOpenTimeout to {0} seconds",channelOpenTimeoutValue));
+                    } else
+                    {
+                        Logger.WriteInfoMessage(string.Format("AppFabric ChannelOpenTimeout set to invalid value of [{0}]. Not setting",channelOpenTimeout));
+                    }
+                }
+
 			}
 		}
 
