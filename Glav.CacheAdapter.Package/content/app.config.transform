@@ -6,31 +6,16 @@
   </configSections>
   
   <appSettings>
-    <!-- Example Cache setting ovverrides via appSettings -->
-    <add key="Cache.CacheToUse" value="memory"/>
-    <add key="Cache.IsCacheEnabled" value="true"/>
-    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
-	
+<!-- Example Cache setting ovverrides via appSettings -->
+<add key="Cache.CacheToUse" value="memory"/>
+    
+<add key="Cache.IsCacheEnabled" value="true"/>
+    
+<add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+
 
     <!-- For memcached if used -->
-    <add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
-  </appSettings>
+<add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+      </appSettings>
 
-  <applicationSettings>
-    <Glav.CacheAdapter.MainConfig>
-      <setting name="CacheToUse" serializeAs="String">
-        <value>Memory</value>
-      </setting>
-      <setting name="DistributedCacheServers" serializeAs="String">
-        <value>localhost:22223</value>
-      </setting>
-      <setting name="DistributedCacheName" serializeAs="String">
-        <value>MyCache</value>
-      </setting>
-      <!--The data config below is specific to Azure AppFabric only at this time but can be used to supply data to any cache implementation-->
-      <setting name="CacheSpecificData" serializeAs="String">
-        <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-      </setting>
-    </Glav.CacheAdapter.MainConfig>
-  </applicationSettings>
-</configuration>
+  </configuration>
