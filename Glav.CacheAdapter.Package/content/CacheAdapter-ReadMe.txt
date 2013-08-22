@@ -198,3 +198,8 @@ Details:
   In other words, you no longer need a <Glav.CacheAdapter.MainConfig> section. You can
   use the <appSettings> section only if you choose.
 
+Notes on Version 3.0.1
+~~~~~~~~~~~~~~~~~~~~~~
+Minor bug fix when using appfabric and NOT including the CacheSpecificData section. Would throw an error as 
+default of this (if not present) contains an invalid example security key. Supply some CacheSpecificData would resolve
+this but this update fixes that.
