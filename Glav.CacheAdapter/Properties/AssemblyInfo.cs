@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Glav.CacheAdapter")]
-[assembly: AssemblyDescription(".Net Cache level abstraction supporting memory, web and AppFabric cache")]
+[assembly: AssemblyDescription(".Net Cache level abstraction supporting memory, web AppFabric and memcached cache")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Glav")]
 [assembly: AssemblyProduct("Glav.CacheAdapter")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.0.0")]
+[assembly: AssemblyVersion("3.0.1.0")]
+[assembly: AssemblyFileVersion("3.0.1.0")]
