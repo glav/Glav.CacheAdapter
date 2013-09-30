@@ -149,7 +149,9 @@ namespace Glav.CacheAdapter.DependencyManagement
             }
 
             var items = GetDependentCacheKeysForParent(parentKey);
-            if (items != null && items.Count() > 0)
+            var numItems = items != null ? items.Count() : 0;
+            _logger.WriteInfoMessage(string.Format("Number of dependencies found for master cache key [{0}] is: {1}",parentKey,numItems));
+            if (numItems > 0)
             {
                 foreach (var item in items)
                 {
@@ -170,6 +172,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                     switch (cacheItemAction)
                     {
                         case CacheDependencyAction.ClearDependentItems:
+                            _logger.WriteInfoMessage(string.Format("Clearing dependent item: [{0}]",item.CacheKey));
                             _cache.InvalidateCacheItem(item.CacheKey);
                             // Recursively clear any dependencies as this key itself might be a parent
                             // to other items
@@ -206,7 +209,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         private DateTime GetMaxAge()
         {
-            return DateTime.Now.AddYears(99);
+            // Note: Anything above 25 causes memcached to NOT store the item with an error.
+            return DateTime.Now.AddYears(10);
         }
 
 

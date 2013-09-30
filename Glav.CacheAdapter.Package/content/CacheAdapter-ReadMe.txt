@@ -203,3 +203,14 @@ Notes on Version 3.0.1
 Minor bug fix when using appfabric and NOT including the CacheSpecificData section. Would throw an error as 
 default of this (if not present) contains an invalid example security key. Supply some CacheSpecificData would resolve
 this but this update fixes that.
+
+Notes on Version 3.0.2
+~~~~~~~~~~~~~~~~~~~~~~
+Fixes to readme.txt and instructions
+
+Notes on Version 3.0.3
+~~~~~~~~~~~~~~~~~~~~~~
+* Minor bug fix to memcached dependency management. Would not store dependencies when trying to store master cache dependency list for longer than
+  25 years.
+
+
