@@ -1,0 +1,21 @@
+﻿<configuration>
+  <configSections>
+    <sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" >
+      <section name="Glav.CacheAdapter.MainConfig" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    </sectionGroup>
+  </configSections>
+  
+  <appSettings>
+<!-- Example Cache setting ovverrides via appSettings -->
+<add key="Cache.CacheToUse" value="memory"/>
+    
+<add key="Cache.IsCacheEnabled" value="true"/>
+    
+<add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+
+
+    <!-- For memcached if used -->
+<add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+      </appSettings>
+
+  </configuration>
