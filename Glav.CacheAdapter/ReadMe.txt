@@ -215,6 +215,6 @@ Notes on Version 3.0.3
 
 Notes on Version 3.1
 ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
-* Support for SecurityMode.None for AppAfabric caching
+* Support for SecurityMode.None for AppAfabric caching (Issue £20)
 
 
