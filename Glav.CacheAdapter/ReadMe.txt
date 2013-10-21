@@ -213,4 +213,8 @@ Notes on Version 3.0.3
 * Minor bug fix to memcached dependency management. Would not store dependencies when trying to store master cache dependency list for longer than
   25 years.
 
+Notes on Version 3.1
+¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+* Support for SecurityMode.None for AppAfabric caching
+
 
