@@ -48,8 +48,16 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 _logger.WriteInfoMessage(string.Format("AppFabric Use Ssl: [{0}]", useSslValue));
             }
 
+            string protectionLevelValue = null;
+            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_ProtectionLevelKey))
+            {
+                protectionLevelValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ProtectionLevelKey];
+                _logger.WriteInfoMessage(string.Format("AppFabric Protection Mode: [{0}]", protectionLevelValue));
+            }
+
             var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
             var normalisedSslValue = string.IsNullOrWhiteSpace(useSslValue) ? string.Empty : useSslValue.ToLowerInvariant();
+            var normalisedProtectionLevel = string.IsNullOrWhiteSpace(protectionLevelValue) ? string.Empty : useSslValue.ToLowerInvariant();
             if (!string.IsNullOrWhiteSpace(securityAuthValue))
             {
                 if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_Message)
@@ -68,19 +76,33 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     factoryConfig.SecurityProperties = securityProps;
                 }
 
+                var actualProtectionLevel = DataCacheProtectionLevel.None;
+                if (!string.IsNullOrWhiteSpace(normalisedProtectionLevel))
+                {
+                    if (normalisedProtectionLevel == AppFabricConstants.CONFIG_ProtectionLevel_Sign)
+                    {
+                        actualProtectionLevel = DataCacheProtectionLevel.Sign;
+                    } 
+                    else if (normalisedProtectionLevel == AppFabricConstants.CONFIG_ProtectionLevel_EncryptAndSign)
+                    {
+                        actualProtectionLevel = DataCacheProtectionLevel.EncryptAndSign;
+                    }
+                }
+
+                _logger.WriteInfoMessage(string.Format("AppFabric Protection Level:[{0}]", actualProtectionLevel));
+
                 if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_Transport)
                 {
-                    DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.Transport, DataCacheProtectionLevel.None);
+                    DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.Transport, actualProtectionLevel);
                     factoryConfig.SecurityProperties = securityProps;
                 }
 
                 if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_None)
                 {
-                    DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.None, DataCacheProtectionLevel.None);
+                    DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.None, actualProtectionLevel);
                     factoryConfig.SecurityProperties = securityProps;
                 }
             }
-
         }
 
         private void SetChannelOpenTimeout(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)

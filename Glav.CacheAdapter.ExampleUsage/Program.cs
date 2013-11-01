@@ -97,6 +97,7 @@ namespace Glav.CacheAdapter.ExampleUsage
         private static void ExampleAddAndRetrieveFromCache()
         {
             Console.WriteLine("*** Simple Add and Retrieve Examples\n");
+            //AppServices.PreStartInitialise();
         	var cacheProvider = AppServices.Cache;
 
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
