@@ -13,24 +13,24 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 {
     public static class AppServices
     {
-    	private static ICacheProvider _cacheProvider;
-    	private static ICache _cache;
-    	private static ILogging _logger;
-    	private static bool _isInitialised = false;
-		private static readonly object _lockRef = new object();
+        private static ICacheProvider _cacheProvider;
+        private static ICache _cache;
+        private static ILogging _logger;
+        private static bool _isInitialised = false;
+        private static readonly object _lockRef = new object();
         private static readonly CacheConfig _config = new CacheConfig();
 
-    	static AppServices()
-    	{
-    		PreStartInitialise();
-    	}
+        static AppServices()
+        {
+            Console.WriteLine("_isInitialised={0}", _isInitialised);
+        }
 
-		public static void SetLogger(ILogging logger)
-		{
-			_logger = logger;
-			_isInitialised = false;
-			PreStartInitialise();
-		}
+        public static void SetLogger(ILogging logger)
+        {
+            _logger = logger;
+            _isInitialised = false;
+            PreStartInitialise();
+        }
 
         /// <summary>
         /// Initialise the container with core dependencies. The cache/cache provider should be set to be
@@ -44,18 +44,19 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// </remarks>
         public static void PreStartInitialise()
         {
-			if (!_isInitialised)
-			{
-				lock (_lockRef)
-				{
-					if (!_isInitialised)
-					{
+            if (!_isInitialised)
+            {
+                lock (_lockRef)
+                {
+                    if (!_isInitialised)
+                    {
                         try
                         {
-                            _isInitialised = true;
                             _cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger, _config.CacheToUse);
                             _cache = _cacheProvider.InnerCache;
-                        } catch (Exception ex)
+                            _isInitialised = true;
+                        }
+                        catch (Exception ex)
                         {
                             if (_logger == null)
                             {
@@ -65,11 +66,18 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                             _logger.WriteException(ex);
                             throw;
                         }
-					}
-				}
-			}
+                    }
+                }
+            }
         }
 
-		public static ICacheProvider Cache { get { return _cacheProvider; } }
+        public static ICacheProvider Cache
+        {
+            get
+            {
+                PreStartInitialise();
+                return _cacheProvider;
+            }
+        }
     }
 }
