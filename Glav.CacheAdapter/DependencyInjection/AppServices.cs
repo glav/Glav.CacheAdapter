@@ -22,7 +22,6 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 
         static AppServices()
         {
-            Console.WriteLine("_isInitialised={0}", _isInitialised);
         }
 
         public static void SetLogger(ILogging logger)
