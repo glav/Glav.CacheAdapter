@@ -216,5 +216,11 @@ Notes on Version 3.0.3
 Notes on Version 3.1
 ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
 * Support for SecurityMode.None for AppAfabric caching (Issue £20)
+* Support for LocalCaching configuration values (Issue #21)
+  For local caching support, you can specify the following inthe cache specific data:
+  <add key="Cache.CacheSpecificData" value="LocalCache.IsEnabled=true;LocalCache.DefaultTimeout=300;LocalCache.ObjectCount;LocalCache.InvalidationPolicy={TimeoutBased|NotificationBased}"/>
+  Note: DefaultTimout value specifies amount of time in seconds.
+
+
 
 

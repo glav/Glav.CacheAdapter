@@ -21,6 +21,44 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             SetSecuritySettings(config, factoryConfig);
             SetMaxConnectionsToServer(config, factoryConfig);
             SetChannelOpenTimeout(config, factoryConfig);
+            SetLocalCacheConfiguration(config, factoryConfig);
+        }
+
+        private void SetLocalCacheConfiguration(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
+        {
+            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_IsEnabled))
+            {
+                var isEnabledValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_LocalCache_IsEnabled];
+                _logger.WriteInfoMessage(string.Format("Setting AppFabric LocalCache IsEnabled:[{0}]", isEnabledValue));
+
+                bool isEnabled;
+                bool.TryParse(isEnabledValue, out isEnabled);
+                if (isEnabled)
+                {
+                    int defaultTimeoutInSeconds = 0;
+                    int objectCount = 0;
+                    if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_DefaultTimeout))
+                    {
+                        int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_LocalCache_DefaultTimeout], out defaultTimeoutInSeconds);
+                    }
+                    if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_ObjectCount))
+                    {
+                        int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_LocalCache_ObjectCount], out objectCount);
+                    }
+                    var invalidationPolicy = DataCacheLocalCacheInvalidationPolicy.NotificationBased; // the default
+                    if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_InvalidationPolicy))
+                    {
+                        var policyValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_LocalCache_InvalidationPolicy];
+                        var normalisedPolicyValue=policyValue.ToLowerInvariant();
+                        if (normalisedPolicyValue == AppFabricConstants.CONFIG_LocalCache_InvalidationPolicyValue_TimeoutBased)
+                        {
+                            invalidationPolicy = DataCacheLocalCacheInvalidationPolicy.TimeoutBased;;
+                        }
+                    }
+                    
+                    factoryConfig.LocalCacheProperties = new DataCacheLocalCacheProperties(objectCount,TimeSpan.FromSeconds(defaultTimeoutInSeconds),invalidationPolicy);
+                }
+            }
         }
 
         private void SetSecuritySettings(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
