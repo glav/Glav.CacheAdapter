@@ -11,17 +11,15 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		private const string DEFAULT_IpAddress = "127.0.0.1";
 		private const int DEFAULT_Port = 11211;
 
-		private CacheConfig _config;
-
 		private int _minPoolSize = 10;
 		private int _maxPoolSize = 20;
 		private TimeSpan _connectTimeout = TimeSpan.FromSeconds(5);
 		private TimeSpan _deadNodeTimeout = TimeSpan.FromSeconds(30);
 
 
-		public memcachedCacheFactory(ILogging logger) : base(logger)
+		public memcachedCacheFactory(ILogging logger, CacheConfig config = null) : base(logger,config)
 		{
-			_config = ParseConfig(DEFAULT_IpAddress, DEFAULT_Port);
+			ParseConfig(DEFAULT_IpAddress, DEFAULT_Port);
 			ExtractCacheSpecificConfig();
 		}
 
@@ -35,7 +33,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			try
 			{
 				var serverFarm = new CacheServerFarm(Logger);
-				serverFarm.Initialise(_config.ServerNodes);
+				serverFarm.Initialise(CacheConfiguration.ServerNodes);
 				return serverFarm;
 			}
 			catch (Exception ex)
@@ -82,9 +80,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
 
 		private string SafeGetCacheConfigValue(string key)
 		{
-			if (_config.ProviderSpecificValues.ContainsKey(key))
+			if (CacheConfiguration.ProviderSpecificValues.ContainsKey(key))
 			{
-				return _config.ProviderSpecificValues[key];
+				return CacheConfiguration.ProviderSpecificValues[key];
 			}
 
 			return null;

@@ -21,31 +21,29 @@ namespace Glav.CacheAdapter.Core
 	    private readonly ICacheDependencyManager _cacheDependencyManager;
 	    private ICacheFeatureSupport _featureSupport;
 
-		public CacheProvider(ICache cache, ILogging logger)
+		public CacheProvider(ICache cache, ILogging logger) : this(cache, logger,null ,null)
 		{
-			_cache = cache;
-			_logger = logger;
-		    _featureSupport = new CacheFeatureSupport(cache);
-            if (_config.IsCacheDependencyManagementEnabled)
-            {
-                // Dependencies are enabled but the default constructor was used (without
-                // specifying a dependency manager) so we instantiate the default.
-                _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
-                _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled but no dependency manager specified so using {0}.",_cacheDependencyManager.Name));
-            } else
-            {
-                _cacheDependencyManager = null;  // Dependency Management is disabled
-                _logger.WriteInfoMessage("CacheKey dependency management not enabled.");
-            }
 		}
-        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager)
+        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager) : this(cache,logger,cacheDependencyManager,null)
+        {
+        }
+
+        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager, ICacheFeatureSupport featureSupport)
         {
             _cache = cache;
             _logger = logger;
-            _featureSupport = new CacheFeatureSupport(cache);
+            _featureSupport = featureSupport;
+            if (_featureSupport == null)
+            {
+                _featureSupport = new CacheFeatureSupport(cache);
+            }
             if (_config.IsCacheDependencyManagementEnabled)
             {
                 _cacheDependencyManager = cacheDependencyManager;
+                if (_cacheDependencyManager == null)
+                {
+                    _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
+                }
                 _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
             }
             else
@@ -53,16 +51,17 @@ namespace Glav.CacheAdapter.Core
                 _cacheDependencyManager = null;  // Dependency Management is disabled
                 _logger.WriteInfoMessage("CacheKey dependency management not enabled.");
             }
-        }
 
-        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager, ICacheFeatureSupport featureSupport) : this(cache,logger,cacheDependencyManager)
-        {
-            _featureSupport = featureSupport;
-            _featureSupport.Cache = cache;
+            _featureSupport.Cache = _cache;
         }
         
 
 		public ICache InnerCache { get { return _cache; }}
+
+        public CacheConfig CacheConfiguration
+        {
+            get { return _config; }
+        }
 
 		public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData,string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
