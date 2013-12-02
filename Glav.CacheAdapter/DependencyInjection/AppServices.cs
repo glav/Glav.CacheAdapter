@@ -15,10 +15,8 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
     {
         private static ICacheProvider _cacheProvider;
         private static ICache _cache;
-        private static ILogging _logger;
         private static bool _isInitialised = false;
         private static readonly object _lockRef = new object();
-        private static readonly CacheConfig _config = new CacheConfig();
 
         static AppServices()
         {
@@ -26,9 +24,15 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 
         public static void SetLogger(ILogging logger)
         {
-            _logger = logger;
             _isInitialised = false;
-            PreStartInitialise();
+            PreStartInitialise(logger);
+        }
+
+        //!!! NOT sure about this
+        public static void SetConfig(CacheConfig config)
+        {
+            _isInitialised = false;
+            PreStartInitialise(null, config);
         }
 
         /// <summary>
@@ -41,7 +45,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// code simply acts as a cheap mechanism for this without requiring a dependency on a 
         /// container that you dont like/use.
         /// </remarks>
-        public static void PreStartInitialise()
+        public static void PreStartInitialise(ILogging logger = null, CacheConfig config = null)
         {
             if (!_isInitialised)
             {
@@ -51,19 +55,16 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                     {
                         try
                         {
-                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger, _config.CacheToUse);
+                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(logger, config);
+                            CacheBinder.Logger.WriteInfoMessage(string.Format("Initialised cache of type: {0}", CacheBinder.Configuration.CacheToUse));
                             _cache = _cacheProvider.InnerCache;
                             _isInitialised = true;
                         }
                         catch (Exception ex)
                         {
-                            if (_logger == null)
-                            {
-                                _logger = new Logger();
-                            }
-
-                            _logger.WriteException(ex);
-                            throw;
+                            var outerEx = new ApplicationException(string.Format("Problem initialisting cache of type: {0}", CacheBinder.Configuration.CacheToUse), ex);
+                            CacheBinder.Logger.WriteException(outerEx);
+                            throw outerEx;
                         }
                     }
                 }

@@ -11,21 +11,21 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheFactory: DistributedCacheFactoryBase
     {
-        public AppFabricCacheFactory(ILogging logger) : base(logger)
+        public AppFabricCacheFactory(ILogging logger, CacheConfig config = null) : base(logger, config)
         {
         }
 
         public DataCache ConstructCache()
         {
-			var config = ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
+			ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
 			var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
-			config.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
+			CacheConfiguration.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
             var factoryConfig = new DataCacheFactoryConfiguration();
 			factoryConfig.Servers = dataCacheEndpoints;
 
             var configMapper = new FactoryConfigConverter(Logger);
-            configMapper.MapSettingsFromConfigToAppFabricSettings(config, factoryConfig);
+            configMapper.MapSettingsFromConfigToAppFabricSettings(CacheConfiguration, factoryConfig);
 			//SetSecuritySettings(config, factoryConfig);
 
             try
@@ -39,9 +39,9 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             	string cacheName;
 				// Prefer the new config mechanism over the explicit entry but still support it. So we
 				// try and extract config from the ProviderSpecificValues first.
-				if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
+                if (CacheConfiguration.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
 				{
-					cacheName = config.ProviderSpecificValues[AppFabricConstants.CONFIG_CacheNameKey];
+                    cacheName = CacheConfiguration.ProviderSpecificValues[AppFabricConstants.CONFIG_CacheNameKey];
 				} else
 				{
 					cacheName = MainConfig.Default.DistributedCacheName;

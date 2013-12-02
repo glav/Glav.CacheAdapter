@@ -13,39 +13,69 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 {
 	public static class CacheBinder
 	{
-	    private static CacheConfig _config = new CacheConfig();
+	    private static CacheConfig _config ;
+        private static ILogging _logger;
 
-        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry=null, string dependencyManagerConfigEntry=null)
+        public static CacheConfig  Configuration
+        {
+            get { return _config; }
+        }
+        public static ILogging Logger
+        {
+            get { return _logger; }
+        }
+        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, CacheConfig config)
+        {
+            if (config != null)
+            {
+                _config = config;
+            }
+            if (logger != null)
+            {
+                _logger = logger;
+            }
+            EnsureLoggingAndCacheAreValidObjects();
+            return CreateCacheFromConfig();
+        }
+
+        [Obsolete("Use 'ResolveCacheFromConfig(ILogging logger, CacheConfig config) overload")]
+        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry = null, string dependencyManagerConfigEntry = null)
 		{
-			if (logger == null)
-			{
-				logger = new Logger();
-			}
-
-            if (string.IsNullOrWhiteSpace(cacheConfigEntry))
+            if (logger != null)
             {
-                cacheConfigEntry = _config.CacheToUse;
+                _logger = logger;
             }
-            if (string.IsNullOrWhiteSpace(dependencyManagerConfigEntry))
+            EnsureLoggingAndCacheAreValidObjects();
+
+            if (!string.IsNullOrWhiteSpace(cacheConfigEntry))
             {
-                dependencyManagerConfigEntry = _config.DependencyManagerToUse;
+                _config.CacheToUse = cacheConfigEntry;
+            }
+            if (!string.IsNullOrWhiteSpace(dependencyManagerConfigEntry))
+            {
+                _config.DependencyManagerToUse = dependencyManagerConfigEntry;
             }
 
+            return CreateCacheFromConfig();
+		}
+
+        private static ICacheProvider CreateCacheFromConfig()
+        {
             ICacheProvider provider = null;
-            var cache = GetCache(cacheConfigEntry, logger);
+            var cache = GetCache(_config.CacheToUse, _logger);
             if (_config.IsCacheDependencyManagementEnabled)
             {
-                var dependencyManager = GetCacheDependencyManager(dependencyManagerConfigEntry, cache, logger);
+                var dependencyManager = GetCacheDependencyManager(_config.DependencyManagerToUse, cache, _logger);
 
-                provider = new CacheProvider(cache, logger, dependencyManager);
-            } else
-            {
-                provider = new CacheProvider(cache, logger);
+                provider = new CacheProvider(cache, _logger, dependencyManager);
             }
-            logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine",cacheConfigEntry));
-
-			return provider;
-		}
+            else
+            {
+                provider = new CacheProvider(cache, _logger);
+            }
+            _logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine", _config.CacheToUse));
+            return provider;
+        }
 
         private static ICache GetCache(string cacheConfigEntry, ILogging logger)
         {
@@ -83,6 +113,18 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                     break;
             }
             return dependencyMgr;
+        }
+
+        private static void EnsureLoggingAndCacheAreValidObjects()
+        {
+            if (_logger == null)
+            {
+                _logger = new Logger();
+            }
+            if (_config == null)
+            {
+                _config = new CacheConfig();
+            }
         }
     }
 }
