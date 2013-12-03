@@ -8,6 +8,7 @@ using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Distributed.memcached;
+using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
 {
@@ -15,6 +16,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 	{
 	    private static CacheConfig _config ;
         private static ILogging _logger;
+        private static ICacheAdapterResolver _resolver;
 
         public static CacheConfig  Configuration
         {
@@ -24,7 +26,27 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         {
             get { return _logger; }
         }
-        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, CacheConfig config)
+        public static ICacheAdapterResolver Resolver
+        {
+            get { return _resolver; }
+        }
+        
+        /// <summary>
+        /// Construct the ICacheProvider implementation using the configuration provided, the
+        /// logging implementation provided, and the cache adapter resolver provided. If
+        /// any of these items are passed as null, the existing values/settings are used. If there
+        /// are no existing settings, then the default implementation is used.
+        /// </summary>
+        /// <param name="config">Configuration to use when creating the cache engine. if NULL
+        /// is passed in, then the configuration is created based on values in the configuration file.</param>
+        /// <param name="logger">The logging implementation to use. If NULL is provided, then the
+        /// generic logging implementation is used.</param>
+        /// <param name="resolver">The CacheAdapter resolver to use. If NULL is provided, the 
+        /// default resolver is used. You would typically provided your own resolver if you
+        /// wanted to use different dependency resolution engines such as Ninject or Autofac which
+        /// provide much richer lifetime support.</param>
+        /// <returns></returns>
+        public static ICacheProvider ResolveCacheFromConfig(CacheConfig config, ILogging logger = null, ICacheAdapterResolver resolver = null)
         {
             if (config != null)
             {
@@ -34,8 +56,12 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             {
                 _logger = logger;
             }
-            EnsureLoggingAndCacheAreValidObjects();
-            return CreateCacheFromConfig();
+            if (resolver != null)
+            {
+                _resolver = resolver;
+            }
+            EnsureObjectPropertiesAreValidObjects();
+            return _resolver.ResolveCacheFromConfig(_config);
         }
 
         [Obsolete("Use 'ResolveCacheFromConfig(ILogging logger, CacheConfig config) overload")]
@@ -45,7 +71,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             {
                 _logger = logger;
             }
-            EnsureLoggingAndCacheAreValidObjects();
+            EnsureObjectPropertiesAreValidObjects();
 
             if (!string.IsNullOrWhiteSpace(cacheConfigEntry))
             {
@@ -56,66 +82,10 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                 _config.DependencyManagerToUse = dependencyManagerConfigEntry;
             }
 
-            return CreateCacheFromConfig();
+            return _resolver.ResolveCacheFromConfig(_config);
 		}
 
-        private static ICacheProvider CreateCacheFromConfig()
-        {
-            ICacheProvider provider = null;
-            var cache = GetCache(_config.CacheToUse, _logger);
-            if (_config.IsCacheDependencyManagementEnabled)
-            {
-                var dependencyManager = GetCacheDependencyManager(_config.DependencyManagerToUse, cache, _logger);
-
-                provider = new CacheProvider(cache, _logger, dependencyManager);
-            }
-            else
-            {
-                provider = new CacheProvider(cache, _logger);
-            }
-            _logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine", _config.CacheToUse));
-            return provider;
-        }
-
-        private static ICache GetCache(string cacheConfigEntry, ILogging logger)
-        {
-            ICache cache = null;
-            switch (cacheConfigEntry)
-            {
-                case CacheTypes.MemoryCache:
-                    cache = new MemoryCacheAdapter(logger);
-                    break;
-                case CacheTypes.WebCache:
-                    cache = new WebCacheAdapter(logger);
-                    break;
-                case CacheTypes.AppFabricCache:
-                    cache = new AppFabricCacheAdapter(logger);
-                    break;
-                case CacheTypes.memcached:
-                    cache = new memcachedAdapter(logger);
-                    break;
-                default:
-                    cache = new MemoryCacheAdapter(logger);
-                    break;
-            }
-            return cache;
-        }
-        private static ICacheDependencyManager GetCacheDependencyManager(string dependencyManagerConfigEntry, ICache cache, ILogging logger)
-        {
-            ICacheDependencyManager dependencyMgr = null;
-            switch (dependencyManagerConfigEntry)
-            {
-                case CacheDependencyManagerTypes.Default:
-                    dependencyMgr = new GenericDependencyManager(cache,logger);
-                    break;
-                default:
-                    dependencyMgr = new GenericDependencyManager(cache, logger);
-                    break;
-            }
-            return dependencyMgr;
-        }
-
-        private static void EnsureLoggingAndCacheAreValidObjects()
+        private static void EnsureObjectPropertiesAreValidObjects()
         {
             if (_logger == null)
             {
@@ -124,6 +94,10 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             if (_config == null)
             {
                 _config = new CacheConfig();
+            }
+            if (_resolver == null)
+            {
+                _resolver = new CacheAdapterResolver(_logger);
             }
         }
     }

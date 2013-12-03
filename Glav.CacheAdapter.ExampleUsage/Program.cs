@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 using System;
 using Glav.CacheAdapter.Core.DependencyInjection;
+using Glav.CacheAdapter.Bootstrap;
 
 #endregion
 
@@ -97,7 +98,17 @@ namespace Glav.CacheAdapter.ExampleUsage
         private static void ExampleAddAndRetrieveFromCache()
         {
             Console.WriteLine("*** Simple Add and Retrieve Examples\n");
-            //AppServices.PreStartInitialise();
+
+            //If you want to programmatically alter the configured values for the cache, you can
+            // use the commented section below as an example
+            //CacheConfig config = new CacheConfig();
+            //config.CacheToUse = CacheTypes.MemoryCache;
+            //AppServices.SetConfig(config);
+            // Alternatively, you can use the commented method below to set the logging implementation,
+            // configuration settings, and resolver to use when determining the ICacheProvider
+            // implementation.
+            //AppServices.PreStartInitialise(null, config);
+
         	var cacheProvider = AppServices.Cache;
 
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
