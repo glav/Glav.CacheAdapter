@@ -10,9 +10,9 @@ implementation underlying that interface via configuration to use either:
  4. Distributed memcached cache. (config setting="memcached")
 
 For example:
-            <setting name="CacheToUse" serializeAs="String">
-                <value>memcached</value>
-            </setting>
+			<appSettings>
+				<add key="Cache.CacheToUse" value="memcached" />
+			</appSettings>
 Means the underlying cache mechanism uses memcached and it expects to find memcached server nodes at the address listed in
 the 'DistributedCacheServers' configuration element (see below).
 
@@ -35,9 +35,9 @@ is simply provided to give a more fluent API to cache usage.
 In the config file, if you set the 'CacheToUse' setting to either 'AppFabric' or 'memcached', then the 'DistributedCacheServers'
 should be a comma separated list of server IP addresses and port numbers that represent the cache servers in your cache farm. 
 For example:
-    <setting name="DistributedCacheServers" serializeAs="String">
-      <value>localhost:11211;localhost:11212</value>
-    </setting>
+		<appSettings>
+			<add key="Cache.DistributedCacheServers" value="localhost:11211;192.168.1.2:11211" />
+		</appSettings>
 This configuration states that there are 2 cache servers in the farm. One at address localhost (127.0.0.1), port 11211 and the
 other at address localhost (127.0.0.1), port 11212.
 
@@ -57,9 +57,9 @@ to one cache mechanism and not make sense for others.
 For example, Windows Azure AppFabric(ie.AppFabric only when used within Azure) requires security type and a security
 key to work properly. This can be set like so:
     
-	<setting name="CacheSpecificData" serializeAs="String">
-      <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-    </setting>
+	<appSettings>
+		<add key="Cache.CacheSpecificData" value="UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard" />
+	</appSettings>
 
 This data is telling Windows AppFabric client to not use SSL, SecurityMode = Message and the 
 authorizationInfo = 'your_secure_key_from_azure_dashboard'  (this key is supplied from the Azure dashboard)
@@ -86,9 +86,9 @@ Also, since the 'DistributedCacheName' configuration element is only AppFabric s
 in the CacheSpecificData setting instead of its own element. The library looks for this data (if AppFabric is used)
 in the CacheSpecificData element first before checking the single config element.
 So you could have something like:
-	<setting name="CacheSpecificData" serializeAs="String">
-      <value>DistributedCacheName=MyCache;UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-    </setting>
+	<appSettings>
+		<add key="Cache.CacheSpecificData" value="DistributedCacheName=MyCache;UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard" />
+	</appSettings>
 
 Also note that a blank entry for DistributedCacheName config setting will result in the default cache being used/accessed in AppFabric.
 
@@ -97,15 +97,19 @@ Disabling the cache globally
 You can completely disable the use of any cache so that all GET attempts will result in a cache miss 
 and execute the delegate if one is provided. You can do this by setting the configuration
 setting "IsCacheEnabled" to false.
-            <setting name="IsCacheEnabled" serializeAs="String">
-                <value>True</value>
-            </setting>
+	<appSettings>
+		<add key="Cache.IsCacheEnabled" value="true" />
+	</appSettings>
 Note: This feature only works if you are using the CacheProvider method of access. If you access the 
 InnerCache or ICache directly, you will still be able to access the cache itself and cache operations will work as normal.
 
 Notes on Version 2.5
 ~~~~~~~~~~~~~~~~~~~~
-This version takes a dependency upon enyim memcached. The reason is simply performance. I was doing a lot of performance work only to  realise I was duplicating work already tried and tested in Enyim memcached caching component so have taken a dependency on that. This release is again only has changes related to memcached. The performance of enyim memcached is fantastic so you you should see some really good gains.
+This version takes a dependency upon enyim memcached. The reason is simply performance. 
+I was doing a lot of performance work only to realise I was duplicating work already tried and 
+tested in Enyim memcached caching component so have taken a dependency on that. 
+This release is again only has changes related to memcached. 
+The performance of enyim memcached is fantastic so you you should see some really good gains.
 
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
@@ -196,7 +200,8 @@ Details:
       <add key="Cache.CacheToUse" value="memory"/>
 	</appSettings>
   In other words, you no longer need a <Glav.CacheAdapter.MainConfig> section. You can
-  use the <appSettings> section only if you choose.
+  use the <appSettings> section only if you choose.In fact, the <appSettings> approach is 
+  the preferred method.
 
 Notes on Version 3.0.1
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -212,5 +217,16 @@ Notes on Version 3.0.3
 ~~~~~~~~~~~~~~~~~~~~~~
 * Minor bug fix to memcached dependency management. Would not store dependencies when trying to store master cache dependency list for longer than
   25 years.
+
+Notes on Version 3.1
+¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+* Support for SecurityMode.None for AppAfabric caching (Issue #20)
+* Support for LocalCaching configuration values (Issue #21)
+  For local caching support, you can specify the following inthe cache specific data:
+  <add key="Cache.CacheSpecificData" value="LocalCache.IsEnabled=true;LocalCache.DefaultTimeout=300;LocalCache.ObjectCount;LocalCache.InvalidationPolicy={TimeoutBased|NotificationBased}"/>
+  Note: DefaultTimout value specifies amount of time in seconds.
+* Support for programmatically setting the configuration and initialising the cache. (Issue #??)
+
+
 
 
