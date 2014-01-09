@@ -17,10 +17,10 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         private ILogging _logger;
         private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
-        public AppFabricCacheAdapter(ILogging logger)
+        public AppFabricCacheAdapter(ILogging logger, CacheConfig config = null)
         {
             _logger = logger;
-            var factory = new AppFabricCacheFactory(_logger);
+            var factory = new AppFabricCacheFactory(_logger,config);
 
             _cache = factory.ConstructCache();
         }
