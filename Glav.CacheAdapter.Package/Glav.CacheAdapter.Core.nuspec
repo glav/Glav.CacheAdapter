@@ -3,9 +3,10 @@
 	<metadata>
 		<id>Glav.CacheAdapter.Core</id>
 		<title>.NET CacheAdapter Core components</title>
-		<version>3.1.0</version>
+		<version>3.1.0-beta</version>
 		<authors>Paul Glavich (with help via Darren Boon)</authors>
 		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric and memcached cache mechasnisms. Supports advanced features such as cache dependencies and also fully supports AppFabric within Azure. This package contains no examples or documentation and contains core components only.</description>
+		<summary>A Generic cache mechanism supporting multiple cache engines.</summary>
 		<language>en-US</language>
 		<projectUrl>http://weblogs.asp.net/pglavich/archive/2013/07/21/cacheadapter-3-0-released.aspx</projectUrl>
 		<frameworkAssemblies>
