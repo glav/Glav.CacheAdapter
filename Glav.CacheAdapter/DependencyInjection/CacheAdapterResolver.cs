@@ -51,7 +51,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cache = new WebCacheAdapter(_logger);
                     break;
                 case CacheTypes.AppFabricCache:
-                    cache = new AppFabricCacheAdapter(_logger);
+                    cache = new AppFabricCacheAdapter(_logger, config);
                     break;
                 case CacheTypes.memcached:
                     cache = new memcachedAdapter(_logger,config);

@@ -74,7 +74,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                         }
                         catch (Exception ex)
                         {
-                            var outerEx = new ApplicationException(string.Format("Problem initialisting cache of type: {0}", CacheBinder.Configuration.CacheToUse), ex);
+                            var outerEx = new ApplicationException(string.Format("Problem initialising cache of type: {0}", CacheBinder.Configuration.CacheToUse), ex);
                             CacheBinder.Logger.WriteException(outerEx);
                             throw outerEx;
                         }
