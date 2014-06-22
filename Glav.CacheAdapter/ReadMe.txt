@@ -231,6 +231,8 @@ Notes on Version 3.1
   easier to update the package and NOT include the readme and example code all the time.
 * Merged in changes from Darren Boon's cache optimisation to ensure data only added to cache when its enabled and non null. Involved code cleanup
   as this branch had been partially merged prior.
+* Merged change from https://bitbucket.org/c0dem0nkee/cacheadapter/branch/default to destroy cache when using local cache on calling ClearAll method.
+
 
 
 
