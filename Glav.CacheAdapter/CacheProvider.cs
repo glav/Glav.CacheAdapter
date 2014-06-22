@@ -69,10 +69,10 @@ namespace Glav.CacheAdapter.Core
 			T data = GetData(cacheKey, getData,parentKey,actionForDependency);
 			//only add non null data to the cache.
 			if (data != null)
-			{
-				_cache.Add(cacheKey, expiryDate, data);
-				_logger.WriteInfoMessage(string.Format("Adding item [{0}] to cache with expiry date/time of [{1}].", cacheKey,
-													   expiryDate.ToString("dd/MM/yyyy hh:mm:ss")));
+				{
+					_cache.Add(cacheKey, expiryDate, data);
+					_logger.WriteInfoMessage(string.Format("Adding item [{0}] to cache with expiry date/time of [{1}].", cacheKey,
+														   expiryDate.ToString("dd/MM/yyyy hh:mm:ss")));
 
             }
 			return data;
@@ -84,28 +84,33 @@ namespace Glav.CacheAdapter.Core
             T data = GetData(cacheKey, getData, parentKey, actionForDependency);
 			//only add non null data to the cache.
 			if (data != null && _config.IsCacheEnabled)
-			{
-				_cache.Add(cacheKey, slidingExpiryWindow, data);
-				_logger.WriteInfoMessage(
-					string.Format("Adding item [{0}] to cache with sliding sliding expiry window in seconds [{1}].", cacheKey,
-								  slidingExpiryWindow.TotalSeconds));
+				{
+					_cache.Add(cacheKey, slidingExpiryWindow, data);
+					_logger.WriteInfoMessage(
+						string.Format("Adding item [{0}] to cache with sliding sliding expiry window in seconds [{1}].", cacheKey,
+									  slidingExpiryWindow.TotalSeconds));
 			}
 			return data;
 		}
 
 		private T GetData<T>(string cacheKey, Func<T> getData,string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems) where T : class
 		{
+
+			//Get data from cache
 			T data = _config.IsCacheEnabled ? _cache.Get<T>(cacheKey) : null;
+
+			// check to see if we need to get data from the source
 			if (data == null)
 			{
 				//get data from source
 				data = getData();
+
+				//only add non null data to the cache.
 			}
 			else
 			{
 				_logger.WriteInfoMessage(string.Format("Retrieving item [{0}] from cache.", cacheKey));
 			}
-
             ManageCacheDependenciesForCacheItem(data, cacheKey, parentKey, actionForDependency);
 
 			return data;
