@@ -15,6 +15,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         {
         }
 
+        public bool IsLocalCacheEnabled { get; set; }
+
         public DataCache ConstructCache()
         {
 			ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
@@ -26,6 +28,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
             var configMapper = new FactoryConfigConverter(Logger);
             configMapper.MapSettingsFromConfigToAppFabricSettings(CacheConfiguration, factoryConfig);
+            IsLocalCacheEnabled = configMapper.IsLocalCacheEnabled;
 			//SetSecuritySettings(config, factoryConfig);
 
             try

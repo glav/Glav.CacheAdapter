@@ -16,6 +16,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             _logger = logger;
         }
 
+        public bool IsLocalCacheEnabled { get; set; }
+
         internal void MapSettingsFromConfigToAppFabricSettings(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
         {
             SetSecuritySettings(config, factoryConfig);
@@ -35,6 +37,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 bool.TryParse(isEnabledValue, out isEnabled);
                 if (isEnabled)
                 {
+                    IsLocalCacheEnabled = true;
                     int defaultTimeoutInSeconds = 0;
                     int objectCount = 0;
                     if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_DefaultTimeout))
