@@ -63,6 +63,19 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
         private void SetSecuritySettings(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
         {
+            // If appfabric service is running as a domain account the client must specify
+            // http://blogs.msdn.com/b/distributedservices/archive/2012/10/29/authenticationexception-in-appfabric-1-1-caching-for-windows-server.aspx
+            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_UseDomainServiceAccount))
+            {
+                bool useDomainServiceAccount;
+                var converted = bool.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_UseDomainServiceAccount] ?? "false", out useDomainServiceAccount);
+                if (converted && useDomainServiceAccount)
+                {
+                    _logger.WriteInfoMessage("Setting AppFabric DataCacheServiceAccountType to DomainAccount.");
+                    factoryConfig.DataCacheServiceAccountType = DataCacheServiceAccountType.DomainAccount;
+                }
+            }
+
             string securityModeValue = null;
             // Set the security mode if required
             if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_SecurityModeKey))
