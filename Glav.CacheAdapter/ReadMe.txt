@@ -225,10 +225,12 @@ Notes on Version 3.1
   For local caching support, you can specify the following in the cache specific data:
   <add key="Cache.CacheSpecificData" value="LocalCache.IsEnabled=true;LocalCache.DefaultTimeout=300;LocalCache.ObjectCount;LocalCache.InvalidationPolicy={TimeoutBased|NotificationBased}"/>
   Note: DefaultTimeout value specifies amount of time in seconds.
-* Support for programmatically setting the configuration and initialising the cache. (Issue #??)
+* Support for programmatically setting the configuration and initialising the cache. (Issue #19)
 * Splitting Glav.CacheAdapter package into 2 packages - Glav.CacheAdapter.Core & Glav.CacheAdapter. 
   The 'Core'package contains just the Glav.CacheAdapter assembly and references to depedencies so it is much
   easier to update the package and NOT include the readme and example code all the time.
+* Merged in changes from Darren Boon's cache optimisation to ensure data only added to cache when its enabled and non null. Involved code cleanup
+  as this branch had been partially merged prior.
 
 
 
