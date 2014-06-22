@@ -90,6 +90,10 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     _cache.ClearRegion(regionName);
                 } 
                 
+                // If local cache is enabled then ensures that local cache is destroyed
+                _cache = null;
+                _cache = factory.ConstructCache();
+                
             } catch (Exception ex)
             {
                 _logger.WriteException(ex);
