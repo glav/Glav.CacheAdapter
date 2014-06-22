@@ -99,7 +99,7 @@ namespace Glav.CacheAdapter.Core
         private T GetAndAddIfNecessary<T>(string cacheKey, Action<T> addData, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
             if (!_config.IsCacheEnabled)
-                return null;
+                return getData();
 
             //Get data from cache
             T data = _cache.Get<T>(cacheKey);
