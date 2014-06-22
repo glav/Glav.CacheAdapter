@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         public const string CONFIG_LocalCache_InvalidationPolicy = "LocalCache.InvalidationPolicy";
         public const string CONFIG_LocalCache_InvalidationPolicyValue_TimeoutBased = "timeoutbased";
         public const string CONFIG_LocalCache_InvalidationPolicyValue_NotificationBased = "notificationbased";
+		public const string CONFIG_UseDomainServiceAccount = "UseDomainServiceAccount";
 
 		public const string CONFIG_SecurityMode_Message = "message";
 		public const string CONFIG_SecurityMode_None = "none";
