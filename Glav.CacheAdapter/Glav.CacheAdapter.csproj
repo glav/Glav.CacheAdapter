@@ -63,7 +63,9 @@
     <Compile Include="CacheProvider.cs" />
     <Compile Include="CacheSettingEnumeration.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
+    <Compile Include="DependencyInjection\CacheAdapterResolver.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
+    <Compile Include="DependencyInjection\ICacheAdapterResolver.cs" />
     <Compile Include="DependencyManagement\DependencyItem.cs" />
     <Compile Include="DependencyManagement\GenericDependencyManager.cs" />
     <Compile Include="DependencyManagement\ICacheDependencyManager.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />
+    <Compile Include="Distributed\AppFabric\FactoryConfigConverter.cs" />
     <Compile Include="Distributed\DistributedCacheFactoryBase.cs" />
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />

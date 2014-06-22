@@ -8,29 +8,43 @@ using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Distributed.memcached;
+using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
 {
+    /// <summary>
+    /// A utility class that provides static, simple access to the cache provider mechanism.
+    /// Large scale application may typically forego the use of this class and provide their
+    /// own resolution mechanism.
+    /// </summary>
     public static class AppServices
     {
-    	private static ICacheProvider _cacheProvider;
-    	private static ICache _cache;
-    	private static ILogging _logger;
-    	private static bool _isInitialised = false;
-		private static readonly object _lockRef = new object();
-        private static readonly CacheConfig _config = new CacheConfig();
+        private static ICacheProvider _cacheProvider;
+        private static ICache _cache;
+        private static bool _isInitialised = false;
+        private static readonly object _lockRef = new object();
 
-    	static AppServices()
-    	{
-    		PreStartInitialise();
-    	}
+        static AppServices()
+        {
+        }
 
-		public static void SetLogger(ILogging logger)
-		{
-			_logger = logger;
-			_isInitialised = false;
-			PreStartInitialise();
-		}
+        public static void SetLogger(ILogging logger)
+        {
+            _isInitialised = false;
+            PreStartInitialise(logger);
+        }
+
+        public static void SetConfig(CacheConfig config)
+        {
+            _isInitialised = false;
+            PreStartInitialise(null, config);
+        }
+
+        public static void SetResolver(ICacheAdapterResolver resolver)
+        {
+            _isInitialised = false;
+            PreStartInitialise(null, null,resolver);
+        }
 
         /// <summary>
         /// Initialise the container with core dependencies. The cache/cache provider should be set to be
@@ -39,37 +53,43 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// <remarks>Note: In a .Net 4 web app, this method could be invoked using the new PreApplicationStartMethod attribute
         /// as in: <code>[assembly: PreApplicationStartMethod(typeof(MyStaticClass), "PreStartInitialise")]</code>
         /// Also note this section should be replaced with the DependencyInjection container of choice. This
-        /// code simply acts as a cheap mechanism for this without requiring a dependency on a 
-        /// container that you dont like/use.
+        /// code simply acts as a cheap and simple utility mechanism for this without requiring a dependency on a 
+        /// container that you dont like/use. You can opt to replace the ICacheAdapterResolver with
+        /// your resolver of choice as well to utilise your own dependency resolution mechanism.
         /// </remarks>
-        public static void PreStartInitialise()
+        public static void PreStartInitialise(ILogging logger = null, CacheConfig config = null, ICacheAdapterResolver resolver=null)
         {
-			if (!_isInitialised)
-			{
-				lock (_lockRef)
-				{
-					if (!_isInitialised)
-					{
+            if (!_isInitialised)
+            {
+                lock (_lockRef)
+                {
+                    if (!_isInitialised)
+                    {
                         try
                         {
-                            _isInitialised = true;
-                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(_logger, _config.CacheToUse);
+                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(config,logger,resolver);
+                            CacheBinder.Logger.WriteInfoMessage(string.Format("Initialised cache of type: {0}", CacheBinder.Configuration.CacheToUse));
                             _cache = _cacheProvider.InnerCache;
-                        } catch (Exception ex)
-                        {
-                            if (_logger == null)
-                            {
-                                _logger = new Logger();
-                            }
-
-                            _logger.WriteException(ex);
-                            throw;
+                            _isInitialised = true;
                         }
-					}
-				}
-			}
+                        catch (Exception ex)
+                        {
+                            var outerEx = new ApplicationException(string.Format("Problem initialising cache of type: {0}", CacheBinder.Configuration.CacheToUse), ex);
+                            CacheBinder.Logger.WriteException(outerEx);
+                            throw outerEx;
+                        }
+                    }
+                }
+            }
         }
 
-		public static ICacheProvider Cache { get { return _cacheProvider; } }
+        public static ICacheProvider Cache
+        {
+            get
+            {
+                PreStartInitialise();
+                return _cacheProvider;
+            }
+        }
     }
 }

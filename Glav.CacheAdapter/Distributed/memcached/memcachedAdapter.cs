@@ -21,11 +21,11 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		private static bool _isInitialised = false;
 
 
-		public memcachedAdapter(ILogging logger)
+        public memcachedAdapter(ILogging logger, CacheConfig config = null)
 		{
 			_logger = logger;
 
-			var factory = new memcachedCacheFactory(_logger);
+			var factory = new memcachedCacheFactory(_logger,config);
 			_serverFarm = factory.ConstructCacheFarm();
 
 			if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)

@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 using System;
 using Glav.CacheAdapter.Core.DependencyInjection;
+using Glav.CacheAdapter.Bootstrap;
 
 #endregion
 
@@ -28,6 +29,10 @@ namespace Glav.CacheAdapter.ExampleUsage
             // Uncomment this line to simulate about 100,000 hits to the cache engine
             //HammerTheCache.StartHammering();
 
+            // Uncomment this line to see how config can be changed/supplied programmatically.
+            //  The example switches the config to use memcached to you need that running
+            //ExampleSettingConfigurationViaCode();
+
             if (_allTestsPassed)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -43,6 +48,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 
         }
 
+        #region Examples Adding and Clearing with Dependencies
         private static void ExampleAddAndClearWithDependencies()
         {
             Console.WriteLine("\n*** Simple Cache Dependency examples\n");
@@ -94,9 +100,23 @@ namespace Glav.CacheAdapter.ExampleUsage
             cacheProvider.ClearAll();
         }
 
+        #endregion
+
+        #region Simple Example of Add and Retrieve from Cache
         private static void ExampleAddAndRetrieveFromCache()
         {
             Console.WriteLine("*** Simple Add and Retrieve Examples\n");
+
+            //If you want to programmatically alter the configured values for the cache, you can
+            // use the commented section below as an example
+            //CacheConfig config = new CacheConfig();
+            //config.CacheToUse = CacheTypes.MemoryCache;
+            //AppServices.SetConfig(config);
+            // Alternatively, you can use the commented method below to set the logging implementation,
+            // configuration settings, and resolver to use when determining the ICacheProvider
+            // implementation.
+            //AppServices.PreStartInitialise(null, config);
+
         	var cacheProvider = AppServices.Cache;
 
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
@@ -201,6 +221,32 @@ namespace Glav.CacheAdapter.ExampleUsage
 
 		}
 
+        #endregion
+
+        #region Examples of setting config programmatically
+
+        private static void ExampleSettingConfigurationViaCode()
+        {
+            Console.WriteLine("initialising");
+            AppServices.PreStartInitialise();
+
+            Console.WriteLine("adding data");
+            AppServices.Cache.Add("test", DateTime.Now.AddMinutes(10), "blah");
+            Console.WriteLine("clearing");
+            AppServices.Cache.ClearAll();
+
+            Console.WriteLine("Setting memcached");
+            AppServices.SetConfig(new Glav.CacheAdapter.CacheConfig() { CacheToUse = "memcached", DistributedCacheServers = "localhost:11211" });
+
+            Console.WriteLine("getting data");
+            var data = AppServices.Cache.InnerCache.Get<string>("test");
+            Console.WriteLine("data is [{0}]", data);
+
+            Console.ReadLine();
+        }
+        #endregion
+
+        #region Helper Functions
         private static void WriteErrMsgToConsole(string msg)
         {
             var originalColour = Console.ForegroundColor;
@@ -210,13 +256,18 @@ namespace Glav.CacheAdapter.ExampleUsage
             _allTestsPassed = false;
         }
 
+        #endregion
+
     }
 
-	[Serializable]
+    #region Just Test Data Class
+    [Serializable]
 	public class SomeData
 	{
 		public string SomeText { get; set; }
 		public int SomeNumber { get; set; }
 	}
+
+    #endregion
 
 }
