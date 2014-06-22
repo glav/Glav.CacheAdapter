@@ -15,6 +15,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
     {
         private DataCache _cache;
         private ILogging _logger;
+        private bool _isLocalCacheEnabled = false;
+
         private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
         public AppFabricCacheAdapter(ILogging logger, CacheConfig config = null)
@@ -23,6 +25,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             var factory = new AppFabricCacheFactory(_logger,config);
 
             _cache = factory.ConstructCache();
+            _isLocalCacheEnabled = factory.IsLocalCacheEnabled;
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)
