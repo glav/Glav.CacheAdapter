@@ -30,5 +30,7 @@ namespace Glav.CacheAdapter.Core
         void InvalidateDependenciesForParent(string parentKey);
 
         ICacheFeatureSupport FeatureSupport { get;  }
+
+        CacheConfig CacheConfiguration { get; }
     }
 }

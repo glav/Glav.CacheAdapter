@@ -11,19 +11,25 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheFactory: DistributedCacheFactoryBase
     {
-        public AppFabricCacheFactory(ILogging logger) : base(logger)
+        public AppFabricCacheFactory(ILogging logger, CacheConfig config = null) : base(logger, config)
         {
         }
 
+        public bool IsLocalCacheEnabled { get; set; }
+
         public DataCache ConstructCache()
         {
-			var config = ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
+			ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
 			var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
-			config.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
+			CacheConfiguration.ServerNodes.ForEach(e => dataCacheEndpoints.Add(new DataCacheServerEndpoint(e.IPAddressOrHostName,e.Port)));
 
             var factoryConfig = new DataCacheFactoryConfiguration();
 			factoryConfig.Servers = dataCacheEndpoints;
-			SetSecuritySettings(config, factoryConfig);
+
+            var configMapper = new FactoryConfigConverter(Logger);
+            configMapper.MapSettingsFromConfigToAppFabricSettings(CacheConfiguration, factoryConfig);
+            IsLocalCacheEnabled = configMapper.IsLocalCacheEnabled;
+			//SetSecuritySettings(config, factoryConfig);
 
             try
             {
@@ -36,9 +42,9 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             	string cacheName;
 				// Prefer the new config mechanism over the explicit entry but still support it. So we
 				// try and extract config from the ProviderSpecificValues first.
-				if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
+                if (CacheConfiguration.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey))
 				{
-					cacheName = config.ProviderSpecificValues[AppFabricConstants.CONFIG_CacheNameKey];
+                    cacheName = CacheConfiguration.ProviderSpecificValues[AppFabricConstants.CONFIG_CacheNameKey];
 				} else
 				{
 					cacheName = MainConfig.Default.DistributedCacheName;
@@ -67,99 +73,6 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             }
         }
 
-		private void SetSecuritySettings(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
-		{
-            // If appfabric service is running as a domain account the client must specify
-            // http://blogs.msdn.com/b/distributedservices/archive/2012/10/29/authenticationexception-in-appfabric-1-1-caching-for-windows-server.aspx
-			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_UseDomainServiceAccount))
-			{
-			    bool useDomainServiceAccount;
-                var converted = bool.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_UseDomainServiceAccount] ?? "false", out useDomainServiceAccount);
-			    if (converted && useDomainServiceAccount)
-			    {
-                    Logger.WriteInfoMessage("Setting AppFabric DataCacheServiceAccountType to DomainAccount.");
-			        factoryConfig.DataCacheServiceAccountType = DataCacheServiceAccountType.DomainAccount;
-			    }
-			}
-			string securityModeValue = null;
-			// Set the security mode if required
-			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_SecurityModeKey))
-			{
-				securityModeValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_SecurityModeKey];
-				Logger.WriteInfoMessage(string.Format("Setting AppFabric security mode:[{0}]", securityModeValue));
-			}
-
-			// Set the authorization info/value if required
-			string securityAuthValue = null;
-			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_SecurityMessageAuthorisationKey))
-			{
-				securityAuthValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_SecurityMessageAuthorisationKey];
-				Logger.WriteInfoMessage("Setting AppFabric security Authorisation value");
-			}
-
-			string useSslValue = null;
-			if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_UseSslKey))
-			{
-				useSslValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_UseSslKey];
-				Logger.WriteInfoMessage(string.Format("AppFabric Use Ssl: [{0}]",useSslValue));
-			}
-
-            int maxConnectionsToServer;
-            if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_MaxConnectionsToServer))
-            {
-                if (int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_MaxConnectionsToServer],out maxConnectionsToServer))
-                {
-                    factoryConfig.MaxConnectionsToServer = maxConnectionsToServer;
-                    Logger.WriteInfoMessage(string.Format("AppFabric MaxConnectionsToServer: [{0}]", maxConnectionsToServer));
-                }
-                
-            }
-
-
-			var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
-			var normalisedSslValue = string.IsNullOrWhiteSpace(useSslValue) ? string.Empty : useSslValue.ToLowerInvariant();
-			if (!string.IsNullOrWhiteSpace(securityAuthValue))
-			{
-				if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_Message)
-				{
-					var secureToken = new SecureString();
-					foreach (var ch in securityAuthValue)
-					{
-						secureToken.AppendChar(ch);
-					}
-					bool useSsl = false;
-					if (normalisedSslValue == CacheConstants.ConfigValueTrueText || normalisedSslValue == CacheConstants.ConfigValueTrueNumeric)
-					{
-						useSsl = true;
-					}
-					DataCacheSecurity securityProps = new DataCacheSecurity(secureToken, useSsl);
-					factoryConfig.SecurityProperties = securityProps;
-				}
-
-				if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_Transport)
-				{
-					DataCacheSecurity securityProps = new DataCacheSecurity(DataCacheSecurityMode.Transport,DataCacheProtectionLevel.None);
-					factoryConfig.SecurityProperties = securityProps;
-				}
-
-                // Set the channel open timeout if required - useful for debugging
-                string channelOpenTimeout = null;
-                if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_ChannelOpenTimeout))
-                {
-                    channelOpenTimeout = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ChannelOpenTimeout];
-                    int channelOpenTimeoutValue;
-                    if (int.TryParse(channelOpenTimeout,out channelOpenTimeoutValue))
-                    {
-                        factoryConfig.ChannelOpenTimeout = TimeSpan.FromSeconds(channelOpenTimeoutValue);
-                        Logger.WriteInfoMessage(string.Format("Setting AppFabric ChannelOpenTimeout to {0} seconds",channelOpenTimeoutValue));
-                    } else
-                    {
-                        Logger.WriteInfoMessage(string.Format("AppFabric ChannelOpenTimeout set to invalid value of [{0}]. Not setting",channelOpenTimeout));
-                    }
-                }
-
-			}
-		}
 
     }
 }

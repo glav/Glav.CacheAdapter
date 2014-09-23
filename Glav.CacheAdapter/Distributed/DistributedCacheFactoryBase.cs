@@ -10,33 +10,41 @@ namespace Glav.CacheAdapter.Distributed
 	public class DistributedCacheFactoryBase
 	{
 		private ILogging _logger;
+        private CacheConfig _config;
 
 		public DistributedCacheFactoryBase()
 		{
-			_logger = new Logger();	
+			_logger = new Logger();
+            _config = new CacheConfig();
 		}
 
 		public DistributedCacheFactoryBase(ILogging logger)
 		{
 			_logger = logger;
+            _config = new CacheConfig();
 		}
-		protected ILogging Logger { get { return _logger; } }
+        public DistributedCacheFactoryBase(ILogging logger, CacheConfig config)
+        {
+            _logger = logger;
+            _config = config;
+        }
+        protected ILogging Logger { get { return _logger; } }
 
-		public CacheConfig ParseConfig(string defaultServerIp, int defaultPort)
+        protected CacheConfig CacheConfiguration { get { return _config; } }
+
+		public void ParseConfig(string defaultServerIp, int defaultPort)
 		{
-			CacheConfig config = new CacheConfig();
+            if (String.IsNullOrWhiteSpace(_config.DistributedCacheServers))
+				return;
 
-            if (String.IsNullOrWhiteSpace(config.DistributedCacheServers))
-				return config;
-
-			ExtractServerNodesFromConfig(config);
-			if (config.ServerNodes.Count == 0)
+			ExtractServerNodesFromConfig(_config);
+			if (_config.ServerNodes.Count == 0)
 			{
-				config.ServerNodes.Add(new ServerNode(defaultServerIp,defaultPort));
+				_config.ServerNodes.Add(new ServerNode(defaultServerIp,defaultPort));
 			}
-			ExtractCacheSpecificConfiguration(config);
+			ExtractCacheSpecificConfiguration(_config);
 
-			return config;
+			return;
 		}
 
 		private void ExtractCacheSpecificConfiguration(CacheConfig config)
