@@ -233,6 +233,10 @@ Notes on Version 3.1 and also 3.2 (combined)
   as this branch had been partially merged prior.
 * Merged change from https://bitbucket.org/c0dem0nkee/cacheadapter/branch/default to destroy cache when using local cache on calling ClearAll method.
 
+Notes on Version 3.2.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Fix for Issue #29. Using SecurityMode=None incorrectly depended on SecurityMessageAuthorizationKey setting. This is now resolved.
+
 
 
 
