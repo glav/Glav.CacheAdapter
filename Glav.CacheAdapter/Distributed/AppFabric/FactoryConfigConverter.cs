@@ -111,8 +111,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
             var normalisedSecurityMode = string.IsNullOrWhiteSpace(securityModeValue) ? string.Empty : securityModeValue.ToLowerInvariant();
             var normalisedSslValue = string.IsNullOrWhiteSpace(useSslValue) ? string.Empty : useSslValue.ToLowerInvariant();
-            var normalisedProtectionLevel = string.IsNullOrWhiteSpace(protectionLevelValue) ? string.Empty : useSslValue.ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(securityAuthValue))
+            var normalisedProtectionLevel = string.IsNullOrWhiteSpace(protectionLevelValue) ? string.Empty : protectionLevelValue.ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(normalisedSecurityMode) && normalisedSecurityMode != AppFabricConstants.CONFIG_SecurityMode_None)
             {
                 if (normalisedSecurityMode == AppFabricConstants.CONFIG_SecurityMode_Message)
                 {
