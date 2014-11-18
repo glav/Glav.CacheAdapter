@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Glav.CacheAdapter" GeneratedClassName="MainConfig">
+  <Profiles />
+  <Settings>
+    <Setting Name="CacheToUse" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Memory</Value>
+    </Setting>
+    <Setting Name="DistributedCacheServers" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">localhost:22223</Value>
+    </Setting>
+    <Setting Name="DistributedCacheName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IsCacheEnabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsCacheDependencyManagementEnabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DependencyManagerToUse" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Default</Value>
+    </Setting>
+    <Setting Name="CacheSpecificData" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
