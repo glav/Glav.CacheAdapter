@@ -4,6 +4,7 @@ using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
+using Glav.CacheAdapter.Distributed.Redis;
 using Glav.CacheAdapter.Web;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,9 @@ namespace Glav.CacheAdapter.DependencyInjection
                     break;
                 case CacheTypes.memcached:
                     cache = new memcachedAdapter(_logger,config);
+                    break;
+                case CacheTypes.redis:
+                    cache = new RedisCacheAdatper(_logger, config);
                     break;
                 default:
                     cache = new MemoryCacheAdapter(_logger);
