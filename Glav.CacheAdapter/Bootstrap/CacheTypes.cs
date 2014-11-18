@@ -11,6 +11,7 @@ namespace Glav.CacheAdapter.Bootstrap
         public const string WebCache = "web";
         public const string AppFabricCache = "appfabric";
     	public const string memcached = "memcached";
+        public const string redis = "redis";
 
     }
 }
