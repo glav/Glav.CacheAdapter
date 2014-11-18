@@ -79,6 +79,8 @@
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />
+    <Compile Include="Distributed\Redis\RedisCacheAdatper.cs" />
+    <Compile Include="Distributed\Redis\RedisCacheFactory.cs" />
     <Compile Include="Features\CacheFeatureSupport.cs" />
     <Compile Include="Features\ICacheFeatureSupport.cs" />
     <Compile Include="Helpers\ConversionExtensions.cs" />
@@ -111,9 +113,7 @@
     <Content Include="Copyright.txt" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Distributed\Redis\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

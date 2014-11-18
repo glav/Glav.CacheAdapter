@@ -26,7 +26,7 @@ namespace Glav.CacheAdapter.Distributed
         public DistributedCacheFactoryBase(ILogging logger, CacheConfig config)
         {
             _logger = logger;
-            _config = config;
+            _config = config != null ? config : new CacheConfig();
         }
         protected ILogging Logger { get { return _logger; } }
 
