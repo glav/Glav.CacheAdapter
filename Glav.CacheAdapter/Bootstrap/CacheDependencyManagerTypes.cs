@@ -7,6 +7,8 @@ namespace Glav.CacheAdapter.Bootstrap
 {
     internal static class CacheDependencyManagerTypes
     {
-        public const string Default = "default";   // only 1 for now... :-)
+        public const string Default = "default";
+        public const string Redis = "redis";
+        public const string Unspecified = "";
     }
 }

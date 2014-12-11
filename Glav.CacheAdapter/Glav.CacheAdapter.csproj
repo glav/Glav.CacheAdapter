@@ -88,9 +88,11 @@
     <Compile Include="DependencyInjection\CacheAdapterResolver.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
     <Compile Include="DependencyInjection\ICacheAdapterResolver.cs" />
+    <Compile Include="DependencyManagement\BaseCacheDependencyManager.cs" />
     <Compile Include="DependencyManagement\DependencyItem.cs" />
     <Compile Include="DependencyManagement\GenericDependencyManager.cs" />
     <Compile Include="DependencyManagement\ICacheDependencyManager.cs" />
+    <Compile Include="DependencyManagement\RedisDependencyManager.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />

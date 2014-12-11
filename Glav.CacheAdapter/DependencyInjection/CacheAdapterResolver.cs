@@ -74,11 +74,33 @@ namespace Glav.CacheAdapter.DependencyInjection
             switch (normalisedDependencyManagerConfig)
             {
                 case CacheDependencyManagerTypes.Default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger);
+                    dependencyMgr = new GenericDependencyManager(cache, _logger,config);
+                    break;
+                case CacheDependencyManagerTypes.Redis:
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
+                    break;
+                case CacheDependencyManagerTypes.Unspecified:
+                    // try and determine what one to use based on the cache type
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
                     break;
                 default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger);
+                    dependencyMgr = new GenericDependencyManager(cache, _logger,config);
                     break;
+            }
+            return dependencyMgr;
+        }
+
+        private ICacheDependencyManager GetRedisCacheDependencyManagerIfApplicable(CacheConfig config, ICache cache)
+        {
+            ICacheDependencyManager dependencyMgr = null;
+            var redisCache = cache as RedisCacheAdatper;
+            if (redisCache != null)
+            {
+                dependencyMgr = new RedisDependencyManager(cache, _logger, redisCache.RedisDatabase, config);
+            }
+            else
+            {
+                dependencyMgr = new GenericDependencyManager(cache, _logger, config);
             }
             return dependencyMgr;
         }

@@ -16,7 +16,8 @@ namespace Glav.CacheAdapter.Distributed.Redis
         private ConnectionMultiplexer _redisConnection = null;
         private IDatabase _db = null;
 
-        public RedisCacheFactory(ILogging logger, CacheConfig config = null) : base(logger,config)
+        public RedisCacheFactory(ILogging logger, CacheConfig config = null)
+            : base(logger, config)
         {
             ParseConfig(DEFAULT_IpAddress, DEFAULT_Port);
         }
@@ -29,7 +30,8 @@ namespace Glav.CacheAdapter.Distributed.Redis
             {
                 _redisConnection = ConnectionMultiplexer.Connect(connectionOptions);
                 _db = _redisConnection.GetDatabase();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.WriteException(ex);
                 throw;
@@ -40,9 +42,13 @@ namespace Glav.CacheAdapter.Distributed.Redis
 
         private ConfigurationOptions ConstructConnectionOptions()
         {
-            // Note: The redis config parser requires values be separated by a comma, not a semi-colon which is what CacheAdapter likes
-            var redisSpecificOptions = string.IsNullOrWhiteSpace(CacheConfiguration.CacheSpecificData) ? string.Empty : CacheConfiguration.CacheSpecificData.Replace(';',',');
-            var redisOptions = ConfigurationOptions.Parse(redisSpecificOptions, true);
+            var redisOptions = new ConfigurationOptions();
+            if (!string.IsNullOrWhiteSpace(CacheConfiguration.CacheSpecificData))
+            {
+                // Note: The redis config parser requires values be separated by a comma, not a semi-colon which is what CacheAdapter likes
+                var redisSpecificOptions = CacheConfiguration.CacheSpecificData.Replace(';', ',');
+                redisOptions = ConfigurationOptions.Parse(redisSpecificOptions, true);
+            }
 
             // Clear the endpoints if any specified here as we use the ones defined in DistributedCacheServers setting to keep
             // config consistent and it means that users can switch to different cache providers without issues
