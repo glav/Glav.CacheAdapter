@@ -16,11 +16,13 @@ namespace Glav.CacheAdapter.Distributed.Redis
         private RedisCacheFactory _factory;
         private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
         private static IDatabase _db = null;
+        private CacheConfig _config = null;
 
         public RedisCacheAdatper(ILogging logger, CacheConfig config = null)
         {
             _logger = logger;
-            _factory = new RedisCacheFactory(logger, config);
+            _config = config;
+            _factory = new RedisCacheFactory(logger, _config);
 
             _db = _factory.ConstructCacheInstance();
         }
@@ -34,7 +36,19 @@ namespace Glav.CacheAdapter.Distributed.Redis
                     return requestCacheData;
                 }
 
-                var data = _db.StringGet(cacheKey);
+                var data = new RedisValue();
+                if (_config.IsCacheDependencyManagementEnabled && _db.KeyType(cacheKey) == RedisType.List)
+                {
+                    var cacheValue = _db.ListGetByIndex(cacheKey, 0);
+                    if (cacheValue.HasValue && cacheValue != string.Empty)
+                    {
+                        data = cacheValue;
+                    }
+                }
+                else
+                {
+                    data = _db.StringGet(cacheKey);
+                }
                 if (!data.IsNull && data.HasValue)
                 {
                     var blobBytes = (byte[])data;
@@ -101,6 +115,11 @@ namespace Glav.CacheAdapter.Distributed.Redis
         {
             //TODO: Figure out good way of clearing a redis instance of data
             _logger.WriteErrorMessage("Redis does not support clearing the entire contents of the cache.");
+        }
+
+        public IDatabase RedisDatabase
+        {
+            get { return _db; }
         }
     }
 }

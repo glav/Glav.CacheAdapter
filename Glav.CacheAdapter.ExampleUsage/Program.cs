@@ -54,7 +54,9 @@ namespace Glav.CacheAdapter.ExampleUsage
             Console.WriteLine("\n*** Simple Cache Dependency examples\n");
             var cacheProvider = AppServices.Cache;
 
+
             Console.WriteLine("1. Adding the main data to cache which acts as the trigger for the other added items");
+            cacheProvider.InvalidateCacheItem("MasterData");
             var masterData = cacheProvider.Get<string>("MasterData", DateTime.Now.AddDays(1), () => "Master Data Item");
 
             Console.WriteLine("\n2. Attempting to get some related Data from cache provider which will\nimplicitly add it to the cache and related it to the 'MasterItem'\nadded previously.");

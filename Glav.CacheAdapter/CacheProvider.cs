@@ -132,17 +132,25 @@ namespace Glav.CacheAdapter.Core
             {
                 return;
             }
-            _cache.InvalidateCacheItem(cacheKey);
 
             if (_cacheDependencyManager == null)
             {
+                _cache.InvalidateCacheItem(cacheKey);
                 return;
             }
 
             if (_cacheDependencyManager.IsOkToActOnDependencyKeysForParent(cacheKey))
             {
-                _cacheDependencyManager.PerformActionForDependenciesAssociatedWithParent(cacheKey);
+                try
+                {
+                    _cacheDependencyManager.PerformActionForDependenciesAssociatedWithParent(cacheKey);
+                } catch (Exception ex)
+                {
+                    _logger.WriteErrorMessage(string.Format("Error when trying to invalidate dependencies for [{0}]", cacheKey));
+                    _logger.WriteException(ex);
+                }
             }
+            _cache.InvalidateCacheItem(cacheKey);
         }
 
         public void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems)
