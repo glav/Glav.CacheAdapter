@@ -34,6 +34,8 @@ namespace Glav.CacheAdapter.Distributed
 
 		public void ParseConfig(string defaultServerIp, int defaultPort)
 		{
+            _config.ServerNodes.Clear();
+
             if (String.IsNullOrWhiteSpace(_config.DistributedCacheServers))
 				return;
 
