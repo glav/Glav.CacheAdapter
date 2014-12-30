@@ -243,6 +243,8 @@ Notes on Version 4.0
 --> <add key="Cache.CacheToUse" value="redis"/>
 --> Also adds support for a redis specific dependency manager which is more efficient than the default for redis
 --> <add key="Cache.DependencyManagerToUse" value="redis"/>
+* Fix for minor performance issue when checking the dependency management (Issue #33 - https://bitbucket.org/glav/cacheadapter/issue/33/call-to)
+
 
 
 
