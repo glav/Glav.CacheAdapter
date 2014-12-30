@@ -114,14 +114,13 @@ namespace Glav.CacheAdapter.Core
                 if (data != null)
                 {
                     addData(data);
+                    ManageCacheDependenciesForCacheItem(data, cacheKey, parentKey, actionForDependency);
                 }
             }
             else
             {
                 _logger.WriteInfoMessage(string.Format("Retrieving item [{0}] from cache.", cacheKey));
             }
-
-            ManageCacheDependenciesForCacheItem(data, cacheKey, parentKey, actionForDependency);
 
             return data;
         }
