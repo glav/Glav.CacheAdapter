@@ -238,6 +238,7 @@ Notes on Version 3.2.1
 * Fix for Issue #29. Using SecurityMode=None incorrectly depended on SecurityMessageAuthorizationKey setting. This is now resolved.
 
 Notes on Version 4.0
+~~~~~~~~~~~~~~~~~~~~
 * Added support for cache type of redis
 --> <add key="Cache.CacheToUse" value="redis"/>
 --> Also adds support for a redis specific dependency manager which is more efficient than the default for redis
