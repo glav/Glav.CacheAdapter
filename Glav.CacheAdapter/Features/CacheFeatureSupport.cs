@@ -60,7 +60,7 @@ namespace Glav.CacheAdapter.Features
                     return true;
                     break;
                 case CacheTypes.redis:
-                    return false;
+                    return true;
                     break;
                 default:
                     return false;

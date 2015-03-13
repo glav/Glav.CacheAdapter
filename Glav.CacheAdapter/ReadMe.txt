@@ -243,7 +243,16 @@ Notes on Version 4.0
 --> <add key="Cache.CacheToUse" value="redis"/>
 --> Also adds support for a redis specific dependency manager which is more efficient than the default for redis
 --> <add key="Cache.DependencyManagerToUse" value="redis"/>
-* Fix for minor performance issue when checking the dependency management (Issue #33 - https://bitbucket.org/glav/cacheadapter/issue/33/call-to)
+    Note: using <add key="Cache.DependencyManagerToUse" value="default"/> will default to using the redis specific cache dependency manager
+	if the redis cache engine is selected
+	You can override this to use the generic dependency managment engine by using:
+	<add key="Cache.DependencyManagerToUse" value="generic"/>
+--> Fix for minor performance issue when checking the dependency management (Issue #33 - https://bitbucket.org/glav/cacheadapter/issue/33/call-to)
+--> Addition of an extra method on the ICache interface - InvalidateCacheItems - to allow efficient batch deletions/removals of cache
+    items
+--> Much more efficient DependencyManager (both generic and redis specific) to remove large lists of dependencies quicker.
+--> Fixed a bug where a new config was not properly applied, if applied after initial initialisation.
+
 
 
 

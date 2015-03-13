@@ -12,10 +12,11 @@ namespace Glav.CacheAdapter.Distributed.Redis
 {
     public class RedisCacheAdatper : ICache
     {
-		private ILogging _logger;
+        private ILogging _logger;
         private RedisCacheFactory _factory;
         private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
         private static IDatabase _db = null;
+        public static ConnectionMultiplexer _connection = null;
         private CacheConfig _config = null;
 
         public RedisCacheAdatper(ILogging logger, CacheConfig config = null)
@@ -24,7 +25,8 @@ namespace Glav.CacheAdapter.Distributed.Redis
             _config = config;
             _factory = new RedisCacheFactory(logger, _config);
 
-            _db = _factory.ConstructCacheInstance();
+            _connection = _factory.ConstructCacheInstance();
+            _db = _connection.GetDatabase();
         }
         public T Get<T>(string cacheKey) where T : class
         {
@@ -84,7 +86,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
         {
             try
             {
-                var success = _db.StringSet(cacheKey, dataToAdd.Serialize(),slidingExpiryWindow);
+                var success = _db.StringSet(cacheKey, dataToAdd.Serialize(), slidingExpiryWindow);
                 if (!success)
                 {
                     _logger.WriteErrorMessage(string.Format("Unable to store item in cache. CacheKey:{0}", cacheKey));
@@ -98,8 +100,43 @@ namespace Glav.CacheAdapter.Distributed.Redis
 
         public void InvalidateCacheItem(string cacheKey)
         {
-            _db.KeyDelete(cacheKey);
+            try
+            {
+                var success = _db.KeyDelete(cacheKey);
+                if (!success)
+                {
+                    _logger.WriteErrorMessage(string.Format("Unable to remove item from cache. CacheKey:{0}", cacheKey));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteException(ex);
+            }
         }
+
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+            _logger.WriteInfoMessage("Invalidating a series of cache keys");
+            var distinctKeys = cacheKeys.Distinct();
+
+            try
+            {
+                var redisKeyList = distinctKeys.Select(s => (RedisKey)s);
+
+                _db.KeyDelete(redisKeyList.ToArray(), CommandFlags.FireAndForget);
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteException(ex);
+            }
+
+
+        }
+
 
         public void AddToPerRequestCache(string cacheKey, object dataToAdd)
         {
@@ -113,8 +150,41 @@ namespace Glav.CacheAdapter.Distributed.Redis
 
         public void ClearAll()
         {
-            //TODO: Figure out good way of clearing a redis instance of data
-            _logger.WriteErrorMessage("Redis does not support clearing the entire contents of the cache.");
+            _logger.WriteInfoMessage("Clearing the cache");
+            var allEndpoints = _connection.GetEndPoints();
+            if (allEndpoints != null && allEndpoints.Length > 0)
+            {
+                foreach (var endpoint in allEndpoints)
+                {
+                    var flushWorked = false;
+                    var server = _connection.GetServer(endpoint);
+                    try
+                    {
+                        server.FlushAllDatabases();
+                        flushWorked = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.WriteErrorMessage("Error flushing the cache (using FlushAllDatabases method):" + ex.Message);
+                        flushWorked = false;
+                    }
+
+                    if (!flushWorked)
+                    {
+                        _logger.WriteErrorMessage("Flushing the database did not work (probably due to requiring admin privileges), attempting to delete all keys");
+
+                        try
+                        {
+                            var allKeys = server.Keys();
+                            _db.KeyDelete(allKeys.ToArray(), CommandFlags.FireAndForget);
+                        } catch (Exception ex)
+                        {
+                            _logger.WriteErrorMessage("Error flushing the cache (using delete keys method):" + ex.Message);
+                            flushWorked = false;
+                        }
+                    }
+                }
+            }
         }
 
         public IDatabase RedisDatabase

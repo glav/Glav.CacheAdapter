@@ -16,8 +16,8 @@ namespace Glav.CacheAdapter.ExampleUsage
     public static class HammerTheCache
     {
         private const int NUMBER_THREADS = 2;
-        private const int NUMBER_OPERATIONS_PER_TASK = 10;
-        private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromSeconds(15);
+        private const int NUMBER_OPERATIONS_PER_TASK = 2;
+        private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromSeconds(2);
         private static readonly CacheConfig _config = new CacheConfig();
         public static void StartHammering()
         {
@@ -41,8 +41,12 @@ namespace Glav.CacheAdapter.ExampleUsage
 
         private static void StartTestExecution()
         {
+            AppServices.SetLogger(new InMemoryLogger());
+
+            Console.WriteLine("Clearing the cache in preparation...");
+            AppServices.Cache.ClearAll();
             Console.WriteLine();
-            Console.WriteLine("Starting {0} threads, each performing {1} iterations, running for a minimum time of: {2} minutes", NUMBER_THREADS, NUMBER_OPERATIONS_PER_TASK, MINIMUM_TIME_TO_RUN.Minutes);
+            Console.WriteLine("Starting {0} threads, each performing {1} iterations, running for a minimum time of: {2} minutes {3} seconds", NUMBER_THREADS, NUMBER_OPERATIONS_PER_TASK, MINIMUM_TIME_TO_RUN.Minutes, MINIMUM_TIME_TO_RUN.Seconds);
 
             Console.WriteLine();
             Console.Write("Up to iteration: #");
@@ -51,16 +55,19 @@ namespace Glav.CacheAdapter.ExampleUsage
             int left = Console.CursorLeft;
             Stopwatch watch = new Stopwatch();
             long shortestTime = long.MaxValue, longestTime = 0;
+            long masterKeyClearTime = 0;
             double total = 0;
             int numTimes = 0;
             var avgTimes = new List<double>();
 
 
 
+            var masterKeys = new List<string>();
             List<Thread> storeTasks = new List<Thread>(NUMBER_THREADS);
 
             watch.Start();
             var currentIterationCount = 0;
+            var rnd = new Random(DateTime.Now.Millisecond);
 
             while (watch.Elapsed < MINIMUM_TIME_TO_RUN)
             {
@@ -69,14 +76,15 @@ namespace Glav.CacheAdapter.ExampleUsage
                 Console.CursorLeft = left;
                 Console.Write(currentIterationCount);
 
+
                 for (int tCnt = 0; tCnt < NUMBER_THREADS; tCnt++)
                 {
-                    var seed = tCnt;
+                    var seed = rnd.Next(1,100);
+                    var masterKey1 = string.Format("masterkey-{0}", tCnt);
+                    masterKeys.Add(masterKey1);
                     var threadStart = new ThreadStart(() =>
                                                           {
                                                               var key = string.Format("Key-{0}", currentIterationCount * seed);
-                                                              var masterKey1 = string.Format("master-{0}", key);
-
                                                               var timer = new Stopwatch();
                                                               timer.Start();
                                                               // get the data, which then also adds it
@@ -91,8 +99,7 @@ namespace Glav.CacheAdapter.ExampleUsage
                                                               }
 
                                                               // Now Clear it
-                                                              AppServices.Cache.InvalidateCacheItem(masterKey1);  // if Cache dependency enabled, clears the data otherwise does nothing
-                                                              AppServices.Cache.InvalidateCacheItem(key);
+                                                              //AppServices.Cache.InvalidateCacheItem(key);
 
                                                               timer.Stop();
                                                               if (timer.ElapsedMilliseconds > longestTime) { longestTime = timer.ElapsedMilliseconds; }
@@ -110,14 +117,24 @@ namespace Glav.CacheAdapter.ExampleUsage
 
                 Console.CursorTop = infoTop;
                 Console.CursorLeft = 0;
-                Console.WriteLine("Shortest Time: {0} mseconds", shortestTime);
-                Console.WriteLine("Longest Time: {0} mseconds", longestTime);
                 var avgTime = total / (double)numTimes;
                 avgTimes.Add(avgTime);
                 Console.WriteLine("Avg Time: {0} mseconds", avgTime);
             }
 
-            avgTimes.ForEach(t => Console.WriteLine("Avg Time: {0}", t));
+            Console.WriteLine("Clearing child items of master/parent keys...");
+            var masterKeyTimer = new Stopwatch();
+            masterKeyTimer.Start();
+            AppServices.Cache.InvalidateCacheItems(masterKeys);
+            masterKeyTimer.Stop();
+            masterKeyClearTime = masterKeyTimer.ElapsedMilliseconds;
+            total += masterKeyClearTime;
+
+            Console.WriteLine("Number of items cached: {0}", numTimes);
+            Console.WriteLine("Shortest Time: {0} mseconds", shortestTime);
+            Console.WriteLine("Longest Time: {0} mseconds", longestTime);
+            Console.WriteLine("Clearing child items of master keys took: {0} mseconds", masterKeyClearTime);
+            InMemoryLogger.FlushToDisk("CacheAdatper.log");
         }
 
         private static MoreDummyData GetDataToCache(int tCnt)
