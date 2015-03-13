@@ -46,6 +46,90 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
+        public void SettingACacheKeyAsAParentShouldNotClearItsCacheValueContents()
+        {
+            const string cacheData = "Some data to cache";
+            const string cacheDataChild1 = "childdata1";
+            const string cacheDataChild2 = "childdata2";
+            const string cacheMasterKey = "masterKeyTest";
+            const string cacheChildKey1 = "childkey1";
+            const string cacheChildKey2 = "childkey2";
+
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+
+            // Ensure we have nodata in the cache
+            cacheProvider.ClearAll();
+
+            cacheProvider.Get<string>(cacheMasterKey, DateTime.Now.AddYears(1), () =>
+            {
+                return cacheData;
+            });
+
+            var testGet = cacheProvider.Get<string>(cacheMasterKey, DateTime.Now.AddYears(1), () =>
+            {
+                return "this should never be returned since the original data will not have expired";
+            });
+
+            // Assert the mastercachekey contains the data we expect
+            Assert.AreEqual<string>(cacheData, testGet);
+
+            // Add some children
+            cacheProvider.Get<string>(cacheChildKey1, DateTime.Now.AddYears(1), () =>
+            {
+                return cacheDataChild1;
+            }, cacheMasterKey);
+            cacheProvider.Get<string>(cacheChildKey2, DateTime.Now.AddYears(1), () =>
+            {
+                return cacheDataChild2;
+            }, cacheMasterKey);
+
+            // Assert the child cache keys contain data we expect
+            var childGet1 = cacheProvider.Get<string>(cacheChildKey1, DateTime.Now.AddYears(1), () =>
+            {
+                return "some different childdata1";
+            }, cacheMasterKey);
+            var childGet2 = cacheProvider.Get<string>(cacheChildKey2, DateTime.Now.AddYears(1), () =>
+            {
+                return "some different childdata2";
+            }, cacheMasterKey);
+            Assert.AreEqual<string>(cacheDataChild1, childGet1);
+            Assert.AreEqual<string>(cacheDataChild2, childGet2);
+
+            // Now check the masterkey cache data to ensure that the data is still valid after it has been converted to
+            // a master key
+            var testGetAgain = cacheProvider.Get<string>(cacheMasterKey, DateTime.Now.AddYears(1), () =>
+            {
+                return "this should never be returned since the original data will not have expired";
+            });
+
+            // Assert the mastercachekey contains the data we expect
+            Assert.AreEqual<string>(cacheData, testGet);
+
+            // And clear it all just to make sure
+            cacheProvider.InvalidateCacheItem(cacheMasterKey);
+
+            // Since all these values should have been cleared, we should now get the newly returned data
+            var testGetMaster = cacheProvider.Get<string>(cacheMasterKey, DateTime.Now.AddYears(1), () =>
+            {
+                return "ok";
+            });
+            var childGet1Final = cacheProvider.Get<string>(cacheChildKey1, DateTime.Now.AddYears(1), () =>
+            {
+                return "ok";
+            });
+            var childGet2Final = cacheProvider.Get<string>(cacheChildKey2, DateTime.Now.AddYears(1), () =>
+            {
+                return "ok";
+            });
+            Assert.AreEqual<string>("ok", testGetMaster);
+            Assert.AreEqual<string>("ok", childGet1Final);
+            Assert.AreEqual<string>("ok", childGet2Final);
+
+
+        }
+
+        [TestMethod]
         public void ShouldInvalidateASeriesOfCacheKeys()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
