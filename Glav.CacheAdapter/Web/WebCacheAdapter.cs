@@ -48,9 +48,22 @@ namespace Glav.CacheAdapter.Web
 
         public void InvalidateCacheItem(string cacheKey)
         {
-            if (_cache.Get(cacheKey) != null)
-                _cache.Remove(cacheKey);
+            _cache.Remove(cacheKey);
         }
+
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+            _logger.WriteInfoMessage("Invalidating a series of cache keys");
+            foreach (var cacheKey in cacheKeys)
+            {
+                _cache.Remove(cacheKey);
+            }
+        }
+
 
         public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
         {

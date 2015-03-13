@@ -3,9 +3,9 @@
 	<metadata>
 		<id>Glav.CacheAdapter.Core</id>
 		<title>.NET CacheAdapter Core components</title>
-		<version>3.2.1</version>
-		<authors>Paul Glavich (with help via Darren Boon)</authors>
-		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric and memcached cache mechasnisms. Supports advanced features such as cache dependencies and also fully supports AppFabric within Azure. This package contains no examples or documentation and contains core components only.</description>
+		<version>4.0</version>
+		<authors>Paul Glavich</authors>
+		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric, memcached cache and redis mechasnisms. Supports advanced features such as cache dependencies and also fully supports AppFabric within Azure. This package contains no examples or documentation and contains core components only.</description>
 		<summary>A Generic cache mechanism supporting multiple cache engines.</summary>
 		<language>en-US</language>
 		<projectUrl>http://weblogs.asp.net/pglavich/archive/2013/07/21/cacheadapter-3-0-released.aspx</projectUrl>
@@ -16,8 +16,12 @@
 		<dependencies>
 			<dependency id="EnyimMemcached" version="2.11" />
 			<dependency id="ServerAppFabric.Client" version="1.1.2106" />
+			<dependency id="Microsoft.Bcl" version="1.1.9" />
+			<dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+			<dependency id="Microsoft.Bcl.Build" version="1.0.14" />
+			<dependency id="StackExchange.Redis" version="1.0.371" />
 		</dependencies>
-		<tags>Cache Caching memcached AppFabric Asp.Net Web Glav</tags>
+		<tags>Cache Caching redis memcached AppFabric Asp.Net Web Glav</tags>
 	</metadata>
 	 <files>
 		  <file src="lib\*.dll" target="lib" />

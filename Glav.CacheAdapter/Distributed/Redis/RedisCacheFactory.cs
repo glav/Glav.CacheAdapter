@@ -14,7 +14,6 @@ namespace Glav.CacheAdapter.Distributed.Redis
         private const int DEFAULT_Port = 6379;
 
         private ConnectionMultiplexer _redisConnection = null;
-        private IDatabase _db = null;
 
         public RedisCacheFactory(ILogging logger, CacheConfig config = null)
             : base(logger, config)
@@ -22,14 +21,13 @@ namespace Glav.CacheAdapter.Distributed.Redis
             ParseConfig(DEFAULT_IpAddress, DEFAULT_Port);
         }
 
-        public IDatabase ConstructCacheInstance()
+        public ConnectionMultiplexer ConstructCacheInstance()
         {
             var connectionOptions = ConstructConnectionOptions();
 
             try
             {
                 _redisConnection = ConnectionMultiplexer.Connect(connectionOptions);
-                _db = _redisConnection.GetDatabase();
             }
             catch (Exception ex)
             {
@@ -37,7 +35,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
                 throw;
             }
 
-            return _db;
+            return _redisConnection;
         }
 
         private ConfigurationOptions ConstructConnectionOptions()

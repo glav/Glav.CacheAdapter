@@ -125,6 +125,52 @@ namespace Glav.CacheAdapter.Core
             return data;
         }
 
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+
+            if (!_config.IsCacheEnabled)
+            {
+                return;
+            }
+
+            var distinctKeys = cacheKeys.Distinct();
+
+            if (_cacheDependencyManager == null)
+            {
+                _cache.InvalidateCacheItems(distinctKeys);
+                return;
+            }
+
+            foreach (var cacheKey in distinctKeys)
+            {
+                if (_cacheDependencyManager.IsOkToActOnDependencyKeysForParent(cacheKey))
+                {
+                    try
+                    {
+                        _cacheDependencyManager.PerformActionForDependenciesAssociatedWithParent(cacheKey);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.WriteErrorMessage(string.Format("Error when trying to invalidate dependencies for [{0}]", cacheKey));
+                        _logger.WriteException(ex);
+                    }
+                }
+            }
+
+            try
+            {
+                _cache.InvalidateCacheItems(distinctKeys);
+            } catch (Exception ex)
+            {
+                _logger.WriteErrorMessage("Error when trying to invalidate a series of cache keys");
+                _logger.WriteException(ex);
+            }
+        }
+
         public void InvalidateCacheItem(string cacheKey)
         {
             if (!_config.IsCacheEnabled)

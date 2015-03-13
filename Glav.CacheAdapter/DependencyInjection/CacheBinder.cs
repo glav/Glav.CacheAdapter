@@ -56,10 +56,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             {
                 _logger = logger;
             }
-            if (resolver != null)
-            {
-                _resolver = resolver;
-            }
+             _resolver = resolver;
             EnsureObjectPropertiesAreValidObjects();
             return _resolver.ResolveCacheFromConfig(_config);
         }

@@ -237,6 +237,20 @@ Notes on Version 3.2.1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Fix for Issue #29. Using SecurityMode=None incorrectly depended on SecurityMessageAuthorizationKey setting. This is now resolved.
 
+Notes on Version 4.0
+~~~~~~~~~~~~~~~~~~~~
+* Added support for cache type of redis
+--> <add key="Cache.CacheToUse" value="redis"/>
+--> Also adds support for a redis specific dependency manager which is more efficient than the default for redis
+    <add key="Cache.DependencyManagerToUse" value="redis"/>
+--> Added a redis specific cache dependency manager. This dependency manager is automatically selected if dependency management
+    is enabled unless the 'generic' type is specified explicitly in config.
+	<add key="Cache.DependencyManagerToUse" value="redis"/>
+--> Refactor of cache dependency management handling to improve performance when removing large sets of dependent keys.
+--> Added a new InvalidateCacheKeys method to ICacheProvider and ICache interfaces to allow bulk invalidation of keys.
+* Fix for minor performance issue when checking the dependency management (Issue #33 - https://bitbucket.org/glav/cacheadapter/issue/33/call-to)
+
+
 
 
 

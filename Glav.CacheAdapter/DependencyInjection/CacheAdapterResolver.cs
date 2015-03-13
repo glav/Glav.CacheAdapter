@@ -21,6 +21,12 @@ namespace Glav.CacheAdapter.DependencyInjection
         {
             _logger = logger;
         }
+
+        public void SetLogger(ILogging logger)
+        {
+            _logger = logger;
+        }
+
         public Core.ICacheProvider ResolveCacheFromConfig(CacheConfig config)
         {
             ICacheProvider provider = null;
@@ -74,10 +80,13 @@ namespace Glav.CacheAdapter.DependencyInjection
             switch (normalisedDependencyManagerConfig)
             {
                 case CacheDependencyManagerTypes.Default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger,config);
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
                     break;
                 case CacheDependencyManagerTypes.Redis:
                     dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
+                    break;
+                case CacheDependencyManagerTypes.Generic:
+                    dependencyMgr = new GenericDependencyManager(cache, _logger, config);
                     break;
                 case CacheDependencyManagerTypes.Unspecified:
                     // try and determine what one to use based on the cache type

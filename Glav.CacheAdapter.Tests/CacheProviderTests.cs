@@ -33,6 +33,47 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
+        public void ShouldNotBlowUpWhenRemovingAteemptingToRemoveAnItemNotInTheCache()
+        {
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+
+            // Ensure we have nodata in the cache
+            cacheProvider.InvalidateCacheItem("hoochy coochy blah blah");
+
+            cacheProvider.InvalidateCacheItems(new string[] { "dont kill me", "really dont", "fine then kill me" });
+
+        }
+
+        [TestMethod]
+        public void ShouldInvalidateASeriesOfCacheKeys()
+        {
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+
+            cache.Add("one", DateTime.Now.AddMinutes(100), "test data for one");
+            cache.Add("two", DateTime.Now.AddMinutes(100), "test data for two");
+            cache.Add("three", DateTime.Now.AddMinutes(100), "test data for three");
+            cache.Add("four", DateTime.Now.AddMinutes(100), "test data for four");
+            
+            // Ensure we have the data in the cache
+            Assert.IsNotNull(cache.Get<string>("one"));
+            Assert.IsNotNull(cache.Get<string>("two"));
+            Assert.IsNotNull(cache.Get<string>("three"));
+            Assert.IsNotNull(cache.Get<string>("four"));
+
+            // Now clear them all
+            cacheProvider.InvalidateCacheItems(new string[] { "one","two","three","four" });
+
+            // Ensure we have removed the data in the cache
+            Assert.IsNull(cache.Get<string>("one"));
+            Assert.IsNull(cache.Get<string>("two"));
+            Assert.IsNull(cache.Get<string>("three"));
+            Assert.IsNull(cache.Get<string>("four"));
+
+        }
+
+        [TestMethod]
         public void ShouldImplicitlyAddItemToCacheAndExpireItem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();

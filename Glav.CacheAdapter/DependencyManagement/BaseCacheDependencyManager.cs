@@ -53,21 +53,59 @@ namespace Glav.CacheAdapter.DependencyManagement
         public virtual void ForceActionForDependenciesAssociatedWithParent(string parentKey, CacheDependencyAction forcedAction)
         {
             Logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction.ToString(), parentKey));
-            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, null, forcedAction);
+            ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, forcedAction);
         }
 
 
-        protected virtual void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, List<string> alreadyProcessedKeys = null, CacheDependencyAction? forcedAction = null)
+        protected virtual void ExecuteDefaultOrSuppliedActionForParentKeyDependencies(string parentKey, CacheDependencyAction? forcedAction = null)
         {
             if (!IsOkToActOnDependencyKeysForParent(parentKey))
             {
                 return;
+            }
+            Logger.WriteInfoMessage(string.Format("executing action on dependency cache keys for parent key:[{0}]", parentKey));
+
+            var alreadyProcessedKeys = new List<string>();
+
+            var itemsToAction = GetCacheKeysToActionForParentKeyDependencies(parentKey, alreadyProcessedKeys);
+            var itemsToClear = new List<string>();
+            itemsToAction.ForEach(item =>
+            {
+                var cacheItemAction = item.Action;
+                if (forcedAction.HasValue)
+                {
+                    cacheItemAction = forcedAction.Value;
+                }
+                switch (cacheItemAction)
+                {
+                    case CacheDependencyAction.ClearDependentItems:
+                        itemsToClear.Add(item.CacheKey);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("Action [{0}] not supported at this time", cacheItemAction));
+                }
+            });
+            if (itemsToClear.Count > 0)
+            {
+                _cache.InvalidateCacheItems(itemsToClear);
+            }
+        }
+
+        protected virtual List<DependencyItem> GetCacheKeysToActionForParentKeyDependencies(string parentKey, List<string> alreadyProcessedKeys = null)
+        {
+            var cacheKeysToAction = new List<DependencyItem>();
+
+            if (!IsOkToActOnDependencyKeysForParent(parentKey))
+            {
+                return cacheKeysToAction;
             }
 
             if (alreadyProcessedKeys == null)
             {
                 alreadyProcessedKeys = new List<string>();
             }
+
+
 
             var items = GetDependentCacheKeysForParent(parentKey);
             var numItems = items != null ? items.Count() : 0;
@@ -85,28 +123,12 @@ namespace Glav.CacheAdapter.DependencyManagement
                     {
                         continue;
                     }
-                    var cacheItemAction = item.Action;
-                    if (forcedAction.HasValue)
-                    {
-                        cacheItemAction = forcedAction.Value;
-                    }
-                    switch (cacheItemAction)
-                    {
-                        case CacheDependencyAction.ClearDependentItems:
-                            _logger.WriteInfoMessage(string.Format("Clearing dependent item: [{0}]", item.CacheKey));
-                            _cache.InvalidateCacheItem(item.CacheKey);
-                            // Recursively clear any dependencies as this key itself might be a parent
-                            // to other items
-                            break;
-                        default:
-                            throw new NotSupportedException(string.Format("Action [{0}] not supported at this time", cacheItemAction));
-                    }
+                    cacheKeysToAction.Add(item);
                     alreadyProcessedKeys.Add(item.CacheKey);
-                    ExecuteDefaultOrSuppliedActionForParentKeyDependencies(item.CacheKey, alreadyProcessedKeys);
-
+                    cacheKeysToAction.AddRange(GetCacheKeysToActionForParentKeyDependencies(item.CacheKey,alreadyProcessedKeys));
                 }
             }
-
+            return cacheKeysToAction;
         }
 
 
