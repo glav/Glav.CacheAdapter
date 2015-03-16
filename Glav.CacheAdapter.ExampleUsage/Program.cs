@@ -24,7 +24,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 
             // Basic dependency management usage - if not enabled in the
             // app.config file, these wont work.
-            //ExampleAddAndClearWithDependencies();
+            ExampleAddAndClearWithDependencies();
 
             // Uncomment this line to simulate about 100,000 hits to the cache engine
             //HammerTheCache.StartHammering();
