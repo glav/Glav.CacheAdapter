@@ -46,6 +46,29 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
+        public void ShouldAddItemToCacheUsingDelegateAsKey()
+        {
+            var cacheProvider = TestHelper.GetCacheProvider();
+            var cache = TestHelper.GetCacheFromConfig();
+            int accessCount = 0;
+
+            var cacheDataDelegate = new Func<string>(() =>
+            {
+                accessCount++;
+                return "some data";
+
+            });
+            var data = cacheProvider.Get<string>(DateTime.Now.AddSeconds(10), cacheDataDelegate);
+            // Item not in cache, delegate was called, so accessCount incremented
+            Assert.AreEqual<int>(1, accessCount);
+
+            data = cacheProvider.Get<string>(DateTime.Now.AddSeconds(10), cacheDataDelegate);
+            // Item was in cache, so delegate was not called, so accessCount not incremented
+            Assert.AreEqual<int>(1, accessCount);
+
+        }
+
+        [TestMethod]
         public void SettingACacheKeyAsAParentShouldNotClearItsCacheValueContents()
         {
             const string cacheData = "Some data to cache";
