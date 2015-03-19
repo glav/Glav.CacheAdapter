@@ -1,6 +1,7 @@
 # Glav.CacheAdapter - README #
 
-This library allows developers to code against a single interface ICacheProvider and be able to run against a variety of cache implementations simply by changing configuration values. The currently supported list of cache engine/implementations are:
+This library allows developers to code against a single interface **ICacheProvider** and be able to run against a variety of cache implementations simply by changing configuration values. The currently supported list of cache engine/implementations are:
+
 * .Net memory cache
 * ASP.Net Web cache
 * [Windows Azure Appfabric](http://blogs.msdn.com/b/cie/archive/2014/03/05/caching-on-windows-azure-microsoft-appfabric-cache-azure-cache-service-managed-cache-dedicated-cache-in-role-cache-co-located-cache-shared-cache-azure-role-based-cache-clarifying-the-naming-confusion.aspx) (also knows as shared cache). Note: Microsoft will be retiring this technology.
@@ -12,8 +13,8 @@ Note that this is only a brief introduction to the CacheAdatper, however for mor
 ### What is this repository for? ###
 
 * Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+(
+(to be done)
 
 ### How do I get set up? ###
 
