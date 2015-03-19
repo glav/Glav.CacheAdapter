@@ -26,7 +26,7 @@ namespace Glav.CacheAdapter.Distributed
         public DistributedCacheFactoryBase(ILogging logger, CacheConfig config)
         {
             _logger = logger;
-            _config = config;
+            _config = config != null ? config : new CacheConfig();
         }
         protected ILogging Logger { get { return _logger; } }
 
@@ -34,6 +34,8 @@ namespace Glav.CacheAdapter.Distributed
 
 		public void ParseConfig(string defaultServerIp, int defaultPort)
 		{
+            _config.ServerNodes.Clear();
+
             if (String.IsNullOrWhiteSpace(_config.DistributedCacheServers))
 				return;
 

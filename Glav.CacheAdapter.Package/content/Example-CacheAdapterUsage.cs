@@ -53,18 +53,22 @@ namespace Glav.CacheAdapter.ExampleUsage
         {
             Console.WriteLine("\n*** Simple Cache Dependency examples\n");
             var cacheProvider = AppServices.Cache;
+            cacheProvider.ClearAll();
+            const string masterDataKey = "MasterData";
+
 
             Console.WriteLine("1. Adding the main data to cache which acts as the trigger for the other added items");
-            var masterData = cacheProvider.Get<string>("MasterData", DateTime.Now.AddDays(1), () => "Master Data Item");
+            //cacheProvider.InvalidateCacheItem(masterDataKey);
+            var masterData = cacheProvider.Get<string>(masterDataKey, DateTime.Now.AddDays(1), () => "Master Data Item");
 
             Console.WriteLine("\n2. Attempting to get some related Data from cache provider which will\nimplicitly add it to the cache and related it to the 'MasterItem'\nadded previously.");
-            var bitOfRelatedData1 = cacheProvider.Get<string>("Bit1", DateTime.Now.AddDays(1), () => "Some Bit Of Data1","MasterData");
-            var bitOfRelatedData2 = cacheProvider.Get<string>("Bit2", DateTime.Now.AddDays(1), () => "Some Bit Of Data2","MasterData");
+            var bitOfRelatedData1 = cacheProvider.Get<string>("Bit1", DateTime.Now.AddDays(1), () => "Some Bit Of Data1", masterDataKey);
+            var bitOfRelatedData2 = cacheProvider.Get<string>("Bit2", DateTime.Now.AddDays(1), () => "Some Bit Of Data2", masterDataKey);
 
             Console.WriteLine("\n3. Make sure everything is in the cache as expected.");
             var bit1Ok = cacheProvider.InnerCache.Get<string>("Bit1") != null;
             var bit2Ok = cacheProvider.InnerCache.Get<string>("Bit2") != null;
-            var masterDataOk = cacheProvider.InnerCache.Get<string>("MasterData") != null;
+            var masterDataOk = cacheProvider.InnerCache.Get<string>(masterDataKey) != null;
 
             Console.WriteLine("Bit1 is in the cache?:{0}", bit1Ok);
             Console.WriteLine("Bit2 is in the cache?:{0}", bit2Ok);
@@ -78,12 +82,16 @@ namespace Glav.CacheAdapter.ExampleUsage
             }
 
             Console.WriteLine("\n5. Now clearing the master data item which should also clear the related items");
-            cacheProvider.InvalidateCacheItem("MasterData");
+            cacheProvider.InvalidateCacheItem(masterDataKey);
+            Wait(2);
 
             Console.WriteLine("\n6. Make sure everything is NOT in the cache as expected.");
-            bit1Ok = cacheProvider.InnerCache.Get<string>("Bit1") == null;
-            bit2Ok = cacheProvider.InnerCache.Get<string>("Bit2") == null;
-            masterDataOk = cacheProvider.InnerCache.Get<string>("MasterData") == null;
+            var bit1Value = cacheProvider.InnerCache.Get<string>("Bit1");
+            var bit2Value = cacheProvider.InnerCache.Get<string>("Bit2");
+            bit1Ok = bit1Value == null;
+            bit2Ok = bit2Value == null;
+            var masterDataValue = cacheProvider.InnerCache.Get<string>(masterDataKey);
+            masterDataOk = masterDataValue == null;
 
             Console.WriteLine("Bit1 is NOT in the cache?:{0}", bit1Ok);
             Console.WriteLine("Bit2 is NOT in the cache?:{0}", bit2Ok);
@@ -122,7 +130,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
             // the item is automatically added to the cache and returned.
 
-            Console.WriteLine("Getting Some Data.");
+            Console.WriteLine("#1: Getting Some Data.");
             var data1 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(5), () =>
             {
                 // This is the anonymous function which gets called if the data is not in the cache.
@@ -142,7 +150,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             // Now try and get some data using the same cache-key and before the cached data expiry time elapses.
             // The data will be located in the cache and returned, and the anonymous function is NOT executed.
 
-            Console.WriteLine("Getting Some More Data which should now be cached.");
+            Console.WriteLine("#2: Getting Some More Data which should now be cached.");
             var data2 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(3), () =>
             {
                 // This is the anonymous function which gets called if the data is not in the cache.
@@ -164,8 +172,8 @@ namespace Glav.CacheAdapter.ExampleUsage
             // is not found in the cache, so once again the anonymous function is executed, whatever is returned is
             // added to the cache, and then returned to the caller.
 
-            System.Threading.Thread.Sleep(5000);
-            Console.WriteLine("Getting Some More Data which should not be cached.");
+            Wait(5);
+            Console.WriteLine("#3: Getting Some More Data which should not be cached.");
             var data3 = cacheProvider.Get<SomeData>("cache-key", DateTime.Now.AddSeconds(5), () =>
             {
                 // This is the anonymous function which gets called if the data is not in the cache.
@@ -196,23 +204,22 @@ namespace Glav.CacheAdapter.ExampleUsage
         	                                                 	});
 			// Here we use the really simple API call to get an item from the cache without a cache key specified.
 			// The cache key is generated from the function we pass in as the delegate used to retrieve the data
-			Console.WriteLine("Getting Some Data which should NOT BE cached.");
-			var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+			Console.WriteLine("#4: Getting Some Data which should NOT BE cached.");
+			var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(3), getCacheData );
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Cache not added to, test result failed!");
             }
 
-        	System.Threading.Thread.Sleep(1000);
-			Console.WriteLine("Getting Some More Data which should BE cached.");
+			Console.WriteLine("#5: Getting Some More Data which should BE cached.");
 			var data5 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Data item not found in cache when it should have been found in cache, test result failed!");
             }
 
-			System.Threading.Thread.Sleep(3000);
-			Console.WriteLine("Getting Some More Data which should NOT be cached.");
+            Wait(3);
+			Console.WriteLine("#6: Getting Some More Data which should NOT be cached.");
 			var data6 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
             if (_accessCounter != 4)
             {
@@ -254,6 +261,15 @@ namespace Glav.CacheAdapter.ExampleUsage
             Console.WriteLine(msg);
             Console.ForegroundColor = originalColour;
             _allTestsPassed = false;
+        }
+
+        private static void Wait(int timeInSeconds)
+        {
+            var originalColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Waiting for {0} seconds...",timeInSeconds);
+            System.Threading.Thread.Sleep(timeInSeconds * 1000);
+            Console.ForegroundColor = originalColour;
         }
 
         #endregion

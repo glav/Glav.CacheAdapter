@@ -4,6 +4,7 @@ using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
+using Glav.CacheAdapter.Distributed.Redis;
 using Glav.CacheAdapter.Web;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,12 @@ namespace Glav.CacheAdapter.DependencyInjection
         {
             _logger = logger;
         }
+
+        public void SetLogger(ILogging logger)
+        {
+            _logger = logger;
+        }
+
         public Core.ICacheProvider ResolveCacheFromConfig(CacheConfig config)
         {
             ICacheProvider provider = null;
@@ -56,6 +63,9 @@ namespace Glav.CacheAdapter.DependencyInjection
                 case CacheTypes.memcached:
                     cache = new memcachedAdapter(_logger,config);
                     break;
+                case CacheTypes.redis:
+                    cache = new RedisCacheAdatper(_logger, config);
+                    break;
                 default:
                     cache = new MemoryCacheAdapter(_logger);
                     break;
@@ -70,11 +80,36 @@ namespace Glav.CacheAdapter.DependencyInjection
             switch (normalisedDependencyManagerConfig)
             {
                 case CacheDependencyManagerTypes.Default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger);
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
+                    break;
+                case CacheDependencyManagerTypes.Redis:
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
+                    break;
+                case CacheDependencyManagerTypes.Generic:
+                    dependencyMgr = new GenericDependencyManager(cache, _logger, config);
+                    break;
+                case CacheDependencyManagerTypes.Unspecified:
+                    // try and determine what one to use based on the cache type
+                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
                     break;
                 default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger);
+                    dependencyMgr = new GenericDependencyManager(cache, _logger,config);
                     break;
+            }
+            return dependencyMgr;
+        }
+
+        private ICacheDependencyManager GetRedisCacheDependencyManagerIfApplicable(CacheConfig config, ICache cache)
+        {
+            ICacheDependencyManager dependencyMgr = null;
+            var redisCache = cache as RedisCacheAdatper;
+            if (redisCache != null)
+            {
+                dependencyMgr = new RedisDependencyManager(cache, _logger, redisCache.RedisDatabase, config);
+            }
+            else
+            {
+                dependencyMgr = new GenericDependencyManager(cache, _logger, config);
             }
             return dependencyMgr;
         }

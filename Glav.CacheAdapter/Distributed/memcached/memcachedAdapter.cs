@@ -140,6 +140,20 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			}
 		}
 
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+            _logger.WriteInfoMessage("Invalidating a series of cache keys");
+            foreach (var cacheKey in cacheKeys)
+            {
+                InvalidateCacheItem(cacheKey);
+            }
+        }
+
+
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
             _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);

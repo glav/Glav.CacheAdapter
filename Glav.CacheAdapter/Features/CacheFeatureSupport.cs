@@ -7,6 +7,7 @@ using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Web;
+using Glav.CacheAdapter.Distributed.Redis;
 
 namespace Glav.CacheAdapter.Features
 {
@@ -38,8 +39,13 @@ namespace Glav.CacheAdapter.Features
                 return SupportsClearingCacheContents(_cache);
             }
 
+            return DetermineIfCahceSupportsClearingContents(_config.CacheToUse);
+        }
+
+        private bool DetermineIfCahceSupportsClearingContents(string cacheType)
+        {
             // Else use whats in config
-            switch (_config.CacheToUse)
+            switch (cacheType)
             {
                 case CacheTypes.MemoryCache:
                     return true;
@@ -53,20 +59,23 @@ namespace Glav.CacheAdapter.Features
                 case CacheTypes.memcached:
                     return true;
                     break;
+                case CacheTypes.redis:
+                    return true;
+                    break;
                 default:
                     return false;
                     break;
 
             }
-        }
+}
         public bool SupportsClearingCacheContents(ICache cache)
         {
-            if (cache is AppFabricCacheAdapter)
+            string cacheType = string.Empty;
+            if (cache != null)
             {
-                return false;
+                cacheType = cache.CacheType.ToStringType();
             }
-
-            return true;
+            return DetermineIfCahceSupportsClearingContents(cacheType);
         }
     }
 }
