@@ -13,7 +13,7 @@ Note that this is only a brief introduction to the CacheAdatper, however for mor
 ### What is this repository for? ###
 
 * Quick summary
-(
+
 (to be done)
 
 ### How do I get set up? ###
