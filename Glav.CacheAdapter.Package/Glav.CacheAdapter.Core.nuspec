@@ -12,7 +12,7 @@
 		</description>
 		<summary>A Generic cache mechanism supporting multiple cache engines.</summary>
 		<language>en-US</language>
-		<projectUrl>http://weblogs.asp.net/pglavich/cacheadapter-3-2-released</projectUrl>
+		<projectUrl>http://weblogs.asp.net/pglavich/cacheadapter-4-0-just-released-with-redis-support</projectUrl>
 		<frameworkAssemblies>
 		  <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net40" />
 		  <frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
