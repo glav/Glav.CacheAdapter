@@ -7,7 +7,7 @@ This library allows developers to code against a single interface ICacheProvider
 * [memcached](http://memcached.org/)
 * [Redis](http://redis.io/)
 
-A brief introduction to the purpose of the CacheAdatper, however for more detailed information, see the related blog posts listed below.
+Note that this is only a brief introduction to the CacheAdatper, however for more detailed information, see the related blog posts listed below.
 
 ### What is this repository for? ###
 
