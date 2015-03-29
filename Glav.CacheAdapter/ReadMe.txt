@@ -253,6 +253,10 @@ Notes on Version 4.0
 --> Much more efficient DependencyManager (both generic and redis specific) to remove large lists of dependencies quicker.
 --> Fixed a bug where a new config was not properly applied, if applied after initial initialisation.
 
+Notes on Version 4.0.1
+~~~~~~~~~~~~~~~~~~~~~~
+--> Fixed minor typo is naming of RedisCacheAdapter (was misspelled RedisCacheAdatper) - Issue #34 - https://bitbucket.org/glav/cacheadapter/issue/34/typo-in-class-name-rediscacheadatper
+
 
 
 

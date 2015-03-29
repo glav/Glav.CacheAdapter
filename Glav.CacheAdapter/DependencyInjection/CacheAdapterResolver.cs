@@ -64,7 +64,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cache = new memcachedAdapter(_logger,config);
                     break;
                 case CacheTypes.redis:
-                    cache = new RedisCacheAdatper(_logger, config);
+                    cache = new RedisCacheAdapter(_logger, config);
                     break;
                 default:
                     cache = new MemoryCacheAdapter(_logger);
@@ -102,7 +102,7 @@ namespace Glav.CacheAdapter.DependencyInjection
         private ICacheDependencyManager GetRedisCacheDependencyManagerIfApplicable(CacheConfig config, ICache cache)
         {
             ICacheDependencyManager dependencyMgr = null;
-            var redisCache = cache as RedisCacheAdatper;
+            var redisCache = cache as RedisCacheAdapter;
             if (redisCache != null)
             {
                 dependencyMgr = new RedisDependencyManager(cache, _logger, redisCache.RedisDatabase, config);

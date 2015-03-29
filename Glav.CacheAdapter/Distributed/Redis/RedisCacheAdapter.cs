@@ -10,7 +10,7 @@ using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.Distributed.Redis
 {
-    public class RedisCacheAdatper : ICache
+    public class RedisCacheAdapter : ICache
     {
         private ILogging _logger;
         private RedisCacheFactory _factory;
@@ -19,7 +19,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
         public static ConnectionMultiplexer _connection = null;
         private CacheConfig _config = null;
 
-        public RedisCacheAdatper(ILogging logger, CacheConfig config = null)
+        public RedisCacheAdapter(ILogging logger, CacheConfig config = null)
         {
             _logger = logger;
             _config = config;
