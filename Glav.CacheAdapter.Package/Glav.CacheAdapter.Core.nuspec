@@ -3,7 +3,7 @@
 	<metadata>
 		<id>Glav.CacheAdapter.Core</id>
 		<title>.NET CacheAdapter Core components</title>
-		<version>4.0</version>
+		<version>4.0.1</version>
 		<authors>Paul Glavich</authors>
 		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric, memcached and redis cache mechasnisms. 
 		Supports advanced features such as cache dependencies and also fully supports AppFabric and redis within Azure. 

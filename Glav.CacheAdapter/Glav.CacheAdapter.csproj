@@ -103,7 +103,7 @@
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />
-    <Compile Include="Distributed\Redis\RedisCacheAdatper.cs" />
+    <Compile Include="Distributed\Redis\RedisCacheAdapter.cs" />
     <Compile Include="Distributed\Redis\RedisCacheFactory.cs" />
     <Compile Include="Features\CacheFeatureSupport.cs" />
     <Compile Include="Features\ICacheFeatureSupport.cs" />
