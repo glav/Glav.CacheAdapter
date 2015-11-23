@@ -60,7 +60,6 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			var connectTimeoutValue = SafeGetCacheConfigValue(memcachedConstants.CONFIG_ConnectionTimeout);
 			var deadTimeoutValue = SafeGetCacheConfigValue(memcachedConstants.CONFIG_DeadNodeTimeout);
 
-			TimeSpan timeValue;
 			try
 			{
 				if (connectTimeoutValue != null)
