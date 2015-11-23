@@ -23,22 +23,16 @@ namespace Glav.CacheAdapter.Core
             {
                 case CacheSetting.AppFabric:
                     return CacheTypes.AppFabricCache;
-                    break;
                 case CacheSetting.memcached:
                     return CacheTypes.memcached;
-                    break;
                 case CacheSetting.Memory:
                     return CacheTypes.MemoryCache;
-                    break;
                 case CacheSetting.Redis:
                     return CacheTypes.redis;
-                    break;
                 case CacheSetting.Web:
                     return CacheTypes.WebCache;
-                    break;
                 default:
                     return CacheTypes.MemoryCache;
-                    break;
             }
         }
     }

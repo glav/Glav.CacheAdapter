@@ -9,7 +9,6 @@ namespace Glav.CacheAdapter.Distributed.Redis
 {
     public class RedisCacheFactory : DistributedCacheFactoryBase
     {
-        private ILogging _logger;
         private const string DEFAULT_IpAddress = "127.0.0.1";
         private const int DEFAULT_Port = 6379;
 

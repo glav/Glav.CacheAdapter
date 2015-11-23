@@ -49,22 +49,16 @@ namespace Glav.CacheAdapter.Features
             {
                 case CacheTypes.MemoryCache:
                     return true;
-                    break;
                 case CacheTypes.WebCache:
                     return true;
-                    break;
                 case CacheTypes.AppFabricCache:
                     return false;
-                    break;
                 case CacheTypes.memcached:
                     return true;
-                    break;
                 case CacheTypes.redis:
                     return true;
-                    break;
                 default:
                     return false;
-                    break;
 
             }
 }

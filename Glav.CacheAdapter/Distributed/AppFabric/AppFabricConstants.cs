@@ -1,12 +1,6 @@
-﻿using System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Glav.CacheAdapter.Distributed.AppFabric
+﻿namespace Glav.CacheAdapter.Distributed.AppFabric
 {
-	public static class AppFabricConstants
+    public static class AppFabricConstants
 	{
 		public const string DEFAULT_ServerAddress = "localhost";
 		public const string CONFIG_CacheNameKey = "DistributedCacheName";
