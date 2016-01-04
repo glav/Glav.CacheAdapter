@@ -1,16 +1,13 @@
 ﻿using Glav.CacheAdapter.Core.Diagnostics;
 using Microsoft.ApplicationServer.Caching;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
-using System.Text;
 
 namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     internal class FactoryConfigConverter
     {
-        private ILogging _logger;
+        private readonly ILogging _logger;
         public FactoryConfigConverter(ILogging logger)
         {
             _logger = logger;
@@ -52,14 +49,14 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_LocalCache_InvalidationPolicy))
                     {
                         var policyValue = config.ProviderSpecificValues[AppFabricConstants.CONFIG_LocalCache_InvalidationPolicy];
-                        var normalisedPolicyValue=policyValue.ToLowerInvariant();
+                        var normalisedPolicyValue = policyValue.ToLowerInvariant();
                         if (normalisedPolicyValue == AppFabricConstants.CONFIG_LocalCache_InvalidationPolicyValue_TimeoutBased)
                         {
-                            invalidationPolicy = DataCacheLocalCacheInvalidationPolicy.TimeoutBased;;
+                            invalidationPolicy = DataCacheLocalCacheInvalidationPolicy.TimeoutBased;
                         }
                     }
-                    
-                    factoryConfig.LocalCacheProperties = new DataCacheLocalCacheProperties(objectCount,TimeSpan.FromSeconds(defaultTimeoutInSeconds),invalidationPolicy);
+
+                    factoryConfig.LocalCacheProperties = new DataCacheLocalCacheProperties(objectCount, TimeSpan.FromSeconds(defaultTimeoutInSeconds), invalidationPolicy);
                 }
             }
         }
@@ -121,11 +118,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     {
                         secureToken.AppendChar(ch);
                     }
-                    bool useSsl = false;
-                    if (normalisedSslValue == CacheConstants.ConfigValueTrueText || normalisedSslValue == CacheConstants.ConfigValueTrueNumeric)
-                    {
-                        useSsl = true;
-                    }
+                    var useSsl = normalisedSslValue == CacheConstants.ConfigValueTrueText || normalisedSslValue == CacheConstants.ConfigValueTrueNumeric;
                     DataCacheSecurity securityProps = new DataCacheSecurity(secureToken, useSsl);
                     factoryConfig.SecurityProperties = securityProps;
                 }
@@ -136,7 +129,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     if (normalisedProtectionLevel == AppFabricConstants.CONFIG_ProtectionLevel_Sign)
                     {
                         actualProtectionLevel = DataCacheProtectionLevel.Sign;
-                    } 
+                    }
                     else if (normalisedProtectionLevel == AppFabricConstants.CONFIG_ProtectionLevel_EncryptAndSign)
                     {
                         actualProtectionLevel = DataCacheProtectionLevel.EncryptAndSign;
@@ -162,10 +155,9 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
         private void SetChannelOpenTimeout(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
         {
             // Set the channel open timeout if required - useful for debugging
-            string channelOpenTimeout = null;
             if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_ChannelOpenTimeout))
             {
-                channelOpenTimeout = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ChannelOpenTimeout];
+                var channelOpenTimeout = config.ProviderSpecificValues[AppFabricConstants.CONFIG_ChannelOpenTimeout];
                 int channelOpenTimeoutValue;
                 if (int.TryParse(channelOpenTimeout, out channelOpenTimeoutValue))
                 {
@@ -181,9 +173,9 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
         private void SetMaxConnectionsToServer(CacheConfig config, DataCacheFactoryConfiguration factoryConfig)
         {
-            int maxConnectionsToServer;
             if (config.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_MaxConnectionsToServer))
             {
+                int maxConnectionsToServer;
                 if (int.TryParse(config.ProviderSpecificValues[AppFabricConstants.CONFIG_MaxConnectionsToServer], out maxConnectionsToServer))
                 {
                     factoryConfig.MaxConnectionsToServer = maxConnectionsToServer;

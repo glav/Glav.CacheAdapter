@@ -1,19 +1,15 @@
 ﻿using Glav.CacheAdapter.Core.Diagnostics;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glav.CacheAdapter.Distributed.Redis
 {
     public class RedisCacheFactory : DistributedCacheFactoryBase
     {
-        private ILogging _logger;
         private const string DEFAULT_IpAddress = "127.0.0.1";
         private const int DEFAULT_Port = 6379;
 
-        private ConnectionMultiplexer _redisConnection = null;
+        private ConnectionMultiplexer _redisConnection;
 
         public RedisCacheFactory(ILogging logger, CacheConfig config = null)
             : base(logger, config)

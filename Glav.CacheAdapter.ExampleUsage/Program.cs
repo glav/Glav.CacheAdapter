@@ -1,22 +1,21 @@
 ﻿#region Using Statements
 using System;
 using Glav.CacheAdapter.Core.DependencyInjection;
-using Glav.CacheAdapter.Bootstrap;
 
 #endregion
 
 namespace Glav.CacheAdapter.ExampleUsage
 {
-	/// <summary>
-	/// This class is simply a very basic demonstration of the use of the CacheAdapter
-	/// in an application. This class is not required in any way so feel free to delete or modify
-	/// this class as you see fit.
-	/// </summary>
+    /// <summary>
+    /// This class is simply a very basic demonstration of the use of the CacheAdapter
+    /// in an application. This class is not required in any way so feel free to delete or modify
+    /// this class as you see fit.
+    /// </summary>
     class Program
-	{
-	    private static int _accessCounter = 0;
-	    private static bool _allTestsPassed = true;
-        
+    {
+        private static int _accessCounter;
+        private static bool _allTestsPassed = true;
+
         static void Main(string[] args)
         {
             // Basic examples usage
@@ -125,7 +124,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             // implementation.
             //AppServices.PreStartInitialise(null, config);
 
-        	var cacheProvider = AppServices.Cache;
+            var cacheProvider = AppServices.Cache;
 
             // First try and get some data. It wont be in the cache, so the anonymous function is executed,
             // the item is automatically added to the cache and returned.
@@ -191,42 +190,42 @@ namespace Glav.CacheAdapter.ExampleUsage
             }
 
 
-        	Func<SomeData> getCacheData = new Func<SomeData>(() =>
-        	                                                 	{
-																	// This is the anonymous function which gets called if the data is not in the cache.
-																	// This method is executed and whatever is returned, is added to the cache with the
-																	// passed in expiry time.
-        	                                                 	    _accessCounter++;
-																	Console.WriteLine("... => Adding data to the cache...4th call, with generated cache key - should only see this msg twice, NOT 3 times");
-																	var someData = new SomeData() { SomeText = "cache example4 - generated cache key", SomeNumber = 4 };
-																	return someData;
+            Func<SomeData> getCacheData = new Func<SomeData>(() =>
+                                                                {
+                                                                    // This is the anonymous function which gets called if the data is not in the cache.
+                                                                    // This method is executed and whatever is returned, is added to the cache with the
+                                                                    // passed in expiry time.
+                                                                    _accessCounter++;
+                                                                    Console.WriteLine("... => Adding data to the cache...4th call, with generated cache key - should only see this msg twice, NOT 3 times");
+                                                                    var someData = new SomeData() { SomeText = "cache example4 - generated cache key", SomeNumber = 4 };
+                                                                    return someData;
 
-        	                                                 	});
-			// Here we use the really simple API call to get an item from the cache without a cache key specified.
-			// The cache key is generated from the function we pass in as the delegate used to retrieve the data
-			Console.WriteLine("#4: Getting Some Data which should NOT BE cached.");
-			var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(3), getCacheData );
+                                                                });
+            // Here we use the really simple API call to get an item from the cache without a cache key specified.
+            // The cache key is generated from the function we pass in as the delegate used to retrieve the data
+            Console.WriteLine("#4: Getting Some Data which should NOT BE cached.");
+            var data4 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(3), getCacheData);
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Cache not added to, test result failed!");
             }
 
-			Console.WriteLine("#5: Getting Some More Data which should BE cached.");
-			var data5 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+            Console.WriteLine("#5: Getting Some More Data which should BE cached.");
+            var data5 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData);
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Data item not found in cache when it should have been found in cache, test result failed!");
             }
 
             Wait(3);
-			Console.WriteLine("#6: Getting Some More Data which should NOT be cached.");
-			var data6 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData );
+            Console.WriteLine("#6: Getting Some More Data which should NOT be cached.");
+            var data6 = cacheProvider.Get<SomeData>(DateTime.Now.AddSeconds(2), getCacheData);
             if (_accessCounter != 4)
             {
                 WriteErrMsgToConsole("Cache not added to, test result failed!");
             }
 
-		}
+        }
 
         #endregion
 
@@ -243,7 +242,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             AppServices.Cache.ClearAll();
 
             Console.WriteLine("Setting memcached");
-            AppServices.SetConfig(new Glav.CacheAdapter.CacheConfig() { CacheToUse = "memcached", DistributedCacheServers = "localhost:11211" });
+            AppServices.SetConfig(new CacheConfig() { CacheToUse = "memcached", DistributedCacheServers = "localhost:11211" });
 
             Console.WriteLine("getting data");
             var data = AppServices.Cache.InnerCache.Get<string>("test");
@@ -267,7 +266,7 @@ namespace Glav.CacheAdapter.ExampleUsage
         {
             var originalColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("Waiting for {0} seconds...",timeInSeconds);
+            Console.WriteLine("Waiting for {0} seconds...", timeInSeconds);
             System.Threading.Thread.Sleep(timeInSeconds * 1000);
             Console.ForegroundColor = originalColour;
         }
@@ -278,11 +277,11 @@ namespace Glav.CacheAdapter.ExampleUsage
 
     #region Just Test Data Class
     [Serializable]
-	public class SomeData
-	{
-		public string SomeText { get; set; }
-		public int SomeNumber { get; set; }
-	}
+    public class SomeData
+    {
+        public string SomeText { get; set; }
+        public int SomeNumber { get; set; }
+    }
 
     #endregion
 

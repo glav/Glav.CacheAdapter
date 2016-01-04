@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core;
-using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Web;
-using System.Reflection;
 
 namespace Glav.CacheAdapter.Distributed.AppFabric
 {
     public class AppFabricCacheAdapter : ICache
     {
         private DataCache _cache;
-        private ILogging _logger;
-        private AppFabricCacheFactory _factory = null;
+        private readonly ILogging _logger;
+        private readonly AppFabricCacheFactory _factory;
 
-        private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
+        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
         public AppFabricCacheAdapter(ILogging logger, CacheConfig config = null)
         {
             _logger = logger;
-            _factory = new AppFabricCacheFactory(_logger,config);
+            _factory = new AppFabricCacheFactory(_logger, config);
 
             _cache = _factory.ConstructCache();
         }
@@ -109,8 +105,9 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                     _cache = null;
                     _cache = _factory.ConstructCache();
                 }
-                
-            } catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 _logger.WriteException(ex);
                 _logger.WriteInfoMessage("Clearing the cache cannot be performed, not currently support by Windows Azure");

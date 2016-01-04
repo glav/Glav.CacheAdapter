@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Glav.CacheAdapter.Web
+﻿namespace Glav.CacheAdapter.Web
 {
     internal class PerRequestCacheHelper
     {
@@ -20,7 +15,7 @@ namespace Glav.CacheAdapter.Web
             }
         }
 
-        public T TryGetItemFromPerRequestCache<T>(string cacheKey) where T: class
+        public T TryGetItemFromPerRequestCache<T>(string cacheKey) where T : class
         {
             // try per request cache first, but only if in a web context
             if (InWebContext())
@@ -39,9 +34,9 @@ namespace Glav.CacheAdapter.Web
             return null;
         }
 
-        private bool InWebContext()
+        private static bool InWebContext()
         {
-            return (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Items != null);
+            return System.Web.HttpContext.Current != null;
         }
     }
 }

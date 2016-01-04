@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Glav.CacheAdapter.DependencyManagement
 {
@@ -28,16 +24,18 @@ namespace Glav.CacheAdapter.DependencyManagement
         /// <param name="dependentCacheKeys"></param>
         /// <param name="actionToPerform"></param>
         void AssociateDependentKeysToParent(string parentKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems);
+
         /// <summary>
         /// Retrieves the list of dependent keys for a parent key. If no parent
         /// key exists, oneis created an a new list is returned.Can optionally also return
         /// the parent node definition as part of the list
         /// </summary>
         /// <param name="parentKey"></param>
+        /// <param name="includeParentNode"></param>
         /// <returns></returns>
         IEnumerable<DependencyItem> GetDependentCacheKeysForParent(string parentKey, bool includeParentNode = false);
-        
-        string Name { get;  }
+
+        string Name { get; }
         /// <summary>
         /// Performs the associated action for every child or dependency associated
         /// with the specified parent key
@@ -62,8 +60,8 @@ namespace Glav.CacheAdapter.DependencyManagement
 
     public enum CacheDependencyAction
     {
-        ClearDependentItems=0,
-        RaiseEvent=1,
-        ClearDependentItemsAndRaiseEvent=2
+        ClearDependentItems = 0,
+        RaiseEvent = 1,
+        ClearDependentItemsAndRaiseEvent = 2
     }
 }

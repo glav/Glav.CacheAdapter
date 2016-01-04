@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Glav.CacheAdapter.Core;
-using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.DependencyManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;

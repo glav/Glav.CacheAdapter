@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Caching;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
@@ -10,18 +8,17 @@ namespace Glav.CacheAdapter.Web
 {
     public class WebCacheAdapter : ICache
     {
-        private System.Web.Caching.Cache _cache;
-        private ILogging _logger;
-        private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
+        private readonly Cache _cache;
+        private readonly ILogging _logger;
+        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
         public WebCacheAdapter(ILogging logger)
         {
             _logger = logger;
 
-            if (System.Web.HttpContext.Current != null)
-                _cache = System.Web.HttpContext.Current.Cache;
-            else
-                _cache = System.Web.HttpRuntime.Cache;
+            _cache = System.Web.HttpContext.Current != null
+                ? System.Web.HttpContext.Current.Cache
+                : System.Web.HttpRuntime.Cache;
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)
@@ -106,7 +103,7 @@ namespace Glav.CacheAdapter.Web
                 }
                 catch (Exception ex)
                 {
-                    _logger.WriteErrorMessage("Error removing item from cache during ClearAll");
+                    _logger.WriteErrorMessage("Error removing item from cache during ClearAll. Error: " + ex.Message);
                 }
             }
         }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using System.Diagnostics;
@@ -79,7 +77,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 
                 for (int tCnt = 0; tCnt < NUMBER_THREADS; tCnt++)
                 {
-                    var seed = rnd.Next(1,100);
+                    var seed = rnd.Next(1, 100);
                     var masterKey1 = string.Format("masterkey-{0}", tCnt);
                     masterKeys.Add(masterKey1);
                     var threadStart = new ThreadStart(() =>
@@ -91,7 +89,7 @@ namespace Glav.CacheAdapter.ExampleUsage
                                                               var testData = AppServices.Cache.Get<MoreDummyData>(key, DateTime.Now.AddMinutes(10), () =>
                                                                                                                                           {
                                                                                                                                               return GetDataToCache(seed);
-                                                                                                                                          },masterKey1);
+                                                                                                                                          }, masterKey1);
 
                                                               if (testData == null)
                                                               {
@@ -187,7 +185,7 @@ namespace Glav.CacheAdapter.ExampleUsage
 
         public void WriteException(Exception ex)
         {
-            var msg = string.Format("Exception: {0}, Message:[{1}], StackTrace:[{2}]", ex.GetType().ToString(), ex.Message, ex.StackTrace);
+            var msg = string.Format("Exception: {0}, Message:[{1}], StackTrace:[{2}]", ex.GetType(), ex.Message, ex.StackTrace);
             Console.WriteLine(msg);
         }
     }
