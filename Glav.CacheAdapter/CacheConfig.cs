@@ -1,52 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 using Glav.CacheAdapter.Distributed;
 using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter
 {
-	public class CacheConfig
-	{
+    public class CacheConfig
+    {
         public const string AppSettingsKeyPrefix = "Cache.";
 
-	    private string _cacheToUse = null;
+        private string _cacheToUse;
         public string CacheToUse { get { return _cacheToUse; } set { _cacheToUse = value; } }
 
-        private string _dependencyManagerToUse = null;
+        private string _dependencyManagerToUse;
         public string DependencyManagerToUse { get { return _dependencyManagerToUse; } set { _dependencyManagerToUse = value; } }
-        
-        private List<ServerNode> _serverNodes = new List<ServerNode>();
-		public List<ServerNode> ServerNodes { get { return _serverNodes; } }
 
-		private Dictionary<string, string> _providerSpecificValues = new Dictionary<string, string>();
-		public Dictionary<string,string> ProviderSpecificValues { get { return _providerSpecificValues; } }
+        private readonly List<ServerNode> _serverNodes = new List<ServerNode>();
+        public List<ServerNode> ServerNodes { get { return _serverNodes; } }
 
-		private bool _isCacheEnabled = true;
-		public bool IsCacheEnabled { get { return _isCacheEnabled; } set { _isCacheEnabled = value; } }
+        private readonly Dictionary<string, string> _providerSpecificValues = new Dictionary<string, string>();
+        public Dictionary<string, string> ProviderSpecificValues { get { return _providerSpecificValues; } }
 
-        private string _distributedCacheServers = null;
-	    public string DistributedCacheServers { get { return _distributedCacheServers; } set { _distributedCacheServers = value; }}
+        private bool _isCacheEnabled = true;
+        public bool IsCacheEnabled { get { return _isCacheEnabled; } set { _isCacheEnabled = value; } }
 
-	    bool _isCacheDependencyManagementEnabled = false;
+        private string _distributedCacheServers;
+        public string DistributedCacheServers { get { return _distributedCacheServers; } set { _distributedCacheServers = value; } }
+
+        bool _isCacheDependencyManagementEnabled;
         /// <summary>
         /// Enables support of cache dependencies using parent and child/associated cache keys
         /// </summary>
         /// <remarks>This can require extra calls to the cache engine and so can incur a
         /// performance degradation due to extra network cache calls</remarks>
         public bool IsCacheDependencyManagementEnabled { get { return _isCacheDependencyManagementEnabled; } set { _isCacheDependencyManagementEnabled = value; } }
-        
-        private string _cacheSpecificData = null;
-        public string CacheSpecificData { get { return _cacheSpecificData; } set { _cacheSpecificData=value; } }
-        
-       
+
+        private string _cacheSpecificData;
+        public string CacheSpecificData { get { return _cacheSpecificData; } set { _cacheSpecificData = value; } }
+
+
         public CacheConfig()
         {
             ApplySettingsFromDefaultConfig();
             OverrideSettingsWithAppSettingsIfPresent();
-		}
+        }
 
         private void ApplySettingsFromDefaultConfig()
         {
@@ -66,7 +63,7 @@ namespace Glav.CacheAdapter
         private void OverrideSettingsWithAppSettingsIfPresent()
         {
             var cacheEnabledKey = string.Format("{0}IsCacheEnabled", AppSettingsKeyPrefix);
-            var isCacheDependencyManagementKey = string.Format("{0}IsCacheDependencyManagementEnabled",AppSettingsKeyPrefix);
+            var isCacheDependencyManagementKey = string.Format("{0}IsCacheDependencyManagementEnabled", AppSettingsKeyPrefix);
             var cacheSpecificDataKey = string.Format("{0}CacheSpecificData", AppSettingsKeyPrefix);
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
             var dependencyMgrToUseKey = string.Format("{0}DependencyManagerToUse", AppSettingsKeyPrefix);
@@ -97,5 +94,5 @@ namespace Glav.CacheAdapter
                 _distributedCacheServers = ConfigurationManager.AppSettings[distributedCacheServersKey];
             }
         }
-	}
+    }
 }

@@ -4,14 +4,13 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.DependencyManagement
 {
     public class RedisDependencyManager : BaseCacheDependencyManager
     {
-        private IDatabase _redisDatabase;
+        private readonly IDatabase _redisDatabase;
 
         public RedisDependencyManager(ICache cache, ILogging logger, IDatabase redisDatabase, CacheConfig config = null)
             : base(cache, logger, config)
@@ -129,7 +128,7 @@ namespace Glav.CacheAdapter.DependencyManagement
 
             if (!includeParentNode && itemList.Count > 0)
             {
-                var parentNode = itemList.FirstOrDefault(n => n.IsParentNode == true);
+                var parentNode = itemList.FirstOrDefault(n => n.IsParentNode);
                 if (parentNode != null)
                 {
                     itemList.Remove(parentNode);

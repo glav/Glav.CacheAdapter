@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.memcached;
 
 namespace Glav.CacheAdapter.DependencyManagement
 {
@@ -19,7 +17,8 @@ namespace Glav.CacheAdapter.DependencyManagement
         public const string CacheKeyPrefix = "__DepMgr_"; // The root cache key prefix we use
         public const string CacheDependencyEntryPrefix = "DepEntry_"; // The additional prefix for master/child cache key dependency entries
 
-        public GenericDependencyManager(ICache cache, ILogging logger, CacheConfig config = null) : base(cache, logger, config)
+        public GenericDependencyManager(ICache cache, ILogging logger, CacheConfig config = null)
+            : base(cache, logger, config)
         {
         }
 
@@ -98,7 +97,7 @@ namespace Glav.CacheAdapter.DependencyManagement
 
             var cacheKeyForParent = GetParentItemCacheKey(parentKey);
             var item = new DependencyItem { CacheKey = parentKey, Action = actionToPerform, IsParentNode = true };
-            var depList = new DependencyItem[] { item };
+            var depList = new[] { item };
             Cache.InvalidateCacheItem(cacheKeyForParent);
             Cache.Add(cacheKeyForParent, GetMaxAge(), depList);
         }

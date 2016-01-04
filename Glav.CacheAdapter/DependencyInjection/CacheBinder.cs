@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glav.CacheAdapter.DependencyManagement;
-using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.AppFabric;
-using Glav.CacheAdapter.Bootstrap;
-using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Glav.CacheAdapter.Bootstrap;
+﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Distributed.AppFabric;
@@ -14,8 +9,8 @@ namespace Glav.CacheAdapter.Tests
 {
     public static class TestHelper
     {
-        private static CacheConfig _config = new CacheConfig();
-        private static ICache _cache = null;
+        private static readonly CacheConfig _config = new CacheConfig();
+        private static ICache _cache;
 
         public static ICache GetCacheFromConfig()
         {

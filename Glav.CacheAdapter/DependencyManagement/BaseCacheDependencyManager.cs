@@ -3,32 +3,24 @@ using Glav.CacheAdapter.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Glav.CacheAdapter.DependencyManagement
 {
     public abstract class BaseCacheDependencyManager : ICacheDependencyManager
     {
-        private ICache _cache;
-        private ILogging _logger;
-        private CacheConfig _config;
+        private readonly ICache _cache;
+        private readonly ILogging _logger;
+        private readonly CacheConfig _config;
 
-        public BaseCacheDependencyManager(ICache cache, ILogging logger, CacheConfig config = null)
+        protected BaseCacheDependencyManager(ICache cache, ILogging logger, CacheConfig config = null)
         {
             _cache = cache;
             _logger = logger;
-            if (config == null)
-            {
-                _config = new CacheConfig();
-            }
-            else
-            {
-                _config = config;
-            }
+            _config = config ?? new CacheConfig();
 
         }
 
-        public CacheConfig Config { get { return _config;  } }
+        public CacheConfig Config { get { return _config; } }
         public ICache Cache { get { return _cache; } }
         public ILogging Logger { get { return _logger; } }
 
@@ -52,7 +44,7 @@ namespace Glav.CacheAdapter.DependencyManagement
 
         public virtual void ForceActionForDependenciesAssociatedWithParent(string parentKey, CacheDependencyAction forcedAction)
         {
-            Logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction.ToString(), parentKey));
+            Logger.WriteInfoMessage(string.Format("Forcing action:[{0}] on dependency cache keys for parent key:[{1}]", forcedAction, parentKey));
             ExecuteDefaultOrSuppliedActionForParentKeyDependencies(parentKey, forcedAction);
         }
 
@@ -108,11 +100,12 @@ namespace Glav.CacheAdapter.DependencyManagement
 
 
             var items = GetDependentCacheKeysForParent(parentKey);
-            var numItems = items != null ? items.Count() : 0;
+            var dependencyItems = items as DependencyItem[] ?? items.ToArray();
+            var numItems = items != null ? dependencyItems.Count() : 0;
             _logger.WriteInfoMessage(string.Format("Number of dependencies found for master cache key [{0}] is: {1}", parentKey, numItems));
             if (numItems > 0)
             {
-                foreach (var item in items)
+                foreach (var item in dependencyItems)
                 {
                     // Dont allow recursion
                     if (item.CacheKey == parentKey)
@@ -125,7 +118,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                     }
                     cacheKeysToAction.Add(item);
                     alreadyProcessedKeys.Add(item.CacheKey);
-                    cacheKeysToAction.AddRange(GetCacheKeysToActionForParentKeyDependencies(item.CacheKey,alreadyProcessedKeys));
+                    cacheKeysToAction.AddRange(GetCacheKeysToActionForParentKeyDependencies(item.CacheKey, alreadyProcessedKeys));
                 }
             }
             return cacheKeysToAction;

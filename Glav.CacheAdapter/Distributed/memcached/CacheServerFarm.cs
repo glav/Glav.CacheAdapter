@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Glav.CacheAdapter.Distributed.memcached;
+﻿using System.Collections.Generic;
 using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.Distributed.memcached

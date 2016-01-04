@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Glav.CacheAdapter.Distributed.memcached
+﻿namespace Glav.CacheAdapter.Distributed.memcached
 {
 	public class memcachedConstants
 	{
