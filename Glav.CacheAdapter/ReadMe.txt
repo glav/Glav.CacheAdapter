@@ -257,6 +257,9 @@ Notes on Version 4.0.1
 ~~~~~~~~~~~~~~~~~~~~~~
 --> Fixed minor typo is naming of RedisCacheAdapter (was misspelled RedisCacheAdatper) - Issue #34 - https://bitbucket.org/glav/cacheadapter/issue/34/typo-in-class-name-rediscacheadatper
 
+Notes on Version 4.0.3
+--> Allow control of logging detail via <add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/> - Issue #43 - https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging
+
 
 
 
