@@ -62,6 +62,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
                         config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
 						config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
 						
+                        // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
+                        // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
+                        // Could be related to memcached version and/or transcoder.
 						config.Protocol = MemcachedProtocol.Text;
 						config.Transcoder = new DataContractTranscoder();
 						_client = new MemcachedClient(config);
