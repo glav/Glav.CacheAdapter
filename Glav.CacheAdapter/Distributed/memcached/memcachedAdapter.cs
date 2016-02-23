@@ -21,15 +21,19 @@ namespace Glav.CacheAdapter.Distributed.memcached
 		private static bool _isInitialised = false;
 
 
-		public memcachedAdapter(ILogging logger)
+        public memcachedAdapter(ILogging logger, CacheConfig config = null)
 		{
 			_logger = logger;
 
-			var factory = new memcachedCacheFactory(_logger);
+			var factory = new memcachedCacheFactory(_logger,config);
 			_serverFarm = factory.ConstructCacheFarm();
 
-			if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
-				throw new ArgumentException("Must specify at least 1 server node to use for memcached");
+            if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
+            {
+                var msg = "Must specify at least 1 server node to use for memcached";
+                logger.WriteErrorMessage(msg);
+                throw new ArgumentException(msg);
+            }
 
 			Initialise(factory);
 			LogManager.AssignFactory(new LogFactoryAdapter(_logger));
@@ -58,6 +62,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
                         config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
 						config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
 						
+                        // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
+                        // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
+                        // Could be related to memcached version and/or transcoder.
 						config.Protocol = MemcachedProtocol.Text;
 						config.Transcoder = new DataContractTranscoder();
 						_client = new MemcachedClient(config);
@@ -140,6 +147,20 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			}
 		}
 
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+            _logger.WriteInfoMessage("Invalidating a series of cache keys");
+            foreach (var cacheKey in cacheKeys)
+            {
+                InvalidateCacheItem(cacheKey);
+            }
+        }
+
+
 		public void AddToPerRequestCache(string cacheKey, object dataToAdd)
 		{
             _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
@@ -158,5 +179,18 @@ namespace Glav.CacheAdapter.Distributed.memcached
 			}
 			return cacheKey.Replace(" ", string.Empty).Replace("#","-");
 		}
-	}
+
+
+        public void ClearAll()
+        {
+            _logger.WriteInfoMessage("Clearing the cache");
+            try
+            {
+                _client.FlushAll();
+            } catch (Exception ex)
+            {
+                _logger.WriteErrorMessage("Error flushing the cache:" + ex.Message);
+            }
+        }
+    }
 }

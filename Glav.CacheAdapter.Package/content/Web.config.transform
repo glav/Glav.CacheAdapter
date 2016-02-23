@@ -1,28 +1,65 @@
-<configuration> 
-     <configSections>
-        <sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" >
-            <section name="Glav.CacheAdapter.MainConfig" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
-        </sectionGroup>
-    </configSections>
-    <applicationSettings>
-        <Glav.CacheAdapter.MainConfig>
-			<!-- Use Memory, Web, AppFabric, or memcached -->
-            <setting name="CacheToUse" serializeAs="String">
-                <value>Memory</value>
-            </setting>
-            <setting name="DistributedCacheServers" serializeAs="String">
-                <value>localhost:22223</value>
-            </setting>
-            <setting name="DistributedCacheName" serializeAs="String">
-                <value>MyCache</value>
-            </setting>
-			 <!--The data config below is specific to Azure AppFabric only at this time but can be used to supply data to any cache implementation-->
-			<setting name="CacheSpecificData" serializeAs="String">
-			  <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-			</setting>
-			<setting name="IsCacheEnabled" serializeAs="String">
-			  <value>True</value>
-			</setting>
-       </Glav.CacheAdapter.MainConfig>
-    </applicationSettings>
- </configuration>
+<configuration>
+  <configSections>
+    <sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" >
+      <section name="Glav.CacheAdapter.MainConfig" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    </sectionGroup>
+  </configSections>
+  <appSettings>
+    <!-- Example Cache setting ovverrides via appSettings -->
+    <add key="Cache.CacheToUse" value="memory"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+	<add key="Cache.LoggingLevel" value="Information"/> <!-- Can be None, ErrorsOnly or Information -->
+
+    <!-- For memcached if used -->
+    <add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+
+    <!--ASP.Net web-->
+    <!--<add key="Cache.CacheToUse" value="web"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DependencyManagerToUse" value="default"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+
+    <!--memcached-->
+    <!--<add key="Cache.CacheToUse" value="memcached"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+    <add key="Cache.CacheSpecificData" value="MinPoolSize=10;MaxPoolSize=30"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+    <!--redis-->
+    <!--<add key="Cache.CacheToUse" value="redis"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DistributedCacheServers" value="{your-azure-redis-name}.redis.cache.windows.net:6380"/>
+    <add key="Cache.DependencyManagerToUse" value="default"/>
+    <add key="Cache.CacheSpecificData" value="ssl=true;abortConnect=false;connecttimeout=15000;password={your-azure-redis-access-key}"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+	</appSettings>
+
+  <applicationSettings>
+    <Glav.CacheAdapter.MainConfig>
+      <!-- Use Memory, Web, AppFabric, or memcached -->
+      <setting name="CacheToUse" serializeAs="String">
+        <value>Memory</value>
+      </setting>
+      <setting name="DistributedCacheServers" serializeAs="String">
+        <value>localhost:22223</value>
+      </setting>
+      <setting name="DistributedCacheName" serializeAs="String">
+        <value>MyCache</value>
+      </setting>
+      <!--The data config below is specific to Azure AppFabric only at this time but can be used to supply data to any cache implementation-->
+      <setting name="CacheSpecificData" serializeAs="String">
+        <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
+      </setting>
+      <setting name="IsCacheEnabled" serializeAs="String">
+        <value>True</value>
+      </setting>
+    </Glav.CacheAdapter.MainConfig>
+  </applicationSettings>
+</configuration>

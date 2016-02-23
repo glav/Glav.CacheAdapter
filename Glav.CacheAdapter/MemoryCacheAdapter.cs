@@ -60,6 +60,19 @@ namespace Glav.CacheAdapter.Core
                 _cache.Remove(cacheKey);
         }
 
+        public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
+        {
+            if (cacheKeys == null)
+            {
+                return;
+            }
+            _logger.WriteInfoMessage("Invalidating a series of cache keys");
+            foreach (var cacheKey in cacheKeys)
+            {
+                _cache.Remove(cacheKey);
+            }
+        }
+
 		public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
 		{
 			if (dataToAdd != null)
@@ -82,5 +95,15 @@ namespace Glav.CacheAdapter.Core
 		{
 			get { return CacheSetting.Memory; }
 		}
-	}
+
+
+        public void ClearAll()
+        {
+            _logger.WriteInfoMessage("Clearing the cache");
+            _cache.ToList().ForEach(i =>
+                                        {
+                                            _cache.Remove(i.Key);
+                                        });
+        }
+    }
 }

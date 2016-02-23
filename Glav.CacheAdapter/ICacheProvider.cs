@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Glav.CacheAdapter.DependencyManagement;
+using Glav.CacheAdapter.Features;
 
 namespace Glav.CacheAdapter.Core
 {
@@ -17,14 +18,20 @@ namespace Glav.CacheAdapter.Core
         T Get<T>(DateTime absoluteExpiryDate, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
         T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
         void InvalidateCacheItem(string cacheKey);
+        void InvalidateCacheItems(IEnumerable<string> cacheKeys);
     	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
 		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
+        void ClearAll();  // pass through
 		ICache InnerCache { get; }
 
         // Dependency Management API
         ICacheDependencyManager InnerDependencyManager { get;  }
         // Convenience methods for dependency management
         void InvalidateDependenciesForParent(string parentKey);
+
+        ICacheFeatureSupport FeatureSupport { get;  }
+
+        CacheConfig CacheConfiguration { get; }
     }
 }
