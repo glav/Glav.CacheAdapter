@@ -49,8 +49,6 @@ namespace Glav.CacheAdapter.Features
                     return true;
                 case CacheTypes.redis:
                     return true;
-                case CacheTypes.AppFabricCache:
-                    return false;
                 default:
                     return false;
 

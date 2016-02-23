@@ -101,7 +101,7 @@ namespace Glav.CacheAdapter.Web
                     var entry = (System.Collections.DictionaryEntry)item;
                     _cache.Remove(entry.Key.ToString());
                 }
-                catch
+                catch (Exception ex)
                 {
                     _logger.WriteErrorMessage("Error removing item from cache during ClearAll. Error: " + ex.Message);
                 }
