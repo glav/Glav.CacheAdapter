@@ -40,8 +40,13 @@ namespace Glav.CacheAdapter.Features
             switch (cacheType)
             {
                 case CacheTypes.MemoryCache:
+                    return true;
                 case CacheTypes.WebCache:
+                    return true;
+                case CacheTypes.AppFabricCache:
+                    return false;
                 case CacheTypes.memcached:
+                    return true;
                 case CacheTypes.redis:
                     return true;
                 case CacheTypes.AppFabricCache:

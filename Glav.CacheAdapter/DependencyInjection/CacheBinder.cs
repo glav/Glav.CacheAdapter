@@ -76,13 +76,13 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 
         private static void EnsureObjectPropertiesAreValidObjects()
         {
-            if (_logger == null)
-            {
-                _logger = new Logger();
-            }
             if (_config == null)
             {
                 _config = new CacheConfig();
+            }
+            if (_logger == null)
+            {
+                _logger = new Logger(_config);
             }
             if (_resolver == null)
             {

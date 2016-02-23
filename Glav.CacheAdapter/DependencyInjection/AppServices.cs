@@ -38,6 +38,12 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             PreStartInitialise(null, null, resolver);
         }
 
+        public static void SetDependencies(ILogging logger = null, CacheConfig config = null, ICacheAdapterResolver resolver = null)
+        {
+            _isInitialised = false;
+            PreStartInitialise(logger, config, resolver);
+        }
+
         /// <summary>
         /// Initialise the container with core dependencies. The cache/cache provider should be set to be
         /// singletons if adapting to use with a Dependency Injection mechanism

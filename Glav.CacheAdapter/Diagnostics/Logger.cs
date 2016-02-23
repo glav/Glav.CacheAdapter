@@ -9,18 +9,40 @@ namespace Glav.CacheAdapter.Core.Diagnostics
     /// </summary>
     public class Logger : ILogging
     {
+        private CacheConfig _config;
+
+        public Logger(CacheConfig config = null)
+        {
+            if (config == null)
+            {
+                config = new CacheConfig();
+            }
+            _config = config;
+        }
         public void WriteInfoMessage(string message)
         {
+            if (_config.LoggingLevel != CacheAdapter.Diagnostics.LoggingLevel.Information)
+            {
+                return;
+            }
             Trace.TraceInformation(ConstructTraceInfo(message));
         }
 
         public void WriteErrorMessage(string message)
         {
+            if (_config.LoggingLevel == CacheAdapter.Diagnostics.LoggingLevel.None)
+            {
+                return;
+            }
             Trace.TraceError(ConstructTraceInfo(message));
         }
 
         public void WriteException(Exception ex)
         {
+            if (_config.LoggingLevel == CacheAdapter.Diagnostics.LoggingLevel.None)
+            {
+                return;
+            }
             Trace.TraceError(FormatExceptionAsString(ex));
         }
 
