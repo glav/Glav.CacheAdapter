@@ -10,9 +10,9 @@ implementation underlying that interface via configuration to use either:
  4. Distributed memcached cache. (config setting="memcached")
 
 For example:
-            <setting name="CacheToUse" serializeAs="String">
-                <value>memcached</value>
-            </setting>
+			<appSettings>
+				<add key="Cache.CacheToUse" value="memcached" />
+			</appSettings>
 Means the underlying cache mechanism uses memcached and it expects to find memcached server nodes at the address listed in
 the 'DistributedCacheServers' configuration element (see below).
 
@@ -35,9 +35,9 @@ is simply provided to give a more fluent API to cache usage.
 In the config file, if you set the 'CacheToUse' setting to either 'AppFabric' or 'memcached', then the 'DistributedCacheServers'
 should be a comma separated list of server IP addresses and port numbers that represent the cache servers in your cache farm. 
 For example:
-    <setting name="DistributedCacheServers" serializeAs="String">
-      <value>localhost:11211;localhost:11212</value>
-    </setting>
+		<appSettings>
+			<add key="Cache.DistributedCacheServers" value="localhost:11211;192.168.1.2:11211" />
+		</appSettings>
 This configuration states that there are 2 cache servers in the farm. One at address localhost (127.0.0.1), port 11211 and the
 other at address localhost (127.0.0.1), port 11212.
 
@@ -57,9 +57,9 @@ to one cache mechanism and not make sense for others.
 For example, Windows Azure AppFabric(ie.AppFabric only when used within Azure) requires security type and a security
 key to work properly. This can be set like so:
     
-	<setting name="CacheSpecificData" serializeAs="String">
-      <value>UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-    </setting>
+	<appSettings>
+		<add key="Cache.CacheSpecificData" value="UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard" />
+	</appSettings>
 
 This data is telling Windows AppFabric client to not use SSL, SecurityMode = Message and the 
 authorizationInfo = 'your_secure_key_from_azure_dashboard'  (this key is supplied from the Azure dashboard)
@@ -86,9 +86,9 @@ Also, since the 'DistributedCacheName' configuration element is only AppFabric s
 in the CacheSpecificData setting instead of its own element. The library looks for this data (if AppFabric is used)
 in the CacheSpecificData element first before checking the single config element.
 So you could have something like:
-	<setting name="CacheSpecificData" serializeAs="String">
-      <value>DistributedCacheName=MyCache;UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard</value>
-    </setting>
+	<appSettings>
+		<add key="Cache.CacheSpecificData" value="DistributedCacheName=MyCache;UseSsl=false;SecurityMode=Message;MessageSecurityAuthorizationInfo=your_secure_key_from_azure_dashboard" />
+	</appSettings>
 
 Also note that a blank entry for DistributedCacheName config setting will result in the default cache being used/accessed in AppFabric.
 
@@ -97,15 +97,19 @@ Disabling the cache globally
 You can completely disable the use of any cache so that all GET attempts will result in a cache miss 
 and execute the delegate if one is provided. You can do this by setting the configuration
 setting "IsCacheEnabled" to false.
-            <setting name="IsCacheEnabled" serializeAs="String">
-                <value>True</value>
-            </setting>
+	<appSettings>
+		<add key="Cache.IsCacheEnabled" value="true" />
+	</appSettings>
 Note: This feature only works if you are using the CacheProvider method of access. If you access the 
 InnerCache or ICache directly, you will still be able to access the cache itself and cache operations will work as normal.
 
 Notes on Version 2.5
 ~~~~~~~~~~~~~~~~~~~~
-This version takes a dependency upon enyim memcached. The reason is simply performance. I was doing a lot of performance work only to  realise I was duplicating work already tried and tested in Enyim memcached caching component so have taken a dependency on that. This release is again only has changes related to memcached. The performance of enyim memcached is fantastic so you you should see some really good gains.
+This version takes a dependency upon enyim memcached. The reason is simply performance. 
+I was doing a lot of performance work only to realise I was duplicating work already tried and 
+tested in Enyim memcached caching component so have taken a dependency on that. 
+This release is again only has changes related to memcached. 
+The performance of enyim memcached is fantastic so you you should see some really good gains.
 
 If you need more information, please look at the following blog posts:
 http://weblogs.asp.net/pglavich/archive/2010/10/13/caching-architecture-testability-dependency-injection-and-multiple-providers.aspx
@@ -119,6 +123,26 @@ Notes on Version 2.5.3
 
 Notes on Version 3.0
 ~~~~~~~~~~~~~~~~~~~~
+Summary of changes in version 3.0:
+1. New Feature: Addition of new Cache Dependency Feature to provide initial support to associate cache items to other cache
+   items so that when one is invalidated, all related items are automatically invalidated.
+2. Modification to configuration system to support storing configuration overrides for all settings in the
+   <appSettings> element in config.
+3. New API Feature: Support for clearing the cache programmatically. You can now call the ClearAll API method to clear the entire contents
+   of the cache programmatically.
+4. Support of ChannelOpenTimeout and MaxConnectionsToServer configuration value for Windows Azure and Appfabric caching (in seconds). 
+   The ChannelOpenTimeout value allows easier debugging when having connection issues as sometimes the client can forcibly disconnect 
+   early and not get an valid exception. Setting this value to much higher allows the client to wait longer for a valid error from the server.
+   An example which sets the ChannelOpenTimeout to 2 minutes(120 seconds) is:
+   <add key="Cache.CacheSpecificData" value="UseSsl=false;ChannelOpenTimeout=120;SecurityMode=Message;MessageSecurityAuthorizationInfo={your_security_token}"/>
+   MaxConnectionsToServer allows fine tuning performance for the number of concurrent connections to the cache service. Currently, the
+   Azure client defaults to 1.
+5. Supports an ICacheFeatureSupport interface and base implementation. This is provided as a property on the
+   ICacheProvider allowing basic feature detection. Currently this only supports identifying if a cache can be cleared
+   but this will be expanded in the future.
+   eg. cacheProvider.FeatureSupport.SupportsClearingCacheContents()
+
+Details:
 * Feature Addition: Rudimentary support of CacheDependencies
   Note: * Enabling this feature when using the default dependency support, incurs some performance 
         hit due to more calls being made to the caching engine. This can result in a more "chatty"
@@ -176,5 +200,66 @@ Notes on Version 3.0
       <add key="Cache.CacheToUse" value="memory"/>
 	</appSettings>
   In other words, you no longer need a <Glav.CacheAdapter.MainConfig> section. You can
-  use the <appSettings> section only if you choose.
+  use the <appSettings> section only if you choose.In fact, the <appSettings> approach is 
+  the preferred method.
+
+Notes on Version 3.0.1
+~~~~~~~~~~~~~~~~~~~~~~
+Minor bug fix when using appfabric and NOT including the CacheSpecificData section. Would throw an error as 
+default of this (if not present) contains an invalid example security key. Supply some CacheSpecificData would resolve
+this but this update fixes that.
+
+Notes on Version 3.0.2
+~~~~~~~~~~~~~~~~~~~~~~
+Fixes to readme.txt and instructions
+
+Notes on Version 3.0.3
+~~~~~~~~~~~~~~~~~~~~~~
+* Minor bug fix to memcached dependency management. Would not store dependencies when trying to store master cache dependency list for longer than
+  25 years.
+
+Notes on Version 3.1 and also 3.2 (combined)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Support for SecurityMode.None for AppAfabric caching (Issue #20)
+* Support for LocalCaching configuration values (Issue #21)
+  For local caching support, you can specify the following in the cache specific data:
+  <add key="Cache.CacheSpecificData" value="LocalCache.IsEnabled=true;LocalCache.DefaultTimeout=300;LocalCache.ObjectCount;LocalCache.InvalidationPolicy={TimeoutBased|NotificationBased}"/>
+  Note: DefaultTimeout value specifies amount of time in seconds.
+* Support for programmatically setting the configuration and initialising the cache. (Issue #19)
+* Splitting Glav.CacheAdapter package into 2 packages - Glav.CacheAdapter.Core & Glav.CacheAdapter.  (Issue #13)
+  The 'Core'package contains just the Glav.CacheAdapter assembly and references to depedencies so it is much
+  easier to update the package and NOT include the readme and example code all the time.
+* Merged in changes from Darren Boon's cache optimisation to ensure data only added to cache when its enabled and non null. Involved code cleanup
+  as this branch had been partially merged prior.
+* Merged change from https://bitbucket.org/c0dem0nkee/cacheadapter/branch/default to destroy cache when using local cache on calling ClearAll method.
+
+Notes on Version 3.2.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Fix for Issue #29. Using SecurityMode=None incorrectly depended on SecurityMessageAuthorizationKey setting. This is now resolved.
+
+Notes on Version 4.0
+~~~~~~~~~~~~~~~~~~~~
+* Added support for cache type of redis
+--> <add key="Cache.CacheToUse" value="redis"/>
+--> Also adds support for a redis specific dependency manager which is more efficient than the default for redis
+--> <add key="Cache.DependencyManagerToUse" value="redis"/>
+    Note: using <add key="Cache.DependencyManagerToUse" value="default"/> will default to using the redis specific cache dependency manager
+	if the redis cache engine is selected
+	You can override this to use the generic dependency managment engine by using:
+	<add key="Cache.DependencyManagerToUse" value="generic"/>
+--> Fix for minor performance issue when checking the dependency management (Issue #33 - https://bitbucket.org/glav/cacheadapter/issue/33/call-to)
+--> Addition of an extra method on the ICache/ICacheProvider interface - InvalidateCacheItems - to allow efficient batch deletions/removals of cache
+    items
+--> Much more efficient DependencyManager (both generic and redis specific) to remove large lists of dependencies quicker.
+--> Fixed a bug where a new config was not properly applied, if applied after initial initialisation.
+
+Notes on Version 4.0.1
+~~~~~~~~~~~~~~~~~~~~~~
+--> Fixed minor typo is naming of RedisCacheAdapter (was misspelled RedisCacheAdatper) - Issue #34 - https://bitbucket.org/glav/cacheadapter/issue/34/typo-in-class-name-rediscacheadatper
+
+
+
+
+
+
 
