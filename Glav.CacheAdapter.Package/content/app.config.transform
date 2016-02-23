@@ -6,12 +6,11 @@
   </configSections>
   
   <appSettings>
-<!-- Example Cache setting ovverrides via appSettings -->
-<add key="Cache.CacheToUse" value="memory"/>
-    
-<add key="Cache.IsCacheEnabled" value="true"/>
-    
-<add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <!-- Example Cache setting ovverrides via appSettings -->
+    <add key="Cache.CacheToUse" value="memory"/>    
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+	<add key="Cache.LoggingLevel" value="Information"/> <!-- Can be None, ErrorsOnly or Information -->
 
 
     <!-- For memcached if used -->

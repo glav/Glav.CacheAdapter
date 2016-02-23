@@ -37,6 +37,7 @@ namespace Glav.CacheAdapter.Tests
             Assert.IsTrue(TestLogger.InfoCount > 1, "Expected some informational messages to be logged but they were not");
             Assert.IsTrue(TestLogger.ErrorCount > 1, "Expected some error messages to be logged but they were not");
         }
+
     }
 
     public class TestLogger : ILogging
