@@ -80,6 +80,7 @@
     <Compile Include="DependencyManagement\RedisDependencyManager.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
+    <Compile Include="Diagnostics\LoggingLevel.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />

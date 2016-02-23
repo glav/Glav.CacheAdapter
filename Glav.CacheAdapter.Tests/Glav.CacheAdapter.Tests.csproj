@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CacheProviderDependencyManagementTests.cs" />
     <Compile Include="CacheProviderTests.cs" />
+    <Compile Include="LoggingTests.cs" />
     <Compile Include="DependencyManagementTests.cs" />
     <Compile Include="DependencyUsageTests.cs" />
     <Compile Include="MockLogger.cs" />

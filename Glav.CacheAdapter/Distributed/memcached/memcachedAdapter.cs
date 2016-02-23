@@ -27,7 +27,11 @@ namespace Glav.CacheAdapter.Distributed.memcached
             _serverFarm = factory.ConstructCacheFarm();
 
             if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
-                throw new ArgumentException("Must specify at least 1 server node to use for memcached");
+            {
+                var msg = "Must specify at least 1 server node to use for memcached";
+                logger.WriteErrorMessage(msg);
+                throw new ArgumentException(msg);
+            }
 
             Initialise(factory);
             LogManager.AssignFactory(new LogFactoryAdapter(_logger));
@@ -56,6 +60,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
                         config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
                         config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
 
+                        // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
+                        // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
+                        // Could be related to memcached version and/or transcoder.
                         config.Protocol = MemcachedProtocol.Text;
                         config.Transcoder = new DataContractTranscoder();
                         _client = new MemcachedClient(config);

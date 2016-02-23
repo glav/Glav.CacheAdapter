@@ -2,6 +2,7 @@
 using System.Configuration;
 using Glav.CacheAdapter.Distributed;
 using Glav.CacheAdapter.Helpers;
+using Glav.CacheAdapter.Diagnostics;
 
 namespace Glav.CacheAdapter
 {
@@ -38,6 +39,9 @@ namespace Glav.CacheAdapter
         private string _cacheSpecificData;
         public string CacheSpecificData { get { return _cacheSpecificData; } set { _cacheSpecificData = value; } }
 
+        private LoggingLevel _loggingLevel;
+        public LoggingLevel LoggingLevel { get { return _loggingLevel; } set { _loggingLevel = value; } }
+
 
         public CacheConfig()
         {
@@ -53,6 +57,9 @@ namespace Glav.CacheAdapter
             CacheToUse = !string.IsNullOrWhiteSpace(MainConfig.Default.CacheToUse) ? MainConfig.Default.CacheToUse.ToLowerInvariant() : string.Empty;
             DependencyManagerToUse = MainConfig.Default.DependencyManagerToUse;
             DistributedCacheServers = MainConfig.Default.DistributedCacheServers;
+            // As of now, we do not support use of the MainConfig and its associated configuration. All new configuration will 
+            // utilise app settings and not be added into MainConfig as we move to deprecate its use.
+            LoggingLevel = LoggingLevel.Information;
         }
 
         /// <summary>
@@ -68,6 +75,7 @@ namespace Glav.CacheAdapter
             var cacheToUseKey = string.Format("{0}CacheToUse", AppSettingsKeyPrefix);
             var dependencyMgrToUseKey = string.Format("{0}DependencyManagerToUse", AppSettingsKeyPrefix);
             var distributedCacheServersKey = string.Format("{0}DistributedCacheServers", AppSettingsKeyPrefix);
+            var logLevelKey = string.Format("{0}LoggingLevel", AppSettingsKeyPrefix);
 
             if (ConfigurationManager.AppSettings[cacheToUseKey].HasValue())
             {
@@ -92,6 +100,15 @@ namespace Glav.CacheAdapter
             if (ConfigurationManager.AppSettings[distributedCacheServersKey].HasValue())
             {
                 _distributedCacheServers = ConfigurationManager.AppSettings[distributedCacheServersKey];
+            }
+
+            if (ConfigurationManager.AppSettings[logLevelKey].HasValue())
+            {
+                _loggingLevel = ConfigurationManager.AppSettings[logLevelKey].ToLoggingLevel();
+
+            } else
+            {
+                _loggingLevel = LoggingLevel.Information;
             }
         }
     }
