@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CacheProviderDependencyManagementTests.cs" />
     <Compile Include="CacheProviderTests.cs" />
+    <Compile Include="LoggingTests.cs" />
     <Compile Include="DependencyManagementTests.cs" />
     <Compile Include="DependencyUsageTests.cs" />
     <Compile Include="MockLogger.cs" />
@@ -59,7 +60,9 @@
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
