@@ -22,21 +22,32 @@ namespace Glav.CacheAdapter.DependencyManagement
         {
         }
 
+        /// <summary>
+        /// Associate the dependent cache keys to their parent or masterkey so that when the parent is cleared, a list of dependent keys can also be cleared.
+        /// IMPORTANT NOTE!!: This method is not thread safe, especially across a distributed system. If this is called concurrently by 2 different threads or processes
+        /// and executes at the same time, there is a chance that the parent gets registered at the time meaning the last registration will work and one child/dependent cache
+        /// key may not get associated with the parent key.
+        /// </summary>
+        /// <param name="parentKey"></param>
+        /// <param name="dependentCacheKeys"></param>
+        /// <param name="actionToPerform"></param>
         public override void AssociateDependentKeysToParent(string parentKey, IEnumerable<string> dependentCacheKeys, CacheDependencyAction actionToPerform = CacheDependencyAction.ClearDependentItems)
         {
             Logger.WriteInfoMessage(string.Format("Associating list of cache keys to parent key:[{0}]", parentKey));
 
             var cacheKeyForDependency = GetParentItemCacheKey(parentKey);
-            var currentEntry = Cache.Get<DependencyItem[]>(cacheKeyForDependency);
+            var currentDependencyItems = Cache.Get<DependencyItem[]>(cacheKeyForDependency);
             var tempList = new List<DependencyItem>();
-            if (currentEntry != null && currentEntry.Length > 0)
-            {
-                Logger.WriteInfoMessage(string.Format("Creating new associated dependency list for parent key:[{0}]", parentKey));
 
-                tempList.AddRange(currentEntry);
+            if (currentDependencyItems != null && currentDependencyItems.Length > 0)
+            {
+                Logger.WriteInfoMessage(string.Format("Found cache key dependency list for parent key:[{0}]", parentKey));
+
+                tempList.AddRange(currentDependencyItems);
             }
             else
             {
+                Logger.WriteInfoMessage(string.Format("No dependency items were found for parent key [{0}].",parentKey));
                 RegisterParentDependencyDefinition(parentKey, actionToPerform);
                 var items = Cache.Get<DependencyItem[]>(cacheKeyForDependency);
                 if (items != null)
@@ -51,6 +62,8 @@ namespace Glav.CacheAdapter.DependencyManagement
                                                                 if (!tempList.Any(c => c.CacheKey == d))
                                                                 {
                                                                     tempList.Add(new DependencyItem { CacheKey = d, Action = actionToPerform });
+                                                                    Logger.WriteInfoMessage(string.Format("Associating cache key [{0}] to its dependent parent key:[{1}]",d, parentKey));
+
                                                                 }
                                                             });
             Cache.InvalidateCacheItem(cacheKeyForDependency);

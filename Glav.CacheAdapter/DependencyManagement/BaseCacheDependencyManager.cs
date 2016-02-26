@@ -117,6 +117,7 @@ namespace Glav.CacheAdapter.DependencyManagement
                         continue;
                     }
                     cacheKeysToAction.Add(item);
+                    Logger.WriteInfoMessage(string.Format("--> Child cache key [{0}] added for processing of parent key [{1}]", item.CacheKey, parentKey));
                     alreadyProcessedKeys.Add(item.CacheKey);
                     cacheKeysToAction.AddRange(GetCacheKeysToActionForParentKeyDependencies(item.CacheKey, alreadyProcessedKeys));
                 }

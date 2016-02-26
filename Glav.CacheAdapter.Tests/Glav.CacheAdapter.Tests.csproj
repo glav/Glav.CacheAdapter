@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CacheProviderDependencyManagementTests.cs" />
+    <Compile Include="CacheProviderAsyncTests.cs" />
     <Compile Include="CacheProviderTests.cs" />
     <Compile Include="LoggingTests.cs" />
     <Compile Include="DependencyManagementTests.cs" />

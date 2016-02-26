@@ -241,6 +241,13 @@ namespace Glav.CacheAdapter.Core
             throw new ArgumentNullException("getData");
         }
 
+        private string GetCacheKeyFromFuncDelegate<T>(Func<Task<T>> getData) where T : class
+        {
+            if (getData.Method.DeclaringType != null)
+                return getData.Method.DeclaringType.FullName + "-" + getData.Method.Name;
+            throw new ArgumentNullException("getData");
+        }
+
         public ICacheDependencyManager InnerDependencyManager
         {
             get { return _cacheDependencyManager; }
@@ -312,10 +319,22 @@ namespace Glav.CacheAdapter.Core
                 );
         }
 
+        public Task<T> GetAsync<T>(DateTime absoluteExpiryDate, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAsync<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData, parentKey, actionForDependency);
+        }
+
+        public Task<T> GetAsync<T>(TimeSpan slidingExpiryWindow, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAsync<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData, parentKey, actionForDependency);
+        }
+
         private async Task<T> GetAndAddIfNecessaryAsync<T>(string cacheKey, Action<T> addData, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
             if (!_config.IsCacheEnabled)
+            {
                 return await getData();
+            }
 
             //Get data from cache
             T data = _cache.Get<T>(cacheKey);
