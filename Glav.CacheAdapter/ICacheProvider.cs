@@ -18,6 +18,9 @@ namespace Glav.CacheAdapter.Core
         T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData,string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
         Task<T> GetAsync<T>(string cacheKey, DateTime absoluteExpiryDate, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
         Task<T> GetAsync<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+        Task<T> GetAsync<T>(DateTime absoluteExpiryDate, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+        Task<T> GetAsync<T>(TimeSpan slidingExpiryWindow, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class;
+
         void InvalidateCacheItem(string cacheKey);
         void InvalidateCacheItems(IEnumerable<string> cacheKeys);
     	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);

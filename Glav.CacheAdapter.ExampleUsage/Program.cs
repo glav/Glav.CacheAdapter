@@ -13,13 +13,10 @@ namespace Glav.CacheAdapter.ExampleUsage
     /// </summary>
     class Program
     {
-        private static int _accessCounter;
-        private static bool _allTestsPassed = true;
-
         static void Main(string[] args)
         {
             // Basic examples usage
-            ExampleAddAndRetrieveFromCache();
+            var allTestsPassed = ExampleAddAndRetrieveFromCache();
 
             // Basic dependency management usage - if not enabled in the
             // app.config file, these wont work.
@@ -32,7 +29,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             //  The example switches the config to use memcached to you need that running
             //ExampleSettingConfigurationViaCode();
 
-            if (_allTestsPassed)
+            if (allTestsPassed)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("All Tests passed.");
@@ -110,8 +107,11 @@ namespace Glav.CacheAdapter.ExampleUsage
         #endregion
 
         #region Simple Example of Add and Retrieve from Cache
-        private static void ExampleAddAndRetrieveFromCache()
+        private static bool ExampleAddAndRetrieveFromCache()
         {
+            int _accessCounter = 0;
+            bool _allTestsPassed = true;
+
             Console.WriteLine("*** Simple Add and Retrieve Examples\n");
 
             //If you want to programmatically alter the configured values for the cache, you can
@@ -208,6 +208,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Cache not added to, test result failed!");
+                _allTestsPassed = false;
             }
 
             Console.WriteLine("#5: Getting Some More Data which should BE cached.");
@@ -215,6 +216,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             if (_accessCounter != 3)
             {
                 WriteErrMsgToConsole("Data item not found in cache when it should have been found in cache, test result failed!");
+                _allTestsPassed = false;
             }
 
             Wait(3);
@@ -223,8 +225,10 @@ namespace Glav.CacheAdapter.ExampleUsage
             if (_accessCounter != 4)
             {
                 WriteErrMsgToConsole("Cache not added to, test result failed!");
+                _allTestsPassed = false;
             }
 
+            return _allTestsPassed;
         }
 
         #endregion
@@ -259,7 +263,6 @@ namespace Glav.CacheAdapter.ExampleUsage
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(msg);
             Console.ForegroundColor = originalColour;
-            _allTestsPassed = false;
         }
 
         private static void Wait(int timeInSeconds)
