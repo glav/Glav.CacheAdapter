@@ -20,6 +20,26 @@ Easiest way is to install the full [nuget package](http://www.nuget.org/packages
 
 You can download or clone this repository, then have a look at the example code provided.
 
+* A bit more details on getting setup
+Modify your app.config/web.config to contain what cache to use.
+' 
+ <appSetttings>  
+  <add key="Cache.CacheToUse" value="memory" />
+  <add key="Cache.IsCacheEnabled" value="true" />
+  <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+  <add key="Cache.CacheSpecificData" value="" />
+  <add key="Cache.LoggingLevel" value="Information"/>
+ </appSetttings>
+'
+This configuration will use the memory cache for all operations, enabled dependency management (parent/child key relationships - see below), and logs all information and errors.
+
+Then, in code you can do:
+'  var data1 = AppServices.Cache.Get<string>("cache-key", DateTime.Now.AddSeconds(5), () =>
+  {
+    return "Some data from a data store";
+  });'
+which will return the data from cache if it exists in the cache, or use the lambda function to retrieve the data, add it to the cache, then return it for you.
+
 ### Blog Posts ###
 * [Version 2.0](https://weblogs.asp.net/pglavich/cacheadapter-v2-now-with-memcached-support) has details on memcached support.
 * [Version 3.0](http://weblogs.asp.net/pglavich/cacheadapter-3-0-released) has details on Cache dependency management features.
