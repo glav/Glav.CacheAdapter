@@ -49,12 +49,19 @@ which will return the data from cache if it exists in the cache, or use the lamb
 * [Version 3.0](http://weblogs.asp.net/pglavich/cacheadapter-3-0-released) has details on Cache dependency management features.
 * [Version 3.2](http://weblogs.asp.net/pglavich/cacheadapter-3-2-released) has details on package structure changes.
 * [Version 4.0](http://weblogs.asp.net/pglavich/cacheadapter-4-0-just-released-with-redis-support) has details on redis support.
+* [Version 4.1](http://weblogs.asp.net/pglavich/cache-adapter-4-1-released) has async methods, configurable logging and targets the .Net framework 4.5.
 
 ### Who do I talk to? ###
 
 * Paul Glavich (Owner). I can be contacted via twitter ( @glav ), or through the issue register within this repository.
 
 ### Revision History ###
+
+#### Version 4.1.0 ####
+* Allow control of logging detail via <add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/> - [Issue 43](https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging)
+* Addition of Async methods on the cache provider interface. [Issue 27](https://bitbucket.org/glav/cacheadapter/issues/27/)
+* Updated nuspec target framework to expect .Net 4.5 as a minimum to reduce dependencies. [Issue 42](https://bitbucket.org/glav/cacheadapter/issues/42/change-dependency-on-newer-net-framework)
+
 
 #### Version 4.0.1 ####
 
