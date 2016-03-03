@@ -1,8 +1,4 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glav.CacheAdapter.Core
 {
@@ -11,7 +7,7 @@ namespace Glav.CacheAdapter.Core
         Memory,
         Web,
         AppFabric,
-		memcached,
+        memcached,
         Redis
     }
 

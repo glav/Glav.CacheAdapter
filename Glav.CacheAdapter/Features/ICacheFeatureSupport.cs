@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glav.CacheAdapter.Core;
+﻿using Glav.CacheAdapter.Core;
 
 namespace Glav.CacheAdapter.Features
 {

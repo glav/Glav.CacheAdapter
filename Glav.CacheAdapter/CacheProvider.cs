@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Features;
@@ -17,9 +17,9 @@ namespace Glav.CacheAdapter.Core
     {
         private readonly ICache _cache;
         private readonly ILogging _logger;
-        private CacheConfig _config = new CacheConfig();
+        private readonly CacheConfig _config = new CacheConfig();
         private readonly ICacheDependencyManager _cacheDependencyManager;
-        private ICacheFeatureSupport _featureSupport;
+        private readonly ICacheFeatureSupport _featureSupport;
 
         public CacheProvider(ICache cache, ILogging logger)
             : this(cache, logger, null, null)
@@ -34,18 +34,10 @@ namespace Glav.CacheAdapter.Core
         {
             _cache = cache;
             _logger = logger;
-            _featureSupport = featureSupport;
-            if (_featureSupport == null)
-            {
-                _featureSupport = new CacheFeatureSupport(cache);
-            }
+            _featureSupport = featureSupport ?? new CacheFeatureSupport(cache);
             if (_config.IsCacheDependencyManagementEnabled)
             {
-                _cacheDependencyManager = cacheDependencyManager;
-                if (_cacheDependencyManager == null)
-                {
-                    _cacheDependencyManager = new GenericDependencyManager(_cache, _logger);
-                }
+                _cacheDependencyManager = cacheDependencyManager ?? new GenericDependencyManager(_cache, _logger);
                 _logger.WriteInfoMessage(string.Format("CacheKey dependency management enabled, using {0}.", _cacheDependencyManager.Name));
             }
             else
@@ -67,7 +59,7 @@ namespace Glav.CacheAdapter.Core
 
         public T Get<T>(string cacheKey, DateTime expiryDate, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
-            return GetAndAddIfNecessary<T>(cacheKey,
+            return GetAndAddIfNecessary(cacheKey,
                 data =>
                 {
                     _cache.Add(cacheKey, expiryDate, data);
@@ -82,7 +74,7 @@ namespace Glav.CacheAdapter.Core
 
         public T Get<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
-            return GetAndAddIfNecessary<T>(cacheKey,
+            return GetAndAddIfNecessary(cacheKey,
                 data =>
                 {
                     _cache.Add(cacheKey, slidingExpiryWindow, data);
@@ -164,7 +156,8 @@ namespace Glav.CacheAdapter.Core
             try
             {
                 _cache.InvalidateCacheItems(distinctKeys);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.WriteErrorMessage("Error when trying to invalidate a series of cache keys");
                 _logger.WriteException(ex);
@@ -189,7 +182,8 @@ namespace Glav.CacheAdapter.Core
                 try
                 {
                     _cacheDependencyManager.PerformActionForDependenciesAssociatedWithParent(cacheKey);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     _logger.WriteErrorMessage(string.Format("Error when trying to invalidate dependencies for [{0}]", cacheKey));
                     _logger.WriteException(ex);
@@ -232,19 +226,27 @@ namespace Glav.CacheAdapter.Core
 
         public T Get<T>(DateTime absoluteExpiryDate, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
-            return Get<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData, parentKey, actionForDependency);
+            return Get(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData, parentKey, actionForDependency);
         }
 
         public T Get<T>(TimeSpan slidingExpiryWindow, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
-            return Get<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData, parentKey, actionForDependency);
+            return Get(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData, parentKey, actionForDependency);
         }
 
         private string GetCacheKeyFromFuncDelegate<T>(Func<T> getData) where T : class
         {
-            return getData.Method.DeclaringType.FullName + "-" + getData.Method.Name;
+            if (getData.Method.DeclaringType != null)
+                return getData.Method.DeclaringType.FullName + "-" + getData.Method.Name;
+            throw new ArgumentNullException("getData");
         }
 
+        private string GetCacheKeyFromFuncDelegate<T>(Func<Task<T>> getData) where T : class
+        {
+            if (getData.Method.DeclaringType != null)
+                return getData.Method.DeclaringType.FullName + "-" + getData.Method.Name;
+            throw new ArgumentNullException("getData");
+        }
 
         public ICacheDependencyManager InnerDependencyManager
         {
@@ -259,7 +261,7 @@ namespace Glav.CacheAdapter.Core
             }
             if (_cacheDependencyManager.IsOkToActOnDependencyKeysForParent(parentKey) && dataToAdd != null)
             {
-                _cacheDependencyManager.AssociateDependentKeysToParent(parentKey, new string[1] { cacheKey }, action);
+                _cacheDependencyManager.AssociateDependentKeysToParent(parentKey, new[] { cacheKey }, action);
             }
 
         }
@@ -281,9 +283,81 @@ namespace Glav.CacheAdapter.Core
         }
 
 
-        public Features.ICacheFeatureSupport FeatureSupport
+        public ICacheFeatureSupport FeatureSupport
         {
             get { return _featureSupport; }
+        }
+
+        public Task<T> GetAsync<T>(string cacheKey, DateTime expiryDate, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAndAddIfNecessaryAsync(cacheKey,
+                data =>
+                {
+                    _cache.Add(cacheKey, expiryDate, data);
+                    _logger.WriteInfoMessage(string.Format("Adding item [{0}] to cache with expiry date/time of [{1}].", cacheKey,
+                                                           expiryDate.ToString("dd/MM/yyyy hh:mm:ss")));
+                },
+                getData,
+                parentKey,
+                actionForDependency
+                );
+        }
+
+        public Task<T> GetAsync<T>(string cacheKey, TimeSpan slidingExpiryWindow, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAndAddIfNecessaryAsync(cacheKey,
+                data =>
+                {
+                    _cache.Add(cacheKey, slidingExpiryWindow, data);
+                    _logger.WriteInfoMessage(
+                        string.Format("Adding item [{0}] to cache with sliding sliding expiry window in seconds [{1}].", cacheKey,
+                                      slidingExpiryWindow.TotalSeconds));
+                },
+                getData,
+                parentKey,
+                actionForDependency
+                );
+        }
+
+        public Task<T> GetAsync<T>(DateTime absoluteExpiryDate, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAsync<T>(GetCacheKeyFromFuncDelegate(getData), absoluteExpiryDate, getData, parentKey, actionForDependency);
+        }
+
+        public Task<T> GetAsync<T>(TimeSpan slidingExpiryWindow, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            return GetAsync<T>(GetCacheKeyFromFuncDelegate(getData), slidingExpiryWindow, getData, parentKey, actionForDependency);
+        }
+
+        private async Task<T> GetAndAddIfNecessaryAsync<T>(string cacheKey, Action<T> addData, Func<Task<T>> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
+        {
+            if (!_config.IsCacheEnabled)
+            {
+                return await getData();
+            }
+
+            //Get data from cache
+            T data = _cache.Get<T>(cacheKey);
+
+            // check to see if we need to get data from the source
+            if (data == null)
+            {
+                //get data from source
+                data = await getData();
+
+                //only add non null data to the cache.
+                if (data != null)
+                {
+                    addData(data);
+                    ManageCacheDependenciesForCacheItem(data, cacheKey, parentKey, actionForDependency);
+                }
+            }
+            else
+            {
+                _logger.WriteInfoMessage(string.Format("Retrieving item [{0}] from cache.", cacheKey));
+            }
+
+            return data;
         }
     }
 }

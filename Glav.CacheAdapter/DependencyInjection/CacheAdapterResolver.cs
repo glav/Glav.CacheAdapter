@@ -6,14 +6,10 @@ using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.Redis;
 using Glav.CacheAdapter.Web;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Glav.CacheAdapter.DependencyInjection
 {
-    public class CacheAdapterResolver :ICacheAdapterResolver
+    public class CacheAdapterResolver : ICacheAdapterResolver
     {
         private ILogging _logger;
 
@@ -27,9 +23,9 @@ namespace Glav.CacheAdapter.DependencyInjection
             _logger = logger;
         }
 
-        public Core.ICacheProvider ResolveCacheFromConfig(CacheConfig config)
+        public ICacheProvider ResolveCacheFromConfig(CacheConfig config)
         {
-            ICacheProvider provider = null;
+            ICacheProvider provider;
             var cache = GetCache(config);
             if (config.IsCacheDependencyManagementEnabled)
             {
@@ -47,7 +43,7 @@ namespace Glav.CacheAdapter.DependencyInjection
 
         private ICache GetCache(CacheConfig config)
         {
-            ICache cache = null;
+            ICache cache;
             var normalisedCacheToUse = !string.IsNullOrWhiteSpace(config.CacheToUse) ? config.CacheToUse.ToLowerInvariant() : string.Empty;
             switch (normalisedCacheToUse)
             {
@@ -61,7 +57,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cache = new AppFabricCacheAdapter(_logger, config);
                     break;
                 case CacheTypes.memcached:
-                    cache = new memcachedAdapter(_logger,config);
+                    cache = new memcachedAdapter(_logger, config);
                     break;
                 case CacheTypes.redis:
                     cache = new RedisCacheAdapter(_logger, config);
@@ -73,9 +69,9 @@ namespace Glav.CacheAdapter.DependencyInjection
             return cache;
         }
 
-        private ICacheDependencyManager GetCacheDependencyManager(CacheConfig config,ICache cache)
+        private ICacheDependencyManager GetCacheDependencyManager(CacheConfig config, ICache cache)
         {
-            ICacheDependencyManager dependencyMgr = null;
+            ICacheDependencyManager dependencyMgr;
             var normalisedDependencyManagerConfig = !string.IsNullOrWhiteSpace(config.DependencyManagerToUse) ? config.DependencyManagerToUse.ToLowerInvariant() : string.Empty;
             switch (normalisedDependencyManagerConfig)
             {
@@ -93,7 +89,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
                     break;
                 default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger,config);
+                    dependencyMgr = new GenericDependencyManager(cache, _logger, config);
                     break;
             }
             return dependencyMgr;
@@ -101,7 +97,7 @@ namespace Glav.CacheAdapter.DependencyInjection
 
         private ICacheDependencyManager GetRedisCacheDependencyManagerIfApplicable(CacheConfig config, ICache cache)
         {
-            ICacheDependencyManager dependencyMgr = null;
+            ICacheDependencyManager dependencyMgr;
             var redisCache = cache as RedisCacheAdapter;
             if (redisCache != null)
             {

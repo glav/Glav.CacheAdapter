@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Glav.CacheAdapter.Core.Diagnostics;
 
 namespace Glav.CacheAdapter.ExampleUsage
 {
     public class InMemoryLogger : ILogging
     {
-        private static StringBuilder _buffer = new StringBuilder();
+        private static readonly StringBuilder _buffer = new StringBuilder();
 
         public void WriteInfoMessage(string message)
         {
-            _buffer.AppendFormat("[Info]: {0}{1}",message,Environment.NewLine);
+            _buffer.AppendFormat("[Info]: {0}{1}", message, Environment.NewLine);
         }
 
         public void WriteErrorMessage(string message)
