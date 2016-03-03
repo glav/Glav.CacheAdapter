@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glav.CacheAdapter.DependencyManagement;
-using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.AppFabric;
-using Glav.CacheAdapter.Bootstrap;
-using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
@@ -84,13 +76,13 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
 
         private static void EnsureObjectPropertiesAreValidObjects()
         {
-            if (_logger == null)
-            {
-                _logger = new Logger();
-            }
             if (_config == null)
             {
                 _config = new CacheConfig();
+            }
+            if (_logger == null)
+            {
+                _logger = new Logger(_config);
             }
             if (_resolver == null)
             {

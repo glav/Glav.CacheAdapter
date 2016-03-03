@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Glav.CacheAdapter.Bootstrap;
+﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
-using Glav.CacheAdapter.Distributed.AppFabric;
-using Glav.CacheAdapter.Distributed.memcached;
-using Glav.CacheAdapter.Web;
-using Glav.CacheAdapter.Distributed.Redis;
 
 namespace Glav.CacheAdapter.Features
 {
     public class CacheFeatureSupport : ICacheFeatureSupport
     {
-        private CacheConfig _config;
+        private readonly CacheConfig _config;
         private ICache _cache;
 
         public CacheFeatureSupport()
@@ -61,7 +53,7 @@ namespace Glav.CacheAdapter.Features
                     return false;
 
             }
-}
+        }
         public bool SupportsClearingCacheContents(ICache cache)
         {
             string cacheType = string.Empty;

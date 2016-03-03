@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Glav.CacheAdapter.Bootstrap
+﻿namespace Glav.CacheAdapter.Bootstrap
 {
     internal static class CacheDependencyManagerTypes
     {

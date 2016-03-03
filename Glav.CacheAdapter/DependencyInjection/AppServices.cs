@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Enyim.Caching;
-using Glav.CacheAdapter.Bootstrap;
-using Glav.CacheAdapter.Distributed.AppFabric;
-using Glav.CacheAdapter.Web;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
@@ -21,7 +13,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
     {
         private static ICacheProvider _cacheProvider;
         private static ICache _cache;
-        private static bool _isInitialised = false;
+        private static bool _isInitialised;
         private static readonly object _lockRef = new object();
 
         static AppServices()
@@ -43,7 +35,13 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         public static void SetResolver(ICacheAdapterResolver resolver)
         {
             _isInitialised = false;
-            PreStartInitialise(null, null,resolver);
+            PreStartInitialise(null, null, resolver);
+        }
+
+        public static void SetDependencies(ILogging logger = null, CacheConfig config = null, ICacheAdapterResolver resolver = null)
+        {
+            _isInitialised = false;
+            PreStartInitialise(logger, config, resolver);
         }
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// container that you dont like/use. You can opt to replace the ICacheAdapterResolver with
         /// your resolver of choice as well to utilise your own dependency resolution mechanism.
         /// </remarks>
-        public static void PreStartInitialise(ILogging logger = null, CacheConfig config = null, ICacheAdapterResolver resolver=null)
+        public static void PreStartInitialise(ILogging logger = null, CacheConfig config = null, ICacheAdapterResolver resolver = null)
         {
             if (!_isInitialised)
             {
@@ -67,7 +65,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
                     {
                         try
                         {
-                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(config,logger,resolver);
+                            _cacheProvider = CacheBinder.ResolveCacheFromConfig(config, logger, resolver);
                             CacheBinder.Logger.WriteInfoMessage(string.Format("Initialised cache of type: {0}", CacheBinder.Configuration.CacheToUse));
                             _cache = _cacheProvider.InnerCache;
                             _isInitialised = true;

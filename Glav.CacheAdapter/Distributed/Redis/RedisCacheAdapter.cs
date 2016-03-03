@@ -5,19 +5,18 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.Distributed.Redis
 {
     public class RedisCacheAdapter : ICache
     {
-        private ILogging _logger;
-        private RedisCacheFactory _factory;
-        private PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
-        private static IDatabase _db = null;
-        public static ConnectionMultiplexer _connection = null;
-        private CacheConfig _config = null;
+        private readonly ILogging _logger;
+        private readonly RedisCacheFactory _factory;
+        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
+        private static IDatabase _db;
+        public static ConnectionMultiplexer _connection;
+        private readonly CacheConfig _config;
 
         public RedisCacheAdapter(ILogging logger, CacheConfig config = null)
         {
@@ -156,7 +155,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
             {
                 foreach (var endpoint in allEndpoints)
                 {
-                    var flushWorked = false;
+                    bool flushWorked;
                     var server = _connection.GetServer(endpoint);
                     try
                     {
@@ -177,10 +176,10 @@ namespace Glav.CacheAdapter.Distributed.Redis
                         {
                             var allKeys = server.Keys();
                             _db.KeyDelete(allKeys.ToArray(), CommandFlags.FireAndForget);
-                        } catch (Exception ex)
+                        }
+                        catch (Exception ex)
                         {
                             _logger.WriteErrorMessage("Error flushing the cache (using delete keys method):" + ex.Message);
-                            flushWorked = false;
                         }
                     }
                 }
