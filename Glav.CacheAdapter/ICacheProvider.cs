@@ -23,7 +23,8 @@ namespace Glav.CacheAdapter.Core
 
         void InvalidateCacheItem(string cacheKey);
         void InvalidateCacheItems(IEnumerable<string> cacheKeys);
-    	void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
+
+        void Add(string cacheKey, DateTime absoluteExpiryDate, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
 		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd, string parentKey=null, CacheDependencyAction actionForDependency= CacheDependencyAction.ClearDependentItems);
     	void AddToPerRequestCache(string cacheKey, object dataToAdd);
         void ClearAll();  // pass through

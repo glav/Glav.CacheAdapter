@@ -13,16 +13,29 @@ namespace Glav.CacheAdapter.ExampleUsage
     /// </summary>
     class Program
     {
+        static ConsoleColor _originalColor = Console.ForegroundColor;
         static void Main(string[] args)
         {
+            
             // Basic examples usage
             var allTestsPassed = ExampleAddAndRetrieveFromCache();
 
-            // Basic dependency management usage - if not enabled in the
-            // app.config file, these wont work.
-            ExampleAddAndClearWithDependencies();
+            if (allTestsPassed)
+            {
+                // Basic dependency management usage - if not enabled in the
+                // app.config file, these wont work.
+                allTestsPassed = ExampleAddAndClearWithDependencies();
+            }
 
-            // Uncomment this line to simulate about 100,000 hits to the cache engine
+            if (allTestsPassed)
+            {
+                ExampleAddUsingAsyncCalls();
+            }
+
+            // Uncomment this line to simulate about 100,000 hits to the cache engine. 
+            // This is only available if you have download/copied/cloned the entire solutions source code. If
+            // you have simply installed the nuget package, uncommenting this line will cause an error since
+            // the cache 'hammering' class in not included in the nuget package.
             //HammerTheCache.StartHammering();
 
             // Uncomment this line to see how config can be changed/supplied programmatically.
@@ -44,10 +57,55 @@ namespace Glav.CacheAdapter.ExampleUsage
 
         }
 
-        #region Examples Adding and Clearing with Dependencies
-        private static void ExampleAddAndClearWithDependencies()
+        #region Simple Async Call examples
+        private static bool ExampleAddUsingAsyncCalls()
         {
-            Console.WriteLine("\n*** Simple Cache Dependency examples\n");
+            WriteHeadingSeparator("Simple Cache examples using Async calls");
+            var cacheProvider = AppServices.Cache;
+            cacheProvider.ClearAll();
+            const string  cacheData = "AsyncData";
+            const string cacheKey = "async-key";
+
+            Console.WriteLine("Call GetAsync with long running task to populate cache");
+            var expensiveData = cacheProvider.GetAsync<string>(cacheKey, DateTime.Now.AddDays(1), () =>
+             {
+                 return System.Threading.Tasks.Task.Run(() =>
+                 {
+                     Wait(2);  // simulate some long running operation
+                     return cacheData;
+                 });
+             });
+
+            Console.WriteLine("...Doing some small work and then checking if item is in cache yet (which it should not be)");
+            // Do some work
+            Wait(1);
+            var doesCacheItemExistInCacheYet = (cacheProvider.InnerCache.Get<string>(cacheKey) != null);
+
+            if (doesCacheItemExistInCacheYet == true)
+            {
+                WriteErrMsgToConsole("Cache item was already in cache when it was not expected to be in there yet via the async method");
+                return false;
+            }
+
+            Console.WriteLine("...Doing a little more work which should take longer than the async task that places data in cache so we expect it to exist in cache.");
+            Wait(1.1);
+
+            var doesCacheItemExistInCacheNow = (cacheProvider.InnerCache.Get<string>(cacheKey) != null);
+            if (doesCacheItemExistInCacheNow == false)
+            {
+                WriteErrMsgToConsole("Cache item was NOT in cache when it was expected to be in there via the async method");
+                return false;
+            }
+
+            Console.WriteLine(">> Item was placed in cache via async method as expected\n\n");
+            return true;
+        }
+        #endregion
+
+        #region Examples Adding and Clearing with Dependencies
+        private static bool ExampleAddAndClearWithDependencies()
+        {
+            WriteHeadingSeparator("Simple Cache Dependency examples");
             var cacheProvider = AppServices.Cache;
             cacheProvider.ClearAll();
             const string masterDataKey = "MasterData";
@@ -74,7 +132,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             if (!bit1Ok || !bit2Ok || !masterDataOk)
             {
                 WriteErrMsgToConsole("Items were not present in cache.");
-                return;
+                return false;
             }
 
             Console.WriteLine("\n5. Now clearing the master data item which should also clear the related items");
@@ -96,12 +154,13 @@ namespace Glav.CacheAdapter.ExampleUsage
             if (!bit1Ok || !bit2Ok || !masterDataOk)
             {
                 WriteErrMsgToConsole("Items were present in cache when they should have been removed.");
-                return;
+                return false;
             }
 
             Console.WriteLine("All dependencies worked as expected.");
 
             cacheProvider.ClearAll();
+            return true;
         }
 
         #endregion
@@ -112,7 +171,7 @@ namespace Glav.CacheAdapter.ExampleUsage
             int _accessCounter = 0;
             bool _allTestsPassed = true;
 
-            Console.WriteLine("*** Simple Add and Retrieve Examples\n");
+            WriteHeadingSeparator("Simple Add and Retrieve Examples");
 
             //If you want to programmatically alter the configured values for the cache, you can
             // use the commented section below as an example
@@ -259,19 +318,29 @@ namespace Glav.CacheAdapter.ExampleUsage
         #region Helper Functions
         private static void WriteErrMsgToConsole(string msg)
         {
-            var originalColour = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(msg);
-            Console.ForegroundColor = originalColour;
+            Console.ForegroundColor = _originalColor;
         }
 
-        private static void Wait(int timeInSeconds)
+        private static void WriteHeadingSeparator(string heading)
         {
-            var originalColour = Console.ForegroundColor;
+            var headingText = "*** " + heading + " ***";
+            var line = new string('*', headingText.Length);
+
+            Console.WriteLine("\n\n");
+            Console.WriteLine(line);
+            Console.WriteLine(headingText);
+            Console.WriteLine(line);
+            Console.WriteLine("\n");
+        }
+
+        private static void Wait(double timeInSeconds)
+        {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("Waiting for {0} seconds...", timeInSeconds);
-            System.Threading.Thread.Sleep(timeInSeconds * 1000);
-            Console.ForegroundColor = originalColour;
+            System.Threading.Thread.Sleep((int)(timeInSeconds * 1000));
+            Console.ForegroundColor = _originalColor;
         }
 
         #endregion
