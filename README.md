@@ -58,7 +58,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 ### Revision History ###
 
 #### Version 4.1.0 ####
-* Allow control of logging detail via <add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/> - [Issue 43](https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging)
+* Allow control of logging detail via `<add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/>` - [Issue 43](https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging)
 * Addition of Async methods on the cache provider interface. [Issue 27](https://bitbucket.org/glav/cacheadapter/issues/27/)
 * Updated nuspec target framework to expect .Net 4.5 as a minimum to reduce dependencies. [Issue 42](https://bitbucket.org/glav/cacheadapter/issues/42/change-dependency-on-newer-net-framework)
 
