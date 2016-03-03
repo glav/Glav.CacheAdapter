@@ -8,13 +8,14 @@ implementation underlying that interface via configuration to use either:
  2. ASP.NET web cache (config setting="web")
  3. Distributed AppFabric cache. (config setting="AppFabric")
  4. Distributed memcached cache. (config setting="memcached")
+ 5. Distributed Redis cache. (config setting="redis")
 
 For example:
 			<appSettings>
 				<add key="Cache.CacheToUse" value="memcached" />
 			</appSettings>
 Means the underlying cache mechanism uses memcached and it expects to find memcached server nodes at the address listed in
-the 'DistributedCacheServers' configuration element (see below).
+the 'Cache.DistributedCacheServers' configuration element in appsettings (see below).
 
 This means you dont have to know how to program against these specific cache mechanisms, as this is all handled
 by the various adapters within this project, and driven purely through configuration.
@@ -258,7 +259,12 @@ Notes on Version 4.0.1
 --> Fixed minor typo is naming of RedisCacheAdapter (was misspelled RedisCacheAdatper) - Issue #34 - https://bitbucket.org/glav/cacheadapter/issue/34/typo-in-class-name-rediscacheadatper
 
 Notes on Version 4.0.3
+~~~~~~~~~~~~~~~~~~~~~~
 --> Allow control of logging detail via <add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/> - Issue #43 - https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging
+
+Notes on Version 4.1
+~~~~~~~~~~~~~~~~~~~~
+--> Addition of Async methods on the cache provider interface. Issue #27 - https://bitbucket.org/glav/cacheadapter/issues/27/ 
 
 
 
