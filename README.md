@@ -42,7 +42,7 @@ Then, in code you can do:
   });
 ~~~~
 
-which will return the data from cache if it exists in the cache, or use the lambda function to retrieve the data, add it to the cache, then return it for you.
+which will return the data from cache if it exists in the cache, or use the lambda function to retrieve the data, add it to the cache , then return it for you. The data will remain in the cache for 5 seconds.
 
 ### Blog Posts ###
 * [Version 2.0](https://weblogs.asp.net/pglavich/cacheadapter-v2-now-with-memcached-support) has details on memcached support.
