@@ -58,7 +58,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 ### Revision History ###
 
 #### Version 4.1.1 ####
-* Version 4.1.1 in Nuget is simply a revision of the packaging. Glav.CacheAdapter.Core package 4.1.1 only contains the assembly. Glav.CacheAdaper 4.1.1 simply references the 4.1.1 core package.
+* Version 4.1.1 in Nuget is simply a revision of the packaging. Glav.CacheAdapter.Core package 4.1.1 only contains the assembly. Glav.CacheAdaper 4.1.1 simply references the 4.1.1 core package. There has been no assembly change. In both packages, the assembly version is 4.1.0.
 
 #### Version 4.1.0 ####
 * Allow control of logging detail via `<add key="Cache.LoggingLevel" value="Information|ErrorsOnly|None"/>` - [Issue 43](https://bitbucket.org/glav/cacheadapter/issues/43/enhancing-the-logging)
