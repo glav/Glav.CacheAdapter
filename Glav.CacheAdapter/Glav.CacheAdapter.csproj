@@ -121,7 +121,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Copyright.txt" />
+    <Content Include="Licence.txt" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup />
