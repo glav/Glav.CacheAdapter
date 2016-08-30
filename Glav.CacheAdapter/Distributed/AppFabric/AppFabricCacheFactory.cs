@@ -38,7 +38,6 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             var configMapper = new FactoryConfigConverter(Logger);
             configMapper.MapSettingsFromConfigToAppFabricSettings(CacheConfiguration, factoryConfig);
             IsLocalCacheEnabled = configMapper.IsLocalCacheEnabled;
-            //SetSecuritySettings(config, factoryConfig);
 
             try
             {
