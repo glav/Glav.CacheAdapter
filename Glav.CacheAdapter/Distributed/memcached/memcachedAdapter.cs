@@ -10,68 +10,17 @@ namespace Glav.CacheAdapter.Distributed.memcached
 {
     public class memcachedAdapter : ICache
     {
-        private readonly CacheServerFarm _serverFarm;
         private readonly ILogging _logger;
         private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
         private static IMemcachedClient _client;
-        private static readonly object _lockRef = new object();
-        private static bool _isInitialised;
 
 
-        public memcachedAdapter(ILogging logger, CacheConfig config = null)
+        public memcachedAdapter(ILogging logger, IMemcachedClient client)
         {
             _logger = logger;
-
-            var factory = new memcachedCacheFactory(_logger, config);
-            _serverFarm = factory.ConstructCacheFarm();
-
-            if (_serverFarm == null || _serverFarm.NodeList == null || _serverFarm.NodeList.Count == 0)
-            {
-                var msg = "Must specify at least 1 server node to use for memcached";
-                logger.WriteErrorMessage(msg);
-                throw new ArgumentException(msg);
-            }
-
-            Initialise(factory);
-            LogManager.AssignFactory(new LogFactoryAdapter(_logger));
+            _client = client;
         }
-
-        private void Initialise(memcachedCacheFactory factory)
-        {
-            if (!_isInitialised)
-            {
-                lock (_lockRef)
-                {
-                    if (!_isInitialised)
-                    {
-                        _isInitialised = true;
-                        // If the consumer of this class has passed in a IMemcachedClient
-                        //instance, then we use that instead
-                        if (_client != null)
-                        {
-                            return;
-                        }
-                        var config = new Enyim.Caching.Configuration.MemcachedClientConfiguration();
-                        _serverFarm.NodeList.ForEach(n => config.AddServer(n.IPAddressOrHostName, n.Port));
-                        config.SocketPool.ConnectionTimeout = factory.ConnectTimeout;
-                        config.SocketPool.DeadTimeout = factory.DeadNodeTimeout;
-
-                        config.SocketPool.MaxPoolSize = factory.MaximumPoolSize;
-                        config.SocketPool.MinPoolSize = factory.MinimumPoolSize;
-
-                        // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
-                        // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
-                        // Could be related to memcached version and/or transcoder.
-                        config.Protocol = MemcachedProtocol.Text;
-                        config.Transcoder = new DataContractTranscoder();
-                        _client = new MemcachedClient(config);
-                        _logger.WriteInfoMessage("memcachedAdapter initialised.");
-                    }
-                }
-            }
-        }
-
 
         public T Get<T>(string cacheKey) where T : class
         {

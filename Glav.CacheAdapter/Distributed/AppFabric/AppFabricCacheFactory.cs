@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.DependencyManagement;
 
 namespace Glav.CacheAdapter.Distributed.AppFabric
 {
-    public class AppFabricCacheFactory : DistributedCacheFactoryBase
+    public class AppFabricCacheFactory : CacheConstructionFactoryBase
     {
         public AppFabricCacheFactory(ILogging logger, CacheConfig config = null)
             : base(logger, config)
@@ -14,7 +16,15 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
         public bool IsLocalCacheEnabled { get; set; }
 
-        public DataCache ConstructCache()
+        public override CacheFactoryComponentResult CreateCacheComponents()
+        {
+            var cacheEngine = CreateCacheEngine();
+            var dependencyMgr = new GenericDependencyManager(cacheEngine, Logger, CacheConfiguration);
+            var featureSupport = new AppFabricFeatureSupport();
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            return result;
+        }
+        private ICache CreateCacheEngine()
         {
             ParseConfig(AppFabricConstants.DEFAULT_ServerAddress, AppFabricConstants.DEFAULT_Port);
             var dataCacheEndpoints = new List<DataCacheServerEndpoint>();
@@ -42,7 +52,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 // try and extract config from the ProviderSpecificValues first.
                 var cacheName = CacheConfiguration.ProviderSpecificValues.ContainsKey(AppFabricConstants.CONFIG_CacheNameKey)
                     ? CacheConfiguration.ProviderSpecificValues[AppFabricConstants.CONFIG_CacheNameKey]
-                    : MainConfig.Default.DistributedCacheName;
+                    : string.Empty;
 
                 Logger.WriteInfoMessage(string.Format("Appfabric Cache Name: [{0}]", cacheName));
 
@@ -50,7 +60,8 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
 
                 Logger.WriteInfoMessage("AppFabric cache constructed.");
 
-                return cache;
+                return new AppFabricCacheAdapter(Logger, cache);
+
             }
             catch (Exception ex)
             {

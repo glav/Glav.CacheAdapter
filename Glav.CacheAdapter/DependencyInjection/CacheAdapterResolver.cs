@@ -1,7 +1,6 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.Redis;
@@ -18,97 +17,56 @@ namespace Glav.CacheAdapter.DependencyInjection
             _logger = logger;
         }
 
-        public void SetLogger(ILogging logger)
-        {
-            _logger = logger;
-        }
-
         public ICacheProvider ResolveCacheFromConfig(CacheConfig config)
         {
             ICacheProvider provider;
-            var cache = GetCache(config);
+            var cacheFactory = GetCacheConstructionFactoryUsingConfig(config);
+            var cacheComponents = cacheFactory.CreateCacheComponents();
             if (config.IsCacheDependencyManagementEnabled)
             {
-                var dependencyManager = GetCacheDependencyManager(config, cache);
-
-                provider = new CacheProvider(cache, _logger, dependencyManager);
+                provider = new CacheProvider(cacheComponents.Cache, _logger, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
             }
             else
             {
-                provider = new CacheProvider(cache, _logger);
+                provider = new CacheProvider(cacheComponents.Cache, _logger,null, cacheComponents.FeatureSupport);
             }
             _logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine", config.CacheToUse));
             return provider;
         }
 
-        private ICache GetCache(CacheConfig config)
+        public ICacheConstructionFactory GetCacheConstructionFactoryUsingConfig(CacheConfig config)
         {
-            ICache cache;
-            var normalisedCacheToUse = !string.IsNullOrWhiteSpace(config.CacheToUse) ? config.CacheToUse.ToLowerInvariant() : string.Empty;
+            return GetCacheConstructionFactoryUsingTypeValue(config.CacheToUse,config);
+        }
+
+        public ICacheConstructionFactory GetCacheConstructionFactoryUsingTypeValue(string cacheTypeValue, CacheConfig config)
+        {
+            ICacheConstructionFactory cacheFactory;
+            var normalisedCacheToUse = !string.IsNullOrWhiteSpace(cacheTypeValue) ? cacheTypeValue.ToLowerInvariant() : string.Empty;
             switch (normalisedCacheToUse)
             {
                 case CacheTypes.MemoryCache:
-                    cache = new MemoryCacheAdapter(_logger);
+                    cacheFactory = new MemoryCacheFactory(_logger, config);
                     break;
                 case CacheTypes.WebCache:
-                    cache = new WebCacheAdapter(_logger);
+                    cacheFactory = new WebCacheFactory(_logger, config);
                     break;
                 case CacheTypes.AppFabricCache:
-                    cache = new AppFabricCacheAdapter(_logger, config);
+                    cacheFactory = new AppFabricCacheFactory(_logger, config);
                     break;
                 case CacheTypes.memcached:
-                    cache = new memcachedAdapter(_logger, config);
+                    cacheFactory = new memcachedCacheFactory(_logger, config);
                     break;
                 case CacheTypes.redis:
-                    cache = new RedisCacheAdapter(_logger, config);
+                    cacheFactory = new RedisCacheFactory(_logger, config);
                     break;
+                case CacheTypes.hybrid:
+                    throw new System.NotSupportedException("Hybrid configuration not supported at this time.");
                 default:
-                    cache = new MemoryCacheAdapter(_logger);
+                    cacheFactory = new MemoryCacheFactory(_logger, config);
                     break;
             }
-            return cache;
+            return cacheFactory;
         }
-
-        private ICacheDependencyManager GetCacheDependencyManager(CacheConfig config, ICache cache)
-        {
-            ICacheDependencyManager dependencyMgr;
-            var normalisedDependencyManagerConfig = !string.IsNullOrWhiteSpace(config.DependencyManagerToUse) ? config.DependencyManagerToUse.ToLowerInvariant() : string.Empty;
-            switch (normalisedDependencyManagerConfig)
-            {
-                case CacheDependencyManagerTypes.Default:
-                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
-                    break;
-                case CacheDependencyManagerTypes.Redis:
-                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
-                    break;
-                case CacheDependencyManagerTypes.Generic:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger, config);
-                    break;
-                case CacheDependencyManagerTypes.Unspecified:
-                    // try and determine what one to use based on the cache type
-                    dependencyMgr = GetRedisCacheDependencyManagerIfApplicable(config, cache);
-                    break;
-                default:
-                    dependencyMgr = new GenericDependencyManager(cache, _logger, config);
-                    break;
-            }
-            return dependencyMgr;
-        }
-
-        private ICacheDependencyManager GetRedisCacheDependencyManagerIfApplicable(CacheConfig config, ICache cache)
-        {
-            ICacheDependencyManager dependencyMgr;
-            var redisCache = cache as RedisCacheAdapter;
-            if (redisCache != null)
-            {
-                dependencyMgr = new RedisDependencyManager(cache, _logger, redisCache.RedisDatabase, config);
-            }
-            else
-            {
-                dependencyMgr = new GenericDependencyManager(cache, _logger, config);
-            }
-            return dependencyMgr;
-        }
-
     }
 }

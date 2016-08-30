@@ -11,16 +11,13 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
     {
         private DataCache _cache;
         private readonly ILogging _logger;
-        private readonly AppFabricCacheFactory _factory;
 
         private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
-        public AppFabricCacheAdapter(ILogging logger, CacheConfig config = null)
+        public AppFabricCacheAdapter(ILogging logger, DataCache cache)
         {
             _logger = logger;
-            _factory = new AppFabricCacheFactory(_logger, config);
-
-            _cache = _factory.ConstructCache();
+            _cache = cache;
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)
@@ -97,13 +94,6 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
                 foreach (string regionName in regions)
                 {
                     _cache.ClearRegion(regionName);
-                }
-
-                if (_factory.IsLocalCacheEnabled)
-                {
-                    // If local cache is enabled then ensures that local cache is destroyed
-                    _cache = null;
-                    _cache = _factory.ConstructCache();
                 }
 
             }

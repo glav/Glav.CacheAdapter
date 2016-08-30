@@ -67,8 +67,11 @@
     <Compile Include="Bootstrap\CacheTypes.cs" />
     <Compile Include="CacheConfig.cs" />
     <Compile Include="CacheConstants.cs" />
-    <Compile Include="CacheProvider.cs" />
-    <Compile Include="CacheSettingEnumeration.cs" />
+    <Compile Include="Core\CacheFactoryComponentResult.cs" />
+    <Compile Include="Core\CacheProvider.cs" />
+    <Compile Include="Core\CacheSettingEnumeration.cs" />
+    <Compile Include="Core\MemoryCacheFactory.cs" />
+    <Compile Include="Core\MemoryFeatureSupport.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
     <Compile Include="DependencyInjection\CacheAdapterResolver.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
@@ -85,38 +88,37 @@
     <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
     <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />
     <Compile Include="Distributed\AppFabric\FactoryConfigConverter.cs" />
-    <Compile Include="Distributed\DistributedCacheFactoryBase.cs" />
+    <Compile Include="Core\CacheConstructionFactoryBase.cs" />
+    <Compile Include="Distributed\AppFabric\AppFabricFeatureSupport.cs" />
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />
+    <Compile Include="Distributed\memcached\memcachedFeatureSupport.cs" />
+    <Compile Include="Distributed\Redis\RedisFeatureSupport.cs" />
     <Compile Include="Distributed\Redis\RedisCacheAdapter.cs" />
     <Compile Include="Distributed\Redis\RedisCacheFactory.cs" />
-    <Compile Include="Features\CacheFeatureSupport.cs" />
+    <Compile Include="Features\DefaultFeatureSupport.cs" />
     <Compile Include="Features\ICacheFeatureSupport.cs" />
+    <Compile Include="Helpers\CacheConfigExtensions.cs" />
+    <Compile Include="Helpers\CacheKeyNamingExtensions.cs" />
     <Compile Include="Helpers\ConversionExtensions.cs" />
     <Compile Include="Helpers\SerialisationExtensions.cs" />
-    <Compile Include="ICache.cs" />
-    <Compile Include="ICacheProvider.cs" />
-    <Compile Include="MainConfig.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>MainConfig.settings</DependentUpon>
-    </Compile>
+    <Compile Include="Core\ICache.cs" />
+    <Compile Include="Core\ICacheConstructionFactory.cs" />
+    <Compile Include="Core\ICacheProvider.cs" />
     <Compile Include="Distributed\memcached\memcachedAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedCacheFactory.cs" />
-    <Compile Include="Distributed\ServerNode.cs" />
-    <Compile Include="MemoryCacheAdapter.cs" />
+    <Compile Include="Core\ServerNode.cs" />
+    <Compile Include="Core\MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\WebFeatureSupport.cs" />
     <Compile Include="Web\PerRequestCacheHelper.cs" />
     <Compile Include="Web\WebCacheAdapter.cs" />
+    <Compile Include="Web\WebCacheFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="MainConfig.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>MainConfig.Designer.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
