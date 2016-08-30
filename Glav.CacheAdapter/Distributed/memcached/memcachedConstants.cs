@@ -1,6 +1,6 @@
 ﻿namespace Glav.CacheAdapter.Distributed.memcached
 {
-	public class memcachedConstants
+	class memcachedConstants
 	{
 		public const string CONFIG_MinimumConnectionPoolSize = "MinPoolSize";
 		public const string CONFIG_MaximumConnectionPoolSize = "MaxPoolSize";

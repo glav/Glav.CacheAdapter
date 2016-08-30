@@ -4,6 +4,7 @@ using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Web;
+using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.Tests
 {
@@ -18,24 +19,29 @@ namespace Glav.CacheAdapter.Tests
             {
                 return _cache;
             }
-            switch (_config.CacheToUse)
-            {
-                case CacheTypes.MemoryCache:
-                    _cache = new MemoryCacheAdapter(new MockLogger());
-                    break;
-                case CacheTypes.memcached:
-                    _cache = new memcachedAdapter(new MockLogger());
-                    break;
-                case CacheTypes.WebCache:
-                    _cache = new WebCacheAdapter(new MockLogger());
-                    break;
-                case CacheTypes.AppFabricCache:
-                    _cache = new AppFabricCacheAdapter(new MockLogger());
-                    break;
-                default:
-                    _cache = new MemoryCacheAdapter(new MockLogger());
-                    break;
-            }
+
+            _cache = CacheConfig.Create()
+                .BuildCacheProvider(new MockLogger())
+                .InnerCache;
+
+        //    switch (_config.CacheToUse)
+        //    {
+        //        case CacheTypes.MemoryCache:
+        //            _cache = new MemoryCacheFactory(new MockLogger(),_config).CreateCacheComponents().Cache;
+        //            break;
+        //        case CacheTypes.memcached:
+        //            _cache = new memcachedCacheFactory(new MockLogger(), _config).CreateCacheComponents().Cache;
+        //            break;
+        //        case CacheTypes.WebCache:
+        //            _cache = new WebCacheFactory(new MockLogger(),_config).CreateCacheComponents().Cache;
+        //            break;
+        //        case CacheTypes.AppFabricCache:
+        //            _cache = new AppFabricCacheFactory(new MockLogger(),_config).CreateCacheComponents().Cache;
+        //            break;
+        //        default:
+        //            _cache = new MemoryCacheFactory(new MockLogger(),_config).CreateCacheComponents().Cache;
+        //            break;
+        //    }
 
             return _cache;
         }
@@ -47,7 +53,10 @@ namespace Glav.CacheAdapter.Tests
 
         public static ICacheProvider GetCacheProvider()
         {
-            ICacheProvider provider = new CacheProvider(GetCacheFromConfig(), new MockLogger(), GetDependencyManager());
+            var provider = CacheConfig.Create()
+                .BuildCacheProvider(new MockLogger());
+
+            //ICacheProvider provider = new CacheProvider(GetCacheFromConfig(), new MockLogger(), GetDependencyManager());
             return provider;
         }
     }

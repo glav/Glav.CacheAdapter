@@ -1,29 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Caching;
-using Glav.CacheAdapter.Core;
+using System.Linq;
+using System.Runtime.Caching;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.Web;
 
-namespace Glav.CacheAdapter.Web
+namespace Glav.CacheAdapter.Core
 {
-    public class WebCacheAdapter : ICache
+    /// <summary>
+    /// In memory cache with no dependencies on the web cache, only runtime dependencies.
+    /// ie. Can be used in any type of application, desktop, web, service or otherwise.
+    /// </summary>
+    public class MemoryCacheAdapter : ICache
     {
-        private readonly Cache _cache;
+        private readonly MemoryCache _cache;
         private readonly ILogging _logger;
         private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
-        public WebCacheAdapter(ILogging logger, Cache cache)
+
+        public MemoryCacheAdapter(ILogging logger, MemoryCache cache)
         {
-            _cache = cache;
             _logger = logger;
+            _cache = cache;
         }
 
         public void Add(string cacheKey, DateTime expiry, object dataToAdd)
         {
+            var policy = new CacheItemPolicy
+            {
+                AbsoluteExpiration = new DateTimeOffset(expiry)
+            };
+
             if (dataToAdd != null)
             {
-                _cache.Add(cacheKey, dataToAdd, null, expiry, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
+                _cache.Add(cacheKey, dataToAdd, policy);
                 _logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, expiry date {1}", cacheKey, expiry.ToString("yyyy/MM/dd hh:mm:ss")));
+
             }
         }
 
@@ -42,7 +54,8 @@ namespace Glav.CacheAdapter.Web
 
         public void InvalidateCacheItem(string cacheKey)
         {
-            _cache.Remove(cacheKey);
+            if (_cache.Contains(cacheKey))
+                _cache.Remove(cacheKey);
         }
 
         public void InvalidateCacheItems(IEnumerable<string> cacheKeys)
@@ -58,14 +71,15 @@ namespace Glav.CacheAdapter.Web
             }
         }
 
-
         public void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd)
         {
             if (dataToAdd != null)
             {
-                _logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding window expiry in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
-                _cache.Add(cacheKey, dataToAdd, null, Cache.NoAbsoluteExpiration, slidingExpiryWindow, CacheItemPriority.BelowNormal,
-                           null);
+                var item = new CacheItem(cacheKey, dataToAdd);
+                var policy = new CacheItemPolicy() { SlidingExpiration = slidingExpiryWindow };
+                _cache.Add(item, policy);
+                _logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding expiry window in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
+
             }
         }
 
@@ -74,35 +88,20 @@ namespace Glav.CacheAdapter.Web
             _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
         }
 
+
         public CacheSetting CacheType
         {
-            get { return CacheSetting.Web; }
+            get { return CacheSetting.Memory; }
         }
 
 
         public void ClearAll()
         {
-            if (_cache.Count == 0)
-            {
-                return;
-            }
-
             _logger.WriteInfoMessage("Clearing the cache");
-
-            foreach (var item in _cache)
-            {
-                // Granular exception around clearing cache items so it can continue
-                //clearing if an error
-                try
-                {
-                    var entry = (System.Collections.DictionaryEntry)item;
-                    _cache.Remove(entry.Key.ToString());
-                }
-                catch (Exception ex)
-                {
-                    _logger.WriteErrorMessage("Error removing item from cache during ClearAll. Error: " + ex.Message);
-                }
-            }
+            _cache.ToList().ForEach(i =>
+                                        {
+                                            _cache.Remove(i.Key);
+                                        });
         }
     }
 }
