@@ -52,10 +52,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="HammerTheCache.cs" />
     <Compile Include="InMemoryLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleUsageAsync.cs" />
+    <Compile Include="SimpleUsageWithDependencies.cs" />
+    <Compile Include="SimpleUsageWithTests.cs" />
+    <Compile Include="SomeData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
