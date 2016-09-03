@@ -13,8 +13,8 @@ namespace Glav.CacheAdapter.ExampleUsage
     /// </summary>
     public static class HammerTheCache
     {
-        private const int NUMBER_THREADS = 2;
-        private const int NUMBER_OPERATIONS_PER_TASK = 2;
+        private const int NUMBER_THREADS = 10;
+        private const int NUMBER_OPERATIONS_PER_TASK = 200;
         private static readonly TimeSpan MINIMUM_TIME_TO_RUN = TimeSpan.FromSeconds(2);
         private static readonly CacheConfig _config = new CacheConfig();
         public static void StartHammering()
