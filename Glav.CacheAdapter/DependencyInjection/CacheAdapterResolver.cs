@@ -24,11 +24,11 @@ namespace Glav.CacheAdapter.DependencyInjection
             var cacheComponents = cacheFactory.CreateCacheComponents();
             if (config.IsCacheDependencyManagementEnabled)
             {
-                provider = new CacheProvider(cacheComponents.Cache, _logger, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+                provider = new CacheProvider(cacheComponents.Cache, _logger,config, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
             }
             else
             {
-                provider = new CacheProvider(cacheComponents.Cache, _logger,null, cacheComponents.FeatureSupport);
+                provider = new CacheProvider(cacheComponents.Cache, _logger,config,null, cacheComponents.FeatureSupport);
             }
             _logger.WriteInfoMessage(string.Format("CacheProvider initialised with {0} cache engine", config.CacheToUse));
             return provider;

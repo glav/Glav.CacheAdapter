@@ -20,7 +20,7 @@ namespace Glav.CacheAdapter
 
         public static CacheConfig Create()
         {
-            return new CacheConfig() { CacheToUse = CacheTypes.MemoryCache };
+            return new CacheConfig();
         }
         public string CacheToUse { get;  set;  }
 
@@ -65,6 +65,9 @@ namespace Glav.CacheAdapter
             if (ConfigurationManager.AppSettings[cacheToUseKey].HasValue())
             {
                 CacheToUse = ConfigurationManager.AppSettings[cacheToUseKey].ToLowerInvariant();
+            } else
+            {
+                CacheToUse = CacheTypes.MemoryCache;
             }
             if (ConfigurationManager.AppSettings[cacheEnabledKey].HasValue())
             {

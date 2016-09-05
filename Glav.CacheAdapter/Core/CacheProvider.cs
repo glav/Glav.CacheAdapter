@@ -22,11 +22,12 @@ namespace Glav.CacheAdapter.Core
         private readonly ICacheDependencyManager _cacheDependencyManager;
         private readonly ICacheFeatureSupport _featureSupport;
 
-        public CacheProvider(ICache cache, ILogging logger, ICacheDependencyManager cacheDependencyManager, ICacheFeatureSupport featureSupport)
+        public CacheProvider(ICache cache, ILogging logger, CacheConfig config, ICacheDependencyManager cacheDependencyManager, ICacheFeatureSupport featureSupport)
         {
             _cache = cache;
             _logger = logger;
             _featureSupport = featureSupport;
+            _config = config ?? CacheConfig.Create();
             _cacheDependencyManager = cacheDependencyManager;
 
             if (_config.IsCacheDependencyManagementEnabled && _cacheDependencyManager != null)
