@@ -73,16 +73,16 @@ namespace Glav.CacheAdapter.Helpers
             return factory.CreateCacheComponents();
         }
 
-        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, ILogging logger)
+        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, CacheConfig config, ILogging logger)
         {
-            return new CacheProvider(cacheComponents.Cache, logger, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+            return new CacheProvider(cacheComponents.Cache, logger, config,cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
         }
 
         public static ICacheProvider BuildCacheProvider(this CacheConfig config, ILogging logger)
         {
             var components = BuildComponents(config, logger);
 
-            return new CacheProvider(components.Cache, logger, components.DependencyManager, components.FeatureSupport);
+            return new CacheProvider(components.Cache, logger, config,components.DependencyManager, components.FeatureSupport);
         }
 
         private static void AddServerNodeIfNotPresent(CacheConfig config, string address)
