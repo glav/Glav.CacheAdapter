@@ -12,7 +12,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldImplicitlyAddItemToCacheAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
@@ -31,7 +31,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldAddItemToCacheUsingDelegateAsKeyAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             int accessCount = 0;
 
             var cacheDataDelegate = new Func<Task<string>>(() =>
@@ -64,7 +64,7 @@ namespace Glav.CacheAdapter.Tests
             const string cacheChildKey2 = "childkey2";
 
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.ClearAll();
@@ -149,7 +149,7 @@ namespace Glav.CacheAdapter.Tests
         public async void ShouldImplicitlyAddItemToCacheAndExpireItemAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
@@ -172,7 +172,7 @@ namespace Glav.CacheAdapter.Tests
         public async void ShouldStoreCacheItemUsingDynamicallyGeneratedKeyAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cache.InvalidateCacheItem("TestItem");

@@ -93,7 +93,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEYNAME);
@@ -119,7 +119,7 @@ namespace Glav.CacheAdapter.Tests
         {
             var mgr = TestHelper.GetDependencyManager();
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEYNAME);
