@@ -66,6 +66,13 @@ namespace Glav.CacheAdapter.Helpers
             return config;
         }
 
+        public static CacheFactoryComponentResult BuildComponentsWithTraceLogging(this CacheConfig config)
+        {
+            var resolver = new CacheAdapterResolver(new Logger(config));
+            var factory = resolver.GetCacheConstructionFactoryUsingConfig(config);
+            return factory.CreateCacheComponents();
+        }
+
         public static CacheFactoryComponentResult BuildComponents(this CacheConfig config, ILogging logger)
         {
             var resolver = new CacheAdapterResolver(logger);
@@ -73,9 +80,22 @@ namespace Glav.CacheAdapter.Helpers
             return factory.CreateCacheComponents();
         }
 
+        public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheFactoryComponentResult cacheComponents, CacheConfig config)
+        {
+            return new CacheProvider(cacheComponents.Cache, new Logger(config), config, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+        }
+
         public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, CacheConfig config, ILogging logger)
         {
             return new CacheProvider(cacheComponents.Cache, logger, config,cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+        }
+
+        public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheConfig config)
+        {
+            var logger = new Logger(config);
+            var components = BuildComponents(config, logger);
+
+            return new CacheProvider(components.Cache, logger, config, components.DependencyManager, components.FeatureSupport);
         }
 
         public static ICacheProvider BuildCacheProvider(this CacheConfig config, ILogging logger)
