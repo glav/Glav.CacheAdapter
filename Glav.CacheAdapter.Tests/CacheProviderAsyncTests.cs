@@ -146,22 +146,27 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
-        public async void ShouldImplicitlyAddItemToCacheAndExpireItemAsync()
+        public async Task ShouldImplicitlyAddItemToCacheAndExpireItemAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
             var cache = TestHelper.BuildTestCache();
-
+            var expectedData = "TestData";
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
 
             // Attempt to get it via the provider
-            await cacheProvider.GetAsync<string>("TestItem", DateTime.Now.AddSeconds(2),
+            var result = await cacheProvider.GetAsync<string>("TestItem", DateTime.Now.AddSeconds(2),
                                       () =>
                                       {
-                                          return new Task<string>(() => { return "TestData"; });
+                                          return Task.FromResult<string>(expectedData);
                                       });
             // Assert that it was implicitly added to the cache via the cache provider
-            Assert.IsNotNull(cache.Get<string>("TestItem"), "Expected item not in the cache");
+            var directCacheResult = cache.Get<string>("TestItem");
+            Assert.IsNotNull(directCacheResult, "Expected item not in the cache");
+            Assert.AreEqual<string>(expectedData, directCacheResult, "Data was in cache, but data incorrect");
+
+            // Assert that it was implicitly added to the cache via the cache provider
+            Assert.AreEqual<string>(expectedData, result, "Data was in cache via async, but data incorrect");
 
             // Wait for it to expire/be evicted and assert that it has gone from the cache
             System.Threading.Thread.Sleep(4000);
@@ -169,17 +174,15 @@ namespace Glav.CacheAdapter.Tests
         }
 
         [TestMethod]
-        public async void ShouldStoreCacheItemUsingDynamicallyGeneratedKeyAsync()
+        public async Task ShouldStoreCacheItemUsingDynamicallyGeneratedKeyAsync()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
             var cache = TestHelper.BuildTestCache();
 
-            // Ensure we have nodata in the cache
-            cache.InvalidateCacheItem("TestItem");
             // Implicitly add it in - bool flag should be set to true
-            var data = await GetTestItemFromCacheAsync(cacheProvider,"TestData");
+            var data = await GetTestItemFromCacheAsync(cacheProvider, "TestData");
 
-            // Now access it again. If not found in cache, delegate will execute but return empty
+            // Now access it again. If not found in cache, delegate will execute but return "Junk"
             // which is not right. It should not need to run delegate to get data so
             // we get a valid value from cache
             data = await GetTestItemFromCacheAsync(cacheProvider,"Junk");
@@ -191,9 +194,9 @@ namespace Glav.CacheAdapter.Tests
 
         private Task<string> GetTestItemFromCacheAsync(ICacheProvider cacheProvider, string dataToReturnFromDelegate)
         {
-            return cacheProvider.GetAsync<string>(DateTime.Now.AddDays(1), () =>
+            return cacheProvider.GetAsync<string>(DateTime.Now.AddSeconds(5), () =>
             {
-                return new Task<string>(() => { return dataToReturnFromDelegate; });
+                return Task.FromResult<string>(dataToReturnFromDelegate);
             });
 
         }
