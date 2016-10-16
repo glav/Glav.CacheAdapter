@@ -34,7 +34,6 @@ namespace Glav.CacheAdapter.Tests
             var provider = CacheConfig.Create()
                 .BuildCacheProviderWithTraceLogging();
 
-            //ICacheProvider provider = new CacheProvider(GetCacheFromConfig(), new MockLogger(), GetDependencyManager());
             return provider;
         }
     }
