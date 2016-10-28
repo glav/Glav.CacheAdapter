@@ -6,6 +6,7 @@ using Glav.CacheAdapter.DependencyManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.Tests
 {
@@ -15,9 +16,9 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldLogInfoMessages()
         {
-            AppServices.SetLogger(new TestLogger());
-            var provider = AppServices.Cache;
-
+            var provider = CacheConfig.Create()
+                .UseMemoryCache()
+                .BuildCacheProvider(new TestLogger());
             provider.Add("test1", DateTime.Now.AddMinutes(1), "data");
 
             Assert.IsTrue(TestLogger.InfoCount > 1,"Expected some informational messages to be logged but they were not");
@@ -27,10 +28,10 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldLogInfoAndErrorMEssages()
         {
             try {
-                var config = new CacheConfig { CacheToUse = "memcached" };
-                config.ServerNodes.Add(new Distributed.ServerNode("1.2.3.4", 1));
-                AppServices.SetDependencies(new TestLogger(), config );
-                var provider = AppServices.Cache;
+                var provider = CacheConfig.Create()
+                    .UseMemcachedCache()
+                    .UsingDistributedServerNode("1.2.3.4", 1)
+                    .BuildCacheProvider(new TestLogger());
                 provider.Add("test1", DateTime.Now.AddMinutes(1), "data");
             } catch {  }
 

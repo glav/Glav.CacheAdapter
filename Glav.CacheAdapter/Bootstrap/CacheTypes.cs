@@ -7,6 +7,7 @@
         public const string AppFabricCache = "appfabric";
     	public const string memcached = "memcached";
         public const string redis = "redis";
+        public const string hybrid = "hybrid";
 
     }
 }

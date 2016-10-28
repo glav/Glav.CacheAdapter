@@ -267,7 +267,10 @@ Notes on Version 4.1
 --> Addition of Async methods on the cache provider interface. Issue #27 - https://bitbucket.org/glav/cacheadapter/issues/27/ 
 --> Updated nuspec target framework to expect .Net 4.5 as a minimum to reduce dependencies. Issue #42 - https://bitbucket.org/glav/cacheadapter/issues/42/change-dependency-on-newer-net-framework
 
-
+Notes on Version 4.2
+~~~~~~~~~~~~~~~~~~~~
+--> Addition of licence file Issue #49 - https://bitbucket.org/glav/cacheadapter/issues/49/license
+--> Configuration system update and internal refactor in preparation for larger update to separate out packages. Issue #50 and Issue #40 - https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul and https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config
 
 
 

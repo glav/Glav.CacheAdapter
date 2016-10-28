@@ -11,7 +11,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldImplicitlyAddItemToCache()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
@@ -30,7 +30,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldNotBlowUpWhenRemovingAteemptingToRemoveAnItemNotInTheCache()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("hoochy coochy blah blah");
@@ -43,7 +43,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldAddItemToCacheUsingDelegateAsKey()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             int accessCount = 0;
 
             var cacheDataDelegate = new Func<string>(() =>
@@ -73,7 +73,7 @@ namespace Glav.CacheAdapter.Tests
             const string cacheChildKey2 = "childkey2";
 
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.ClearAll();
@@ -150,7 +150,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldInvalidateASeriesOfCacheKeys()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             cache.Add("one", DateTime.Now.AddMinutes(100), "test data for one");
             cache.Add("two", DateTime.Now.AddMinutes(100), "test data for two");
@@ -178,7 +178,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldImplicitlyAddItemToCacheAndExpireItem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
@@ -201,7 +201,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldInvalidateCacheItem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cacheProvider.InvalidateCacheItem("TestItem");
@@ -218,7 +218,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldStoreCacheItemUsingDynamicallyGeneratedKey()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Ensure we have nodata in the cache
             cache.InvalidateCacheItem("TestItem");
@@ -241,7 +241,7 @@ namespace Glav.CacheAdapter.Tests
             var cacheConfig = new CacheConfig();
 
             const int NumDataItems = 100;
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var cacheProvider = TestHelper.GetCacheProvider();
 
             // Add data to cache

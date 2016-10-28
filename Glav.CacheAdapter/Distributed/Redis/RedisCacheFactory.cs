@@ -1,10 +1,13 @@
-﻿using Glav.CacheAdapter.Core.Diagnostics;
+﻿using Glav.CacheAdapter.Bootstrap;
+using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.DependencyManagement;
 using StackExchange.Redis;
 using System;
 
 namespace Glav.CacheAdapter.Distributed.Redis
 {
-    public class RedisCacheFactory : DistributedCacheFactoryBase
+    public class RedisCacheFactory : CacheConstructionFactoryBase
     {
         private const string DEFAULT_IpAddress = "127.0.0.1";
         private const int DEFAULT_Port = 6379;
@@ -17,7 +20,25 @@ namespace Glav.CacheAdapter.Distributed.Redis
             ParseConfig(DEFAULT_IpAddress, DEFAULT_Port);
         }
 
-        public ConnectionMultiplexer ConstructCacheInstance()
+        public override CacheFactoryComponentResult CreateCacheComponents()
+        {
+            var cacheEngine = CreateCacheEngine();
+
+            ICacheDependencyManager dependencyMgr = null;
+            if (CacheConfiguration.DependencyManagerToUse == CacheDependencyManagerTypes.Generic)
+            {
+                dependencyMgr = new GenericDependencyManager(cacheEngine, Logger, CacheConfiguration);
+            }
+            else
+            {
+                dependencyMgr = new RedisDependencyManager(cacheEngine, Logger, _redisConnection.GetDatabase(), CacheConfiguration);
+            }
+            var featureSupport = new RedisFeatureSupport();
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            return result;
+        }
+
+        private ICache CreateCacheEngine()
         {
             var connectionOptions = ConstructConnectionOptions();
 
@@ -31,7 +52,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
                 throw;
             }
 
-            return _redisConnection;
+            return new RedisCacheAdapter(Logger,_redisConnection,CacheConfiguration.IsCacheDependencyManagementEnabled);
         }
 
         private ConfigurationOptions ConstructConnectionOptions()
