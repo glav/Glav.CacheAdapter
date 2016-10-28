@@ -1,9 +1,6 @@
-﻿using Glav.CacheAdapter.Bootstrap;
-using Glav.CacheAdapter.Core;
+﻿using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.DependencyManagement;
-using Glav.CacheAdapter.Distributed.AppFabric;
-using Glav.CacheAdapter.Distributed.memcached;
-using Glav.CacheAdapter.Web;
+using Glav.CacheAdapter.Helpers;
 
 namespace Glav.CacheAdapter.Tests
 {
@@ -12,42 +9,31 @@ namespace Glav.CacheAdapter.Tests
         private static readonly CacheConfig _config = new CacheConfig();
         private static ICache _cache;
 
-        public static ICache GetCacheFromConfig()
+        public static ICache BuildTestCache()
         {
             if (_cache != null)
             {
                 return _cache;
             }
-            switch (_config.CacheToUse)
-            {
-                case CacheTypes.MemoryCache:
-                    _cache = new MemoryCacheAdapter(new MockLogger());
-                    break;
-                case CacheTypes.memcached:
-                    _cache = new memcachedAdapter(new MockLogger());
-                    break;
-                case CacheTypes.WebCache:
-                    _cache = new WebCacheAdapter(new MockLogger());
-                    break;
-                case CacheTypes.AppFabricCache:
-                    _cache = new AppFabricCacheAdapter(new MockLogger());
-                    break;
-                default:
-                    _cache = new MemoryCacheAdapter(new MockLogger());
-                    break;
-            }
+
+            _cache = CacheConfig.Create()
+                .BuildCacheProviderWithTraceLogging()
+                .InnerCache;
 
             return _cache;
         }
 
         public static ICacheDependencyManager GetDependencyManager()
         {
-            return new GenericDependencyManager(GetCacheFromConfig(), new MockLogger());
+            var config = CacheConfig.Create();
+            return new GenericDependencyManager(config.BuildCacheProviderWithTraceLogging().InnerCache, new Core.Diagnostics.Logger(config));
         }
 
         public static ICacheProvider GetCacheProvider()
         {
-            ICacheProvider provider = new CacheProvider(GetCacheFromConfig(), new MockLogger(), GetDependencyManager());
+            var provider = CacheConfig.Create()
+                .BuildCacheProviderWithTraceLogging();
+
             return provider;
         }
     }

@@ -7,7 +7,9 @@ namespace Glav.CacheAdapter.DependencyInjection
     {
         //ICacheProvider ResolveCacheFromConfig(CacheConfig config, ILogging logger);
         ICacheProvider ResolveCacheFromConfig(CacheConfig config);
-        void SetLogger(ILogging logger);
+        ICacheConstructionFactory GetCacheConstructionFactoryUsingConfig(CacheConfig config);
+        ICacheConstructionFactory GetCacheConstructionFactoryUsingTypeValue(string cacheTypeValue, CacheConfig config);
+
 
     }
 }

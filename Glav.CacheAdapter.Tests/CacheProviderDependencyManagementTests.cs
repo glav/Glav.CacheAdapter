@@ -10,7 +10,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldImplicitlyAddAssociatedDependentKeysToDependencyListForParentKeyAndClearThem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Add items to cache that are dependent upon a master key
             cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1),() => "ChildData1", "MasterKey");
@@ -36,7 +36,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldAddCacheItemsToParentGroupAndClearThem()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
 
             // Add items to cache that are dependent upon a master key
             cacheProvider.Get<string>("ChildKey1", DateTime.Now.AddDays(1), () => "ChildData1", "Group1");

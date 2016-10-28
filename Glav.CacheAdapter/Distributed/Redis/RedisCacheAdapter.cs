@@ -17,15 +17,15 @@ namespace Glav.CacheAdapter.Distributed.Redis
         private static IDatabase _db;
         public static ConnectionMultiplexer _connection;
         private readonly CacheConfig _config;
+        private readonly bool _cacheDependencyManagementEnabled;
 
-        public RedisCacheAdapter(ILogging logger, CacheConfig config = null)
+        public RedisCacheAdapter(ILogging logger, ConnectionMultiplexer redisConnection, bool cacheDependencyManagementEnabled = false)
         {
             _logger = logger;
-            _config = config;
-            _factory = new RedisCacheFactory(logger, _config);
-
-            _connection = _factory.ConstructCacheInstance();
+            _connection = redisConnection;
             _db = _connection.GetDatabase();
+            _cacheDependencyManagementEnabled = cacheDependencyManagementEnabled;
+
         }
         public T Get<T>(string cacheKey) where T : class
         {
@@ -38,7 +38,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
                 }
 
                 var data = new RedisValue();
-                if (_config.IsCacheDependencyManagementEnabled && _db.KeyType(cacheKey) == RedisType.List)
+                if (_cacheDependencyManagementEnabled && _db.KeyType(cacheKey) == RedisType.List)
                 {
                     var cacheValue = _db.ListGetByIndex(cacheKey, 0);
                     if (cacheValue.HasValue && cacheValue != string.Empty)

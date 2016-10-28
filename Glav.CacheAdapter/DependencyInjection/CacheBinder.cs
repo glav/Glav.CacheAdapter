@@ -4,13 +4,13 @@ using Glav.CacheAdapter.DependencyInjection;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
 {
-	public static class CacheBinder
-	{
-	    private static CacheConfig _config ;
+    public static class CacheBinder
+    {
+        private static CacheConfig _config;
         private static ILogging _logger;
         private static ICacheAdapterResolver _resolver;
 
-        public static CacheConfig  Configuration
+        public static CacheConfig Configuration
         {
             get { return _config; }
         }
@@ -22,7 +22,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         {
             get { return _resolver; }
         }
-        
+
         /// <summary>
         /// Construct the ICacheProvider implementation using the configuration provided, the
         /// logging implementation provided, and the cache adapter resolver provided. If
@@ -40,39 +40,12 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// <returns></returns>
         public static ICacheProvider ResolveCacheFromConfig(CacheConfig config, ILogging logger = null, ICacheAdapterResolver resolver = null)
         {
-            if (config != null)
-            {
-                _config = config;
-            }
-            if (logger != null)
-            {
-                _logger = logger;
-            }
-             _resolver = resolver;
+            _config = config;
+            _logger = logger;
+            _resolver = resolver;
             EnsureObjectPropertiesAreValidObjects();
             return _resolver.ResolveCacheFromConfig(_config);
         }
-
-        [Obsolete("Use 'ResolveCacheFromConfig(ILogging logger, CacheConfig config) overload")]
-        public static ICacheProvider ResolveCacheFromConfig(ILogging logger, string cacheConfigEntry = null, string dependencyManagerConfigEntry = null)
-		{
-            if (logger != null)
-            {
-                _logger = logger;
-            }
-            EnsureObjectPropertiesAreValidObjects();
-
-            if (!string.IsNullOrWhiteSpace(cacheConfigEntry))
-            {
-                _config.CacheToUse = cacheConfigEntry;
-            }
-            if (!string.IsNullOrWhiteSpace(dependencyManagerConfigEntry))
-            {
-                _config.DependencyManagerToUse = dependencyManagerConfigEntry;
-            }
-
-            return _resolver.ResolveCacheFromConfig(_config);
-		}
 
         private static void EnsureObjectPropertiesAreValidObjects()
         {

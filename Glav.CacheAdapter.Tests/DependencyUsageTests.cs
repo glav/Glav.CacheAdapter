@@ -80,7 +80,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearAssociatedCacheItemDependencyFromCache()
         {
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEY);
@@ -103,7 +103,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCache()
         {
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEY);
@@ -130,7 +130,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearMultipleAssociatedCacheItemDependenciesFromCacheUsingBatchAssociation()
         {
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEY);
@@ -158,7 +158,7 @@ namespace Glav.CacheAdapter.Tests
         [TestMethod]
         public void ShouldClearNestedDependenciesFromCacheAsWellAsImmediateDependencies()
         {
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEY);
@@ -237,7 +237,7 @@ namespace Glav.CacheAdapter.Tests
         public void ShouldNotCreateInifniteLoopWhenCircularDependenciesAreEncounteredButStillClearCacheItems()
         {
             var cacheProvider = TestHelper.GetCacheProvider();
-            var cache = TestHelper.GetCacheFromConfig();
+            var cache = TestHelper.BuildTestCache();
             var mgr = TestHelper.GetDependencyManager();
             // Make sure we start out with nothing
             mgr.RemoveParentDependencyDefinition(PARENTKEY);
