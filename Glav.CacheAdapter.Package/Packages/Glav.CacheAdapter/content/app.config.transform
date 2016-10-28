@@ -1,0 +1,42 @@
+﻿<configuration>
+ 
+  
+  <appSettings>
+    <!-- Example Cache setting ovverrides via appSettings -->
+    <add key="Cache.CacheToUse" value="memory"/>    
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+	<add key="Cache.LoggingLevel" value="Information"/> <!-- Can be None, ErrorsOnly or Information -->
+
+
+    <!-- For memcached if used -->
+<add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+
+    <!--ASP.Net web-->
+    <!--<add key="Cache.CacheToUse" value="web"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DependencyManagerToUse" value="default"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+
+    <!--memcached-->
+    <!--<add key="Cache.CacheToUse" value="memcached"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DistributedCacheServers" value="127.0.0.1:11211"/>
+    <add key="Cache.CacheSpecificData" value="MinPoolSize=10;MaxPoolSize=30"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+    <!--redis-->
+    <!--<add key="Cache.CacheToUse" value="redis"/>
+    <add key="Cache.IsCacheEnabled" value="true"/>
+    <add key="Cache.IsCacheDependencyManagementEnabled" value="true" />
+    <add key="Cache.DistributedCacheServers" value="{your-azure-redis-name}.redis.cache.windows.net:6380"/>
+    <add key="Cache.DependencyManagerToUse" value="default"/>
+    <add key="Cache.CacheSpecificData" value="ssl=true;abortConnect=false;connecttimeout=15000;password={your-azure-redis-access-key}"/>
+	<add key="Cache.LoggingLevel" value="Information"/>-->
+
+      </appSettings>
+
+  </configuration>
