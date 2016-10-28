@@ -50,6 +50,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 * [Version 3.2](http://weblogs.asp.net/pglavich/cacheadapter-3-2-released) has details on package structure changes.
 * [Version 4.0](http://weblogs.asp.net/pglavich/cacheadapter-4-0-just-released-with-redis-support) has details on redis support.
 * [Version 4.1](http://weblogs.asp.net/pglavich/cache-adapter-4-1-released) has async methods, configurable logging and targets the .Net framework 4.5.
+* [Version 4.2](https://weblogs.asp.net/pglavich/cacheadapter-4-2-0-released) has a licence file, config bug fix and fluent configuration.
 
 ### Who do I talk to? ###
 
