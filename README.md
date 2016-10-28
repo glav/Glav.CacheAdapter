@@ -57,6 +57,17 @@ which will return the data from cache if it exists in the cache, or use the lamb
 
 ### Revision History ###
 
+#### Version 4.2.0 ####
+* Added a licence file  - [Issue 49](https://bitbucket.org/glav/cacheadapter/issues/49/license)
+* Overhauled internals to provide better structured factory creation of cache engines and dependencies.
+* As a result of the overhaul above, provide a fluent configuration ability to configure the cache from code much easier [Issue 50](https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul). This also fixes a multiple config instance issue [Issue 40](https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config)
+~~~~
+var provider = CacheConfig.Create()
+                .UseMemcachedCache()
+                .UsingDistributedServerNode("127.0.0.1")
+                .BuildCacheProviderWithTraceLogging();
+~~~~
+
 #### Version 4.1.1 ####
 * Version 4.1.1 in Nuget is simply a revision of the packaging. Glav.CacheAdapter.Core package 4.1.1 only contains the assembly. Glav.CacheAdaper 4.1.1 simply references the 4.1.1 core package. There has been no assembly change. In both packages, the assembly version is 4.1.0.
 
