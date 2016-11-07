@@ -63,6 +63,8 @@ which will return the data from cache if it exists in the cache, or use the lamb
 * Overhauled internals to provide better structured factory creation of cache engines and dependencies.
 * As a result of the overhaul above, provide a fluent configuration ability to configure the cache from code much easier [Issue 50](https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul). This also fixes a multiple config instance issue [Issue 40](https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config)
 ~~~~
+using Glav.CacheAdapter.Helpers;
+
 var provider = CacheConfig.Create()
                 .UseMemcachedCache()
                 .UsingDistributedServerNode("127.0.0.1")
