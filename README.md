@@ -50,7 +50,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 * [Version 3.2](http://weblogs.asp.net/pglavich/cacheadapter-3-2-released) has details on package structure changes.
 * [Version 4.0](http://weblogs.asp.net/pglavich/cacheadapter-4-0-just-released-with-redis-support) has details on redis support.
 * [Version 4.1](http://weblogs.asp.net/pglavich/cache-adapter-4-1-released) has async methods, configurable logging and targets the .Net framework 4.5.
-* [Version 4.2](https://weblogs.asp.net/pglavich/cacheadapter-4-2-0-released) has a licence file, config bug fix and fluent configuration.
+* [Version 4.2/4.2.1](https://weblogs.asp.net/pglavich/cacheadapter-4-2-0-released) has a licence file, config bug fix and fluent configuration.
 
 ### Who do I talk to? ###
 
@@ -58,7 +58,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 
 ### Revision History ###
 
-#### Version 4.2.0 ####
+#### Version 4.2.0/4.2.1 ####
 * Added a licence file  - [Issue 49](https://bitbucket.org/glav/cacheadapter/issues/49/license)
 * Overhauled internals to provide better structured factory creation of cache engines and dependencies.
 * As a result of the overhaul above, provide a fluent configuration ability to configure the cache from code much easier [Issue 50](https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul). This also fixes a multiple config instance issue [Issue 40](https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config)
