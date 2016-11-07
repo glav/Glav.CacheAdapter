@@ -69,7 +69,7 @@ var provider = CacheConfig.Create()
                 .BuildCacheProviderWithTraceLogging();
 ~~~~
 
-* **Breaking change**: In addition, due to a configuration system overhaul, there was previously 2 ways of expressing configuration in the configuration file. This has now been changed to support only one. Specifically, the configuration section option has been removed and now only the <appSettings> method of configuration is supported. So if you had something like:
+* **Breaking change**: There was previously 2 ways of expressing configuration in the configuration file. In addition, due to a configuration system overhaul, this has now been changed to support only one. Specifically, the configuration section option has been removed and now only the <appSettings> method of configuration is supported. So if you had something like:
 ~~~~
 <applicationSettings>
         <Glav.CacheAdapter.MainConfig>
