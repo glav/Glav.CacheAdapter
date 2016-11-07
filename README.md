@@ -69,6 +69,29 @@ var provider = CacheConfig.Create()
                 .BuildCacheProviderWithTraceLogging();
 ~~~~
 
+* **Breaking change**: In addition, due to a configuration system overhaul, there was previously 2 ways of expressing configuration in the configuration file. This has now been changed to support only one. Specifically, the configuration section option has been removed and now only the <appSettings> method of configuration is supported. So if you had something like:
+~~~~
+<applicationSettings>
+        <Glav.CacheAdapter.MainConfig>
+            <setting name="CacheToUse" serializeAs="String">
+                <value>memcached</value>
+            </setting>
+            <setting name="DistributedCacheServers" serializeAs="String">
+                <value>localhost:11211</value>
+            </setting>
+        </Glav.CacheAdapter.MainConfig>
+</applicationSettings>
+~~~~
+
+That should now be changed to:
+~~~~
+<appSettings>
+  <add key="Cache.CacheToUse" value="memcached" />
+  <add key="Cache.DistributedCacheServers" value="localhost:11211" />
+</appSettings>
+~~~~
+
+
 #### Version 4.1.1 ####
 * Version 4.1.1 in Nuget is simply a revision of the packaging. Glav.CacheAdapter.Core package 4.1.1 only contains the assembly. Glav.CacheAdaper 4.1.1 simply references the 4.1.1 core package. There has been no assembly change. In both packages, the assembly version is 4.1.0.
 
