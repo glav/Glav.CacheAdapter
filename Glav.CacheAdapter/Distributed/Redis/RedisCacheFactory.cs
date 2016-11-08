@@ -34,7 +34,7 @@ namespace Glav.CacheAdapter.Distributed.Redis
                 dependencyMgr = new RedisDependencyManager(cacheEngine, Logger, _redisConnection.GetDatabase(), CacheConfiguration);
             }
             var featureSupport = new RedisFeatureSupport();
-            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport, CacheConfiguration);
             return result;
         }
 

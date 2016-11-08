@@ -21,7 +21,7 @@ namespace Glav.CacheAdapter.Distributed.AppFabric
             var cacheEngine = CreateCacheEngine();
             var dependencyMgr = new GenericDependencyManager(cacheEngine, Logger, CacheConfiguration);
             var featureSupport = new AppFabricFeatureSupport();
-            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport, CacheConfiguration);
             return result;
         }
         private ICache CreateCacheEngine()

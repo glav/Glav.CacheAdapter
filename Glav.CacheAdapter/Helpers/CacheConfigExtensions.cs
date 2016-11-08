@@ -80,14 +80,14 @@ namespace Glav.CacheAdapter.Helpers
             return factory.CreateCacheComponents();
         }
 
-        public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheFactoryComponentResult cacheComponents, CacheConfig config)
+        public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheFactoryComponentResult cacheComponents)
         {
-            return new CacheProvider(cacheComponents.Cache, new Logger(config), config, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+            return new CacheProvider(cacheComponents.Cache, new Logger(cacheComponents.ConfigUsed), cacheComponents.ConfigUsed, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
         }
 
-        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, CacheConfig config, ILogging logger)
+        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, ILogging logger)
         {
-            return new CacheProvider(cacheComponents.Cache, logger, config,cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+            return new CacheProvider(cacheComponents.Cache, logger, cacheComponents.ConfigUsed, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
         }
 
         public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheConfig config)

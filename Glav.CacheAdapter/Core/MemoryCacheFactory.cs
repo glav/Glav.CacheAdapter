@@ -23,7 +23,7 @@ namespace Glav.CacheAdapter.Core
             var cacheEngine = CreateCacheEngine();
             var dependencyMgr = new GenericDependencyManager(cacheEngine, _logger, _config);
             var featureSupport = new MemoryFeatureSupport();
-            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport,_config);
             return result;
         }
 

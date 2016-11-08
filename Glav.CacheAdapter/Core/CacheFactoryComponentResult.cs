@@ -17,7 +17,9 @@ namespace Glav.CacheAdapter.Core
         public ICacheDependencyManager DependencyManager { get; private set; }
         public ICacheFeatureSupport FeatureSupport { get; private set; }
 
-        public static CacheFactoryComponentResult Create(ICache cache, ICacheDependencyManager dependencyManager, ICacheFeatureSupport featureSupport )
+        public CacheConfig ConfigUsed { get; private set; }
+
+        public static CacheFactoryComponentResult Create(ICache cache, ICacheDependencyManager dependencyManager, ICacheFeatureSupport featureSupport, CacheConfig configUsed )
         {
             var result = new CacheFactoryComponentResult();
             if (cache == null || featureSupport == null)
@@ -27,6 +29,7 @@ namespace Glav.CacheAdapter.Core
             result.Cache = cache;
             result.DependencyManager = dependencyManager;
             result.FeatureSupport = featureSupport;
+            result.ConfigUsed = configUsed;
             return result;
         }
     }

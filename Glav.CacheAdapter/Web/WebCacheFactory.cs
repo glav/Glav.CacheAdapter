@@ -25,7 +25,7 @@ namespace Glav.CacheAdapter.Web
             var cacheEngine = CreateCacheEngine();
             var dependencyMgr = new GenericDependencyManager(cacheEngine, _logger, _config);
             var featureSupport = new WebFeatureSupport();
-            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport);
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport, _config);
             return result;
         }
 
