@@ -59,6 +59,7 @@ which will return the data from cache if it exists in the cache, or use the lamb
 ### Revision History ###
 
 #### Version 4.2.0/4.2.1 ####
+* Note: 4.2.1 was a simple package bug fix. No code changes.
 * Added a licence file  - [Issue 49](https://bitbucket.org/glav/cacheadapter/issues/49/license)
 * Overhauled internals to provide better structured factory creation of cache engines and dependencies.
 * As a result of the overhaul above, provide a fluent configuration ability to configure the cache from code much easier [Issue 50](https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul). This also fixes a multiple config instance issue [Issue 40](https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config)
