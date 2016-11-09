@@ -58,6 +58,10 @@ which will return the data from cache if it exists in the cache, or use the lamb
 
 ### Revision History ###
 
+#### Version 4.2.2 (CacheAdapter)/4.2.1 (CacheAdaper.Core) ####
+* API Cleanup - remove need for 'CacheConfig' and 'ILogging' arguments from BuildCacheProvider extension methods.
+
+
 #### Version 4.2.0/4.2.1 ####
 * Note: 4.2.1 was a simple package bug fix. No code changes.
 * Added a licence file  - [Issue 49](https://bitbucket.org/glav/cacheadapter/issues/49/license)
