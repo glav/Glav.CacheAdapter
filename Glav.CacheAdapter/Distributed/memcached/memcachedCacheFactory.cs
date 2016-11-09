@@ -38,7 +38,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
             var cacheEngine = CreateCacheEngine();
             var dependencyMgr = new GenericDependencyManager(cacheEngine, Logger, CacheConfiguration);
             var featureSupport = new memcachedFeatureSupport();
-            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport, CacheConfiguration);
+            var result = CacheFactoryComponentResult.Create(cacheEngine, dependencyMgr, featureSupport, CacheConfiguration, Logger);
             return result;
         }
 

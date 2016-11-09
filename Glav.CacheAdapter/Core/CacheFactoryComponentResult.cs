@@ -1,4 +1,5 @@
-﻿using Glav.CacheAdapter.DependencyManagement;
+﻿using Glav.CacheAdapter.Core.Diagnostics;
+using Glav.CacheAdapter.DependencyManagement;
 using Glav.CacheAdapter.Features;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,9 @@ namespace Glav.CacheAdapter.Core
 
         public CacheConfig ConfigUsed { get; private set; }
 
-        public static CacheFactoryComponentResult Create(ICache cache, ICacheDependencyManager dependencyManager, ICacheFeatureSupport featureSupport, CacheConfig configUsed )
+        public ILogging Logger { get; private set;}
+
+        public static CacheFactoryComponentResult Create(ICache cache, ICacheDependencyManager dependencyManager, ICacheFeatureSupport featureSupport, CacheConfig configUsed, ILogging logger)
         {
             var result = new CacheFactoryComponentResult();
             if (cache == null || featureSupport == null)
@@ -30,6 +33,7 @@ namespace Glav.CacheAdapter.Core
             result.DependencyManager = dependencyManager;
             result.FeatureSupport = featureSupport;
             result.ConfigUsed = configUsed;
+            result.Logger = logger ?? new Logger();
             return result;
         }
     }

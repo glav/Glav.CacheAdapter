@@ -85,9 +85,9 @@ namespace Glav.CacheAdapter.Helpers
             return new CacheProvider(cacheComponents.Cache, new Logger(cacheComponents.ConfigUsed), cacheComponents.ConfigUsed, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
         }
 
-        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents, ILogging logger)
+        public static ICacheProvider BuildCacheProvider(this CacheFactoryComponentResult cacheComponents)
         {
-            return new CacheProvider(cacheComponents.Cache, logger, cacheComponents.ConfigUsed, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
+            return new CacheProvider(cacheComponents.Cache, cacheComponents.Logger, cacheComponents.ConfigUsed, cacheComponents.DependencyManager, cacheComponents.FeatureSupport);
         }
 
         public static ICacheProvider BuildCacheProviderWithTraceLogging(this CacheConfig config)
