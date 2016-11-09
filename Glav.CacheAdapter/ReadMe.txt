@@ -275,7 +275,7 @@ Notes on Version 4.2
 Notes on Version 4.2.1
 ~~~~~~~~~~~~~~~~~~~~~~
 --> API cleanup: Minor extension method API revision to remove need to provide 'config' argument on BuildCacheProvider method for CacheFactoryComponentResult object
-
+--> API Cleanup: Minor extension method API recision to remove need to provider 'logger' argument on BuildCacheProvider method for CacheFactoryComponentResult object
 
 
 
