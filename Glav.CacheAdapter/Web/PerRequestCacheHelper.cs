@@ -1,6 +1,6 @@
 ﻿namespace Glav.CacheAdapter.Web
 {
-    internal class PerRequestCacheHelper
+    public class PerRequestCacheHelper
     {
         public void AddToPerRequestCache(string cacheKey, object dataToAdd)
         {

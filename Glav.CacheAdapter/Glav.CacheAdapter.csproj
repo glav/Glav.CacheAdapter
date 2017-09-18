@@ -37,12 +37,6 @@
     <Reference Include="Enyim.Caching">
       <HintPath>..\packages\EnyimMemcached.2.11\lib\net35\Enyim.Caching.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.Client">
-      <HintPath>..\packages\ServerAppFabric.Client.1.1.2106\lib\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationServer.Caching.Core">
-      <HintPath>..\packages\ServerAppFabric.Client.1.1.2106\lib\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
-    </Reference>
     <Reference Include="StackExchange.Redis">
       <HintPath>..\packages\StackExchange.Redis.1.0.371\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
@@ -84,12 +78,7 @@
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Diagnostics\LoggingLevel.cs" />
-    <Compile Include="Distributed\AppFabric\AppFabricCacheAdapter.cs" />
-    <Compile Include="Distributed\AppFabric\AppFabricCacheFactory.cs" />
-    <Compile Include="Distributed\AppFabric\AppFabricConstants.cs" />
-    <Compile Include="Distributed\AppFabric\FactoryConfigConverter.cs" />
     <Compile Include="Core\CacheConstructionFactoryBase.cs" />
-    <Compile Include="Distributed\AppFabric\AppFabricFeatureSupport.cs" />
     <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
     <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
     <Compile Include="Distributed\memcached\memcachedConstants.cs" />

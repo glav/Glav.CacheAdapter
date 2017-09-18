@@ -1,7 +1,6 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.AppFabric;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.Redis;
 using Glav.CacheAdapter.Web;
@@ -41,7 +40,7 @@ namespace Glav.CacheAdapter.DependencyInjection
 
         public ICacheConstructionFactory GetCacheConstructionFactoryUsingTypeValue(string cacheTypeValue, CacheConfig config)
         {
-            ICacheConstructionFactory cacheFactory;
+            ICacheConstructionFactory cacheFactory = null;
             var normalisedCacheToUse = !string.IsNullOrWhiteSpace(cacheTypeValue) ? cacheTypeValue.ToLowerInvariant() : string.Empty;
             switch (normalisedCacheToUse)
             {

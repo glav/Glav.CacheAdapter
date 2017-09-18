@@ -1,11 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter", "Glav.CacheAdapter\Glav.CacheAdapter.csproj", "{FDDC051D-062E-49CF-8099-780A53287BC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.ExampleUsage", "Glav.CacheAdapter.ExampleUsage\Glav.CacheAdapter.ExampleUsage.csproj", "{A7BF26DB-E405-4E6B-B67F-162A05AC6E21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.Tests", "Glav.CacheAdapter.Tests\Glav.CacheAdapter.Tests.csproj", "{568BE045-54FB-4D1B-8773-BE259566ACFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CacheEngines", "CacheEngines", "{CDB5F0A6-179E-4D04-9E42-521580AA4719}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.AppFabric", "CacheEngines\Glav.CacheAdapter.AppFabric\Glav.CacheAdapter.AppFabric.csproj", "{CB451B13-11D5-4FB0-9A98-715D519B518E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.Redis", "CacheEngines\Glav.CacheAdapter.Redis\Glav.CacheAdapter.Redis.csproj", "{3DD71252-D651-4686-A326-6DACED0500FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.Memcached", "CacheEngines\Glav.CacheAdapter.Memcached\Glav.CacheAdapter.Memcached.csproj", "{52EF0620-5CB9-4521-8DED-E4B5737A8825}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,8 +57,52 @@ Global
 		{568BE045-54FB-4D1B-8773-BE259566ACFA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{568BE045-54FB-4D1B-8773-BE259566ACFA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{568BE045-54FB-4D1B-8773-BE259566ACFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Debug|x86.Build.0 = Debug|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|x86.ActiveCfg = Release|Any CPU
+		{CB451B13-11D5-4FB0-9A98-715D519B518E}.Release|x86.Build.0 = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DD71252-D651-4686-A326-6DACED0500FC}.Release|x86.Build.0 = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Debug|x86.Build.0 = Debug|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|x86.ActiveCfg = Release|Any CPU
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CB451B13-11D5-4FB0-9A98-715D519B518E} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
+		{3DD71252-D651-4686-A326-6DACED0500FC} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
+		{52EF0620-5CB9-4521-8DED-E4B5737A8825} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D38E49C-2DC3-407E-8F9D-C521F374A47E}
 	EndGlobalSection
 EndGlobal
