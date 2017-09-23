@@ -11,8 +11,6 @@ namespace Glav.CacheAdapter.Memcached
     public class MemcachedAdapter : ICache
     {
         private readonly ILogging _logger;
-        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
-
         private static IMemcachedClient _client;
 
 
@@ -27,13 +25,6 @@ namespace Glav.CacheAdapter.Memcached
             try
             {
                 var sanitisedKey = SanitiseCacheKey(cacheKey);
-                // try per request cache first, but only if in a web context
-                var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
-                if (requestCacheData != null)
-                {
-                    return requestCacheData;
-                }
-
                 return _client.Get<T>(sanitisedKey);
             }
             catch (Exception ex)
@@ -107,11 +98,6 @@ namespace Glav.CacheAdapter.Memcached
             }
         }
 
-
-        public void AddToPerRequestCache(string cacheKey, object dataToAdd)
-        {
-            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
-        }
 
         public CacheSetting CacheType
         {

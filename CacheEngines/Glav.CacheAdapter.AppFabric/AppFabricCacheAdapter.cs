@@ -12,8 +12,6 @@ namespace Glav.CacheAdapter.AppFabric
         private DataCache _cache;
         private readonly ILogging _logger;
 
-        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
-
         public AppFabricCacheAdapter(ILogging logger, DataCache cache)
         {
             _logger = logger;
@@ -33,12 +31,6 @@ namespace Glav.CacheAdapter.AppFabric
         public T Get<T>(string cacheKey) where T : class
         {
             // try per request cache first, but only if in a web context
-            var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
-            if (requestCacheData != null)
-            {
-                return requestCacheData;
-            }
-
             T data = _cache.Get(cacheKey) as T;
             return data;
         }
@@ -71,12 +63,6 @@ namespace Glav.CacheAdapter.AppFabric
                 _cache.Put(cacheKey, dataToAdd, slidingExpiryWindow);
             }
         }
-
-        public void AddToPerRequestCache(string cacheKey, object dataToAdd)
-        {
-            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
-        }
-
 
         public CacheSetting CacheType
         {

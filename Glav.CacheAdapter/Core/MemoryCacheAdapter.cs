@@ -15,7 +15,6 @@ namespace Glav.CacheAdapter.Core
     {
         private readonly MemoryCache _cache;
         private readonly ILogging _logger;
-        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
 
 
         public MemoryCacheAdapter(ILogging logger, MemoryCache cache)
@@ -42,12 +41,6 @@ namespace Glav.CacheAdapter.Core
         public T Get<T>(string cacheKey) where T : class
         {
             // try per request cache first, but only if in a web context
-            var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
-            if (requestCacheData != null)
-            {
-                return requestCacheData;
-            }
-
             T data = _cache.Get(cacheKey) as T;
             return data;
         }
@@ -81,11 +74,6 @@ namespace Glav.CacheAdapter.Core
                 _logger.WriteInfoMessage(string.Format("Adding data to cache with cache key: {0}, sliding expiry window in seconds {1}", cacheKey, slidingExpiryWindow.TotalSeconds));
 
             }
-        }
-
-        public void AddToPerRequestCache(string cacheKey, object dataToAdd)
-        {
-            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
         }
 
 

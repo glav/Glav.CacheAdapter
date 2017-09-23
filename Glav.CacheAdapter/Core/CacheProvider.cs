@@ -207,16 +207,6 @@ namespace Glav.CacheAdapter.Core
             ManageCacheDependenciesForCacheItem(dataToAdd, cacheKey, parentKey, actionForDependency);
         }
 
-        public void AddToPerRequestCache(string cacheKey, object dataToAdd)
-        {
-            if (!_config.IsCacheEnabled)
-            {
-                return;
-            }
-            _cache.AddToPerRequestCache(cacheKey, dataToAdd);
-        }
-
-
         public T Get<T>(DateTime absoluteExpiryDate, Func<T> getData, string parentKey = null, CacheDependencyAction actionForDependency = CacheDependencyAction.ClearDependentItems) where T : class
         {
             return Get(getData.GetCacheKey(), absoluteExpiryDate, getData, parentKey, actionForDependency);

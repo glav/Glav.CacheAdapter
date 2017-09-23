@@ -10,7 +10,6 @@ namespace Glav.CacheAdapter.Core
 		void Add(string cacheKey, TimeSpan slidingExpiryWindow, object dataToAdd);
         void InvalidateCacheItem(string cacheKey);
         void InvalidateCacheItems(IEnumerable<string> cacheKeys);
-    	void AddToPerRequestCache(string cacheKey, object dataToAdd);
     	CacheSetting CacheType { get; }
         void ClearAll();
     }

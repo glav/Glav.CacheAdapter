@@ -12,11 +12,8 @@ namespace Glav.CacheAdapter.Redis
     public class RedisCacheAdapter : ICache
     {
         private readonly ILogging _logger;
-        private readonly RedisCacheFactory _factory;
-        private readonly PerRequestCacheHelper _requestCacheHelper = new PerRequestCacheHelper();
         private static IDatabase _db;
         public static ConnectionMultiplexer _connection;
-        private readonly CacheConfig _config;
         private readonly bool _cacheDependencyManagementEnabled;
 
         public RedisCacheAdapter(ILogging logger, ConnectionMultiplexer redisConnection, bool cacheDependencyManagementEnabled = false)
@@ -31,12 +28,6 @@ namespace Glav.CacheAdapter.Redis
         {
             try
             {
-                var requestCacheData = _requestCacheHelper.TryGetItemFromPerRequestCache<T>(cacheKey);
-                if (requestCacheData != null)
-                {
-                    return requestCacheData;
-                }
-
                 var data = new RedisValue();
                 if (_cacheDependencyManagementEnabled && _db.KeyType(cacheKey) == RedisType.List)
                 {
@@ -134,12 +125,6 @@ namespace Glav.CacheAdapter.Redis
             }
 
 
-        }
-
-
-        public void AddToPerRequestCache(string cacheKey, object dataToAdd)
-        {
-            _requestCacheHelper.AddToPerRequestCache(cacheKey, dataToAdd);
         }
 
         public CacheSetting CacheType
