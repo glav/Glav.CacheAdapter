@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
-using Glav.CacheAdapter.Distributed;
 using Glav.CacheAdapter.Helpers;
 using Glav.CacheAdapter.Diagnostics;
 using Glav.CacheAdapter.Core;

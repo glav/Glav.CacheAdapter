@@ -37,9 +37,6 @@
     <Reference Include="Enyim.Caching">
       <HintPath>..\packages\EnyimMemcached.2.11\lib\net35\Enyim.Caching.dll</HintPath>
     </Reference>
-    <Reference Include="StackExchange.Redis">
-      <HintPath>..\packages\StackExchange.Redis.1.0.371\lib\net45\StackExchange.Redis.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -57,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrap\CacheDependencyManagerTypes.cs" />
+    <Compile Include="Bootstrap\CacheDependencyManagerTypeConfigValues.cs" />
     <Compile Include="Bootstrap\CacheTypes.cs" />
     <Compile Include="CacheConfig.cs" />
     <Compile Include="CacheConstants.cs" />
@@ -77,14 +74,10 @@
     <Compile Include="DependencyManagement\DependencyItem.cs" />
     <Compile Include="DependencyManagement\GenericDependencyManager.cs" />
     <Compile Include="DependencyManagement\ICacheDependencyManager.cs" />
-    <Compile Include="DependencyManagement\RedisDependencyManager.cs" />
     <Compile Include="Diagnostics\ILogging.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Diagnostics\LoggingLevel.cs" />
     <Compile Include="Core\CacheConstructionFactoryBase.cs" />
-    <Compile Include="Distributed\Redis\RedisFeatureSupport.cs" />
-    <Compile Include="Distributed\Redis\RedisCacheAdapter.cs" />
-    <Compile Include="Distributed\Redis\RedisCacheFactory.cs" />
     <Compile Include="Features\DefaultFeatureSupport.cs" />
     <Compile Include="Features\ICacheFeatureSupport.cs" />
     <Compile Include="Helpers\CacheConfigExtensions.cs" />
@@ -106,14 +99,13 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Licence.txt" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Distributed\memcached\" />
+    <Folder Include="Distributed\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

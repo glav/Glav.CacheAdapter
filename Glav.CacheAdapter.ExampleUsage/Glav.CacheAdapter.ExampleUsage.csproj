@@ -65,6 +65,10 @@
       <Project>{52ef0620-5cb9-4521-8ded-e4b5737a8825}</Project>
       <Name>Glav.CacheAdapter.Memcached</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CacheEngines\Glav.CacheAdapter.Redis\Glav.CacheAdapter.Redis.csproj">
+      <Project>{3dd71252-d651-4686-a326-6daced0500fc}</Project>
+      <Name>Glav.CacheAdapter.Redis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
       <Project>{FDDC051D-062E-49CF-8099-780A53287BC7}</Project>
       <Name>Glav.CacheAdapter</Name>
@@ -74,7 +78,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -21,7 +21,7 @@ namespace Glav.CacheAdapter.Core
             _cacheFactoryTypes.Add(CacheSetting.Hybrid, null);
             _cacheFactoryTypes.Add(CacheSetting.memcached, "Glav.CacheAdapter.Memcached.MemcachedCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Memory, null);
-            _cacheFactoryTypes.Add(CacheSetting.Redis, "Glav.CacheAdapter.RedisCacheFactory");
+            _cacheFactoryTypes.Add(CacheSetting.Redis, "Glav.CacheAdapter.Redis.RedisCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Web, null);
         }
 

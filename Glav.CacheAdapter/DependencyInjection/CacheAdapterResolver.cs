@@ -2,7 +2,6 @@
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Distributed.Redis;
 using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.DependencyInjection
@@ -59,7 +58,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cacheFactory = _cacheFactoryAssemblyResolver.ResolveCacheFactory(config);
                     break;
                 case CacheTypes.redis:
-                    cacheFactory = new RedisCacheFactory(_logger, config);
+                    cacheFactory = _cacheFactoryAssemblyResolver.ResolveCacheFactory(config);
                     break;
                 case CacheTypes.hybrid:
                     throw new System.NotSupportedException("Hybrid configuration not supported at this time.");
