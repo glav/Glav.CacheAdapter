@@ -82,10 +82,6 @@
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Diagnostics\LoggingLevel.cs" />
     <Compile Include="Core\CacheConstructionFactoryBase.cs" />
-    <Compile Include="Distributed\memcached\CacheServerFarm.cs" />
-    <Compile Include="Distributed\memcached\LogFactoryAdapter.cs" />
-    <Compile Include="Distributed\memcached\memcachedConstants.cs" />
-    <Compile Include="Distributed\memcached\memcachedFeatureSupport.cs" />
     <Compile Include="Distributed\Redis\RedisFeatureSupport.cs" />
     <Compile Include="Distributed\Redis\RedisCacheAdapter.cs" />
     <Compile Include="Distributed\Redis\RedisCacheFactory.cs" />
@@ -98,8 +94,6 @@
     <Compile Include="Core\ICache.cs" />
     <Compile Include="Core\ICacheConstructionFactory.cs" />
     <Compile Include="Core\ICacheProvider.cs" />
-    <Compile Include="Distributed\memcached\memcachedAdapter.cs" />
-    <Compile Include="Distributed\memcached\memcachedCacheFactory.cs" />
     <Compile Include="Core\ServerNode.cs" />
     <Compile Include="Core\MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -118,7 +112,9 @@
     <Content Include="Licence.txt" />
     <Content Include="ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Distributed\memcached\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
