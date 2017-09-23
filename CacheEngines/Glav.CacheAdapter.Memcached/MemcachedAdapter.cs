@@ -4,7 +4,6 @@ using Enyim.Caching;
 using Enyim.Caching.Memcached;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.Memcached
 {

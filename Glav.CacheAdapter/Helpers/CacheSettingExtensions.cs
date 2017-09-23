@@ -22,7 +22,7 @@ namespace Glav.CacheAdapter.Core
             _cacheFactoryTypes.Add(CacheSetting.memcached, "Glav.CacheAdapter.Memcached.MemcachedCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Memory, null);
             _cacheFactoryTypes.Add(CacheSetting.Redis, "Glav.CacheAdapter.Redis.RedisCacheFactory");
-            _cacheFactoryTypes.Add(CacheSetting.Web, null);
+            _cacheFactoryTypes.Add(CacheSetting.Web, "Glav.CacheAdapter.SystemWeb.WebCacheFactory");
         }
 
         private static void PopulateCacheAssemblies()
@@ -32,7 +32,7 @@ namespace Glav.CacheAdapter.Core
             _cacheAssemblies.Add(CacheSetting.memcached, "Glav.CacheAdapter.Memcached.dll");
             _cacheAssemblies.Add(CacheSetting.Memory, null);
             _cacheAssemblies.Add(CacheSetting.Redis, "Glav.CacheAdapter.redis.dll");
-            _cacheAssemblies.Add(CacheSetting.Web, null);
+            _cacheAssemblies.Add(CacheSetting.Web, "Glav.CacheAdapter.SystemWeb.dll");
         }
 
         public static string ToStringType(this CacheSetting cacheSetting)

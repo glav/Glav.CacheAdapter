@@ -69,6 +69,10 @@
       <Project>{3dd71252-d651-4686-a326-6daced0500fc}</Project>
       <Name>Glav.CacheAdapter.Redis</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CacheEngines\Glav.CacheAdapter.SystemWeb\Glav.CacheAdapter.SystemWeb.csproj">
+      <Project>{086c14ac-32eb-4a46-a53b-ff4c4f1c75ee}</Project>
+      <Name>Glav.CacheAdapter.SystemWeb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
       <Project>{FDDC051D-062E-49CF-8099-780A53287BC7}</Project>
       <Name>Glav.CacheAdapter</Name>

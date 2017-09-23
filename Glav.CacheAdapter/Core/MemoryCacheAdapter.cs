@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.Core
 {

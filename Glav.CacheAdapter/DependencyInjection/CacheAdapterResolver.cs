@@ -2,7 +2,6 @@
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.DependencyInjection
 {
@@ -49,7 +48,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cacheFactory = new MemoryCacheFactory(_logger, config);
                     break;
                 case CacheTypes.WebCache:
-                    cacheFactory = new WebCacheFactory(_logger, config);
+                    cacheFactory = _cacheFactoryAssemblyResolver.ResolveCacheFactory(config);
                     break;
                 case CacheTypes.AppFabricCache:
                     cacheFactory = _cacheFactoryAssemblyResolver.ResolveCacheFactory(config);

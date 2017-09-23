@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Microsoft.ApplicationServer.Caching;
 using Glav.CacheAdapter.Core;
-using Glav.CacheAdapter.Web;
 
 namespace Glav.CacheAdapter.AppFabric
 {

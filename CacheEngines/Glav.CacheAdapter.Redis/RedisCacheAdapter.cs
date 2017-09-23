@@ -1,6 +1,5 @@
 ﻿using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.Diagnostics;
-using Glav.CacheAdapter.Web;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
