@@ -1,12 +1,10 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Glav.CacheAdapter.Helpers
 {
@@ -68,14 +66,17 @@ namespace Glav.CacheAdapter.Helpers
 
         public static CacheFactoryComponentResult BuildComponentsWithTraceLogging(this CacheConfig config)
         {
-            var resolver = new CacheAdapterResolver(new Logger(config));
+            var logger = new Logger(config);
+            var factoryAssemblyResolver = new CacheFactoryAssemblyResolver(logger);
+            var resolver = new CacheAdapterResolver(logger,factoryAssemblyResolver);
             var factory = resolver.GetCacheConstructionFactoryUsingConfig(config);
             return factory.CreateCacheComponents();
         }
 
         public static CacheFactoryComponentResult BuildComponents(this CacheConfig config, ILogging logger)
         {
-            var resolver = new CacheAdapterResolver(logger);
+            var factoryAssemblyResolver = new CacheFactoryAssemblyResolver(logger);
+            var resolver = new CacheAdapterResolver(logger, factoryAssemblyResolver);
             var factory = resolver.GetCacheConstructionFactoryUsingConfig(config);
             return factory.CreateCacheComponents();
         }

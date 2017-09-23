@@ -9,6 +9,7 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         private static CacheConfig _config;
         private static ILogging _logger;
         private static ICacheAdapterResolver _resolver;
+        private static ICacheFactoryAssemblyResolver _cacheFactoryAssemblyResolver;
 
         public static CacheConfig Configuration
         {
@@ -21,6 +22,11 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         public static ICacheAdapterResolver Resolver
         {
             get { return _resolver; }
+        }
+
+        public static ICacheFactoryAssemblyResolver FactoryAssemblyResolver
+        {
+            get { return _cacheFactoryAssemblyResolver; }
         }
 
         /// <summary>
@@ -37,12 +43,17 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
         /// default resolver is used. You would typically provided your own resolver if you
         /// wanted to use different dependency resolution engines such as Ninject or Autofac which
         /// provide much richer lifetime support.</param>
+        /// <param name="cacheFactoryAssemblyResolver">The CacheFactory assembly resolver to use. If NULL is provided the
+        /// default factory resolver is used. This is responsible for resolving external assemblies such as those from
+        /// the distributed cache nuget packages which are separate to this core assembly.</param>
         /// <returns></returns>
-        public static ICacheProvider ResolveCacheFromConfig(CacheConfig config, ILogging logger = null, ICacheAdapterResolver resolver = null)
+        public static ICacheProvider ResolveCacheFromConfig(CacheConfig config, ILogging logger = null, 
+                ICacheAdapterResolver resolver = null, ICacheFactoryAssemblyResolver cacheFactoryAssemblyResolver = null)
         {
             _config = config;
             _logger = logger;
             _resolver = resolver;
+            _cacheFactoryAssemblyResolver = cacheFactoryAssemblyResolver;
             EnsureObjectPropertiesAreValidObjects();
             return _resolver.ResolveCacheFromConfig(_config);
         }
@@ -57,9 +68,13 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             {
                 _logger = new Logger(_config);
             }
+            if (_cacheFactoryAssemblyResolver == null)
+            {
+                _cacheFactoryAssemblyResolver = new CacheFactoryAssemblyResolver(_logger);
+            }
             if (_resolver == null)
             {
-                _resolver = new CacheAdapterResolver(_logger);
+                _resolver = new CacheAdapterResolver(_logger,_cacheFactoryAssemblyResolver);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
 using Glav.CacheAdapter.Core;
+using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Distributed.memcached;
 using Glav.CacheAdapter.Distributed.Redis;
@@ -9,11 +10,13 @@ namespace Glav.CacheAdapter.DependencyInjection
 {
     public class CacheAdapterResolver : ICacheAdapterResolver
     {
-        private ILogging _logger;
+        private readonly ILogging _logger;
+        private readonly ICacheFactoryAssemblyResolver _cacheFactoryAssemblyResolver;
 
-        public CacheAdapterResolver(ILogging logger)
+        public CacheAdapterResolver(ILogging logger, ICacheFactoryAssemblyResolver cacheFactoryAssemblyResolver)
         {
             _logger = logger;
+            _cacheFactoryAssemblyResolver = cacheFactoryAssemblyResolver;
         }
 
         public ICacheProvider ResolveCacheFromConfig(CacheConfig config)
@@ -51,7 +54,7 @@ namespace Glav.CacheAdapter.DependencyInjection
                     cacheFactory = new WebCacheFactory(_logger, config);
                     break;
                 case CacheTypes.AppFabricCache:
-                    cacheFactory = new AppFabricCacheFactory(_logger, config);
+                    cacheFactory = _cacheFactoryAssemblyResolver.ResolveCacheFactory(config);
                     break;
                 case CacheTypes.memcached:
                     cacheFactory = new memcachedCacheFactory(_logger, config);

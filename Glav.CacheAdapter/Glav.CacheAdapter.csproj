@@ -63,7 +63,10 @@
     <Compile Include="CacheConstants.cs" />
     <Compile Include="Core\CacheFactoryComponentResult.cs" />
     <Compile Include="Core\CacheProvider.cs" />
-    <Compile Include="Core\CacheSettingEnumeration.cs" />
+    <Compile Include="Core\CacheSetting.cs" />
+    <Compile Include="DependencyInjection\CacheFactoryAssemblyResolver.cs" />
+    <Compile Include="DependencyInjection\ICacheFactoryAssemblyResolver.cs" />
+    <Compile Include="Helpers\CacheSettingExtensions.cs" />
     <Compile Include="Core\MemoryCacheFactory.cs" />
     <Compile Include="Core\MemoryFeatureSupport.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />

@@ -57,6 +57,10 @@
     <Compile Include="SomeData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CacheEngines\Glav.CacheAdapter.AppFabric\Glav.CacheAdapter.AppFabric.csproj">
+      <Project>{cb451b13-11d5-4fb0-9a98-715d519b518e}</Project>
+      <Name>Glav.CacheAdapter.AppFabric</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
       <Project>{FDDC051D-062E-49CF-8099-780A53287BC7}</Project>
       <Name>Glav.CacheAdapter</Name>
