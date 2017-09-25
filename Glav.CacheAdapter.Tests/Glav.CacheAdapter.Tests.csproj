@@ -65,6 +65,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CacheEngines\Glav.CacheAdapter.Memcached\Glav.CacheAdapter.Memcached.csproj">
+      <Project>{52ef0620-5cb9-4521-8ded-e4b5737a8825}</Project>
+      <Name>Glav.CacheAdapter.Memcached</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
       <Project>{fddc051d-062e-49cf-8099-780a53287bc7}</Project>
       <Name>Glav.CacheAdapter</Name>
