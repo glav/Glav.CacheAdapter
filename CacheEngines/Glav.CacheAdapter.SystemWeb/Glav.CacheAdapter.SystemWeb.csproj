@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="PerRequestCacheHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemWebCacheConfigExtensions.cs" />
     <Compile Include="WebCacheAdapter.cs" />
     <Compile Include="WebCacheFactory.cs" />
     <Compile Include="WebFeatureSupport.cs" />

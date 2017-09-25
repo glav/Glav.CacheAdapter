@@ -47,6 +47,7 @@
     <Compile Include="CacheServerFarm.cs" />
     <Compile Include="LogFactoryAdapter.cs" />
     <Compile Include="MemcachedAdapter.cs" />
+    <Compile Include="MemcachedCacheConfigExtensions.cs" />
     <Compile Include="MemcachedCacheFactory.cs" />
     <Compile Include="MemcachedConstants.cs" />
     <Compile Include="MemcachedFeatureSupport.cs" />

@@ -16,26 +16,6 @@ namespace Glav.CacheAdapter.Helpers
             config.CacheToUse = CacheTypes.MemoryCache;
             return config;
         }
-        public static CacheConfig UseWebCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.WebCache;
-            return config;
-        }
-        public static CacheConfig UseMemcachedCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.memcached;
-            return config;
-        }
-        public static CacheConfig UseAppFabricCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.AppFabricCache;
-            return config;
-        }
-        public static CacheConfig UseRedisCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.redis;
-            return config;
-        }
         public static CacheConfig UseHybridCache(this CacheConfig config)
         {
             config.CacheToUse = CacheTypes.hybrid;

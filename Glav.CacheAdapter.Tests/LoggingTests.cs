@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Helpers;
+using Glav.CacheAdapter.Memcached;
 
 namespace Glav.CacheAdapter.Tests
 {

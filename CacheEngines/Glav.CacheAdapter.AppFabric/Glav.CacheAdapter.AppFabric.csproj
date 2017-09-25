@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppFabricCacheAdapter.cs" />
+    <Compile Include="AppFabricCacheConfigExtensions.cs" />
     <Compile Include="AppFabricCacheFactory.cs" />
     <Compile Include="AppFabricConstants.cs" />
     <Compile Include="AppFabricFeatureSupport.cs" />
