@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Glav.CacheAdapter.Core;
-using Glav.CacheAdapter.Core.DependencyInjection;
-using Glav.CacheAdapter.DependencyManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.Helpers;
 using Glav.CacheAdapter.Memcached;
+using Glav.CacheAdapter.Memory;
 
 namespace Glav.CacheAdapter.Tests
 {

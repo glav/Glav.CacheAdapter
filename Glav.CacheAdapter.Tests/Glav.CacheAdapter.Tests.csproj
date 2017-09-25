@@ -69,6 +69,10 @@
       <Project>{52ef0620-5cb9-4521-8ded-e4b5737a8825}</Project>
       <Name>Glav.CacheAdapter.Memcached</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CacheEngines\Glav.CacheAdapter.Memory\Glav.CacheAdapter.Memory.csproj">
+      <Project>{ef303bd0-077a-434d-8e40-cb5ff71975a5}</Project>
+      <Name>Glav.CacheAdapter.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Glav.CacheAdapter\Glav.CacheAdapter.csproj">
       <Project>{fddc051d-062e-49cf-8099-780a53287bc7}</Project>
       <Name>Glav.CacheAdapter</Name>

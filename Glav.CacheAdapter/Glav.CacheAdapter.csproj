@@ -38,7 +38,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,8 +58,6 @@
     <Compile Include="DependencyInjection\CacheFactoryAssemblyResolver.cs" />
     <Compile Include="DependencyInjection\ICacheFactoryAssemblyResolver.cs" />
     <Compile Include="Helpers\CacheSettingExtensions.cs" />
-    <Compile Include="Core\MemoryCacheFactory.cs" />
-    <Compile Include="Core\MemoryFeatureSupport.cs" />
     <Compile Include="DependencyInjection\AppServices.cs" />
     <Compile Include="DependencyInjection\CacheAdapterResolver.cs" />
     <Compile Include="DependencyInjection\CacheBinder.cs" />
@@ -82,7 +79,6 @@
     <Compile Include="Core\ICacheConstructionFactory.cs" />
     <Compile Include="Core\ICacheProvider.cs" />
     <Compile Include="Core\ServerNode.cs" />
-    <Compile Include="Core\MemoryCacheAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

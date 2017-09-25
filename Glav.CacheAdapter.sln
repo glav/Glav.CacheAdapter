@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.Memcached
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.SystemWeb", "CacheEngines\Glav.CacheAdapter.SystemWeb\Glav.CacheAdapter.SystemWeb.csproj", "{086C14AC-32EB-4A46-A53B-FF4C4F1C75EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glav.CacheAdapter.Memory", "CacheEngines\Glav.CacheAdapter.Memory\Glav.CacheAdapter.Memory.csproj", "{EF303BD0-077A-434D-8E40-CB5FF71975A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,18 @@ Global
 		{086C14AC-32EB-4A46-A53B-FF4C4F1C75EE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{086C14AC-32EB-4A46-A53B-FF4C4F1C75EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{086C14AC-32EB-4A46-A53B-FF4C4F1C75EE}.Release|x86.Build.0 = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +130,7 @@ Global
 		{3DD71252-D651-4686-A326-6DACED0500FC} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
 		{52EF0620-5CB9-4521-8DED-E4B5737A8825} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
 		{086C14AC-32EB-4A46-A53B-FF4C4F1C75EE} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
+		{EF303BD0-077A-434D-8E40-CB5FF71975A5} = {CDB5F0A6-179E-4D04-9E42-521580AA4719}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D38E49C-2DC3-407E-8F9D-C521F374A47E}

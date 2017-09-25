@@ -11,16 +11,6 @@ namespace Glav.CacheAdapter.Helpers
 {
     public static class CacheConfigExtensions
     {
-        public static CacheConfig UseMemoryCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.MemoryCache;
-            return config;
-        }
-        public static CacheConfig UseHybridCache(this CacheConfig config)
-        {
-            config.CacheToUse = CacheTypes.hybrid;
-            return config;
-        }
         public static CacheConfig WithCacheSpecificSettings(this CacheConfig config, string settings)
         {
             config.CacheSpecificData = settings;

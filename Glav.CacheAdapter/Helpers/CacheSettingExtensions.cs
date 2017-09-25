@@ -20,7 +20,7 @@ namespace Glav.CacheAdapter.Core
             _cacheFactoryTypes.Add(CacheSetting.AppFabric, "Glav.CacheAdapter.AppFabric.AppFabricCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Hybrid, null);
             _cacheFactoryTypes.Add(CacheSetting.memcached, "Glav.CacheAdapter.Memcached.MemcachedCacheFactory");
-            _cacheFactoryTypes.Add(CacheSetting.Memory, null);
+            _cacheFactoryTypes.Add(CacheSetting.Memory, "Glav.CacheAdapter.Memory.MemoryCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Redis, "Glav.CacheAdapter.Redis.RedisCacheFactory");
             _cacheFactoryTypes.Add(CacheSetting.Web, "Glav.CacheAdapter.SystemWeb.WebCacheFactory");
         }
@@ -30,7 +30,7 @@ namespace Glav.CacheAdapter.Core
             _cacheAssemblies.Add(CacheSetting.AppFabric, "Glav.CacheAdapter.AppFabric.dll");
             _cacheAssemblies.Add(CacheSetting.Hybrid, null);
             _cacheAssemblies.Add(CacheSetting.memcached, "Glav.CacheAdapter.Memcached.dll");
-            _cacheAssemblies.Add(CacheSetting.Memory, null);
+            _cacheAssemblies.Add(CacheSetting.Memory, "Glav.CacheAdapter.Memory.dll");
             _cacheAssemblies.Add(CacheSetting.Redis, "Glav.CacheAdapter.redis.dll");
             _cacheAssemblies.Add(CacheSetting.Web, "Glav.CacheAdapter.SystemWeb.dll");
         }
