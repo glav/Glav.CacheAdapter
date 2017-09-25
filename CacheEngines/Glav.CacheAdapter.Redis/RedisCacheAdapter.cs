@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glav.CacheAdapter.Helpers;
+using Glav.CacheAdapter.Serialisation;
 
 namespace Glav.CacheAdapter.Redis
 {
@@ -14,12 +15,15 @@ namespace Glav.CacheAdapter.Redis
         private static IDatabase _db;
         public static ConnectionMultiplexer _connection;
         private readonly bool _cacheDependencyManagementEnabled;
+        private readonly IObjectSerialiser _serialiser;
 
-        public RedisCacheAdapter(ILogging logger, ConnectionMultiplexer redisConnection, bool cacheDependencyManagementEnabled = false)
+        public RedisCacheAdapter(ILogging logger, ConnectionMultiplexer redisConnection, 
+            IObjectSerialiser serialiser, bool cacheDependencyManagementEnabled = false)
         {
             _logger = logger;
             _connection = redisConnection;
             _db = _connection.GetDatabase();
+            _serialiser = serialiser;  // Stack Exchange does not provide serialisation, so we must do so.
             _cacheDependencyManagementEnabled = cacheDependencyManagementEnabled;
 
         }
@@ -43,7 +47,7 @@ namespace Glav.CacheAdapter.Redis
                 if (!data.IsNull && data.HasValue)
                 {
                     var blobBytes = (byte[])data;
-                    var deserialisedObject = blobBytes.Deserialize<T>();
+                    var deserialisedObject = _serialiser.Deserialize<T>(blobBytes);
                     return deserialisedObject;
                 }
             }
@@ -59,7 +63,7 @@ namespace Glav.CacheAdapter.Redis
             try
             {
                 var expiry = absoluteExpiry - DateTime.Now;
-                var success = _db.StringSet(cacheKey, dataToAdd.Serialize(), expiry);
+                var success = _db.StringSet(cacheKey, _serialiser.Serialize(dataToAdd), expiry);
                 if (!success)
                 {
                     _logger.WriteErrorMessage(string.Format("Unable to store item in cache. CacheKey:{0}", cacheKey));
@@ -75,7 +79,7 @@ namespace Glav.CacheAdapter.Redis
         {
             try
             {
-                var success = _db.StringSet(cacheKey, dataToAdd.Serialize(), slidingExpiryWindow);
+                var success = _db.StringSet(cacheKey, _serialiser.Serialize(dataToAdd), slidingExpiryWindow);
                 if (!success)
                 {
                     _logger.WriteErrorMessage(string.Format("Unable to store item in cache. CacheKey:{0}", cacheKey));

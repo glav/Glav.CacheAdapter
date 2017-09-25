@@ -4,6 +4,7 @@ using Glav.CacheAdapter.Helpers;
 using Glav.CacheAdapter.Diagnostics;
 using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Bootstrap;
+using Glav.CacheAdapter.Serialisation;
 
 namespace Glav.CacheAdapter
 {
@@ -15,6 +16,7 @@ namespace Glav.CacheAdapter
         {
             IsCacheEnabled = true;
             RetrieveAppSettingsIfPresent();
+            ObjectSerialiser = new DefaultDataContractSerialiser();
         }
 
         public static CacheConfig Create()
@@ -45,6 +47,8 @@ namespace Glav.CacheAdapter
         public string CacheSpecificData { get; set; }
 
         public LoggingLevel LoggingLevel { get; set; }
+
+        public IObjectSerialiser ObjectSerialiser { get; set; }
 
         /// <summary>
         /// Overrides the current settings taken from the config file, with any present in the

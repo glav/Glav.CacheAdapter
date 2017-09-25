@@ -39,7 +39,7 @@ namespace Glav.CacheAdapter.Redis
                     var currentKeyValue = _redisDatabase.StringGet(parentKey);
                     Cache.InvalidateCacheItem(parentKey);
                     cacheValueItems.Add(currentKeyValue);
-                    cacheValueItems.Add(item.Serialize());
+                    cacheValueItems.Add(Config.ObjectSerialiser.Serialize(item));
                     Logger.WriteInfoMessage(string.Format("Registering parent item:[{0}] - regular cache item converted to parent key list", parentKey));
                 }
                 else
@@ -86,7 +86,7 @@ namespace Glav.CacheAdapter.Redis
 
             if (depList.Count > 0)
             {
-                var redisList = depList.Select(r => (RedisValue)r.Serialize());
+                var redisList = depList.Select(r => (RedisValue)Config.ObjectSerialiser.Serialize(r));
                 _redisDatabase.ListRightPush(parentKey, redisList.ToArray());
             }
         }
@@ -115,7 +115,7 @@ namespace Glav.CacheAdapter.Redis
                         var keyItem = keyList[keyCount];
                         try
                         {
-                            var depItem = ((byte[])keyItem).Deserialize<DependencyItem>();
+                            var depItem = Config.ObjectSerialiser.Deserialize<DependencyItem>(((byte[])keyItem));
                             itemList.Add(depItem);
                         }
                         catch (Exception ex)

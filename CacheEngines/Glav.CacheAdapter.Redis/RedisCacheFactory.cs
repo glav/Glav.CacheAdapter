@@ -55,7 +55,7 @@ namespace Glav.CacheAdapter.Redis
                 throw;
             }
 
-            return new RedisCacheAdapter(Logger,_redisConnection,CacheConfiguration.IsCacheDependencyManagementEnabled);
+            return new RedisCacheAdapter(Logger,_redisConnection, CacheConfiguration.ObjectSerialiser, CacheConfiguration.IsCacheDependencyManagementEnabled);
         }
 
         private ConfigurationOptions ConstructConnectionOptions()

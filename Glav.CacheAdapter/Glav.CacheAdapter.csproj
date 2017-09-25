@@ -39,10 +39,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Workflow.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,6 +54,8 @@
     <Compile Include="Core\CacheFactoryComponentResult.cs" />
     <Compile Include="Core\CacheProvider.cs" />
     <Compile Include="Core\CacheSetting.cs" />
+    <Compile Include="Serialisation\DefaultDataContractSerialiser.cs" />
+    <Compile Include="Serialisation\IObjectSerialiser.cs" />
     <Compile Include="DependencyInjection\CacheFactoryAssemblyResolver.cs" />
     <Compile Include="DependencyInjection\ICacheFactoryAssemblyResolver.cs" />
     <Compile Include="Helpers\CacheSettingExtensions.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="Helpers\CacheConfigExtensions.cs" />
     <Compile Include="Helpers\CacheKeyNamingExtensions.cs" />
     <Compile Include="Helpers\ConversionExtensions.cs" />
-    <Compile Include="Helpers\SerialisationExtensions.cs" />
     <Compile Include="Core\ICache.cs" />
     <Compile Include="Core\ICacheConstructionFactory.cs" />
     <Compile Include="Core\ICacheProvider.cs" />
