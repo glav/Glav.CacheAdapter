@@ -276,7 +276,9 @@ Notes on Version 5.0
 ~~~~~~~~~~~~~~~~~~~~
 --> BREAKING! Separated all cache engines (apart from InMemory) into separate projects and packages.
 --> BREAKING! Removed "AddToPerRequestCache" from ICacheProvider & ICache interface. It was added when the web was main focus and pollutes the other engines. Cache lifetime should remain aspect of each cache engine.
-
+--> BREAKING! Added IObjectSerialiser to dependency list in RedisCacheAdapter constructor.
+--> Added IObjectSerialiser to Core to allow a serialiser to be used where none are provided such as StackExchange.Redis. A default DataContractSerialiser implementation is provided.
+--> Added support for specifying object serialiser to fluent interface.
 
 
 
