@@ -1,6 +1,6 @@
 ﻿using Glav.CacheAdapter.Bootstrap;
 
-namespace Glav.CacheAdapter.Redis
+namespace Glav.CacheAdapter.AppFabric
 {
     public static class AppFabricCacheConfigExtensions
     {
