@@ -1,6 +1,7 @@
 ﻿using System;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyInjection;
+using Glav.CacheAdapter.Serialisation;
 
 namespace Glav.CacheAdapter.Core.DependencyInjection
 {
@@ -75,6 +76,10 @@ namespace Glav.CacheAdapter.Core.DependencyInjection
             if (_resolver == null)
             {
                 _resolver = new CacheAdapterResolver(_logger,_cacheFactoryAssemblyResolver);
+            }
+            if (_config.ObjectSerialiser == null)
+            {
+                _config.ObjectSerialiser = new DefaultDataContractSerialiser();
             }
         }
     }

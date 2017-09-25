@@ -3,6 +3,7 @@ using Glav.CacheAdapter.Core;
 using Glav.CacheAdapter.Core.DependencyInjection;
 using Glav.CacheAdapter.Core.Diagnostics;
 using Glav.CacheAdapter.DependencyInjection;
+using Glav.CacheAdapter.Serialisation;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,6 +62,11 @@ namespace Glav.CacheAdapter.Helpers
             {
                 AddServerNodeIfNotPresent(config, n);
             });
+            return config;
+        }
+        public static CacheConfig UsingObjectSerialiser(this CacheConfig config, IObjectSerialiser objectSerialiser)
+        {
+            config.ObjectSerialiser = objectSerialiser;
             return config;
         }
 
