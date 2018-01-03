@@ -8,7 +8,7 @@ This library allows developers to code against a single interface **ICacheProvid
 * [memcached](http://memcached.org/)
 * [Redis](http://redis.io/)
 
-Note that this is only a brief introduction to the CacheAdatper, however for more detailed information, see the related blog posts listed below.
+Note that this is only a brief introduction to the CacheAdapter, however for more detailed information, see the related blog posts listed below.
 
 ### How do I get set up? ###
 

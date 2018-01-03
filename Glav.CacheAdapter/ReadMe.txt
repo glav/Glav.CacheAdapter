@@ -1,4 +1,4 @@
-﻿CacheAdatper
+﻿CacheAdapter
 ~~~~~~~~~~~~
 
 This project provides a simple, consistent API into a number of different cache mechanisms.
