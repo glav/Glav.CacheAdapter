@@ -272,6 +272,10 @@ Notes on Version 4.2
 --> Addition of licence file Issue #49 - https://bitbucket.org/glav/cacheadapter/issues/49/license
 --> Configuration system update and internal refactor in preparation for larger update to separate out packages. Issue #50 and Issue #40 - https://bitbucket.org/glav/cacheadapter/issues/50/configuration-system-overhaul and https://bitbucket.org/glav/cacheadapter/issues/40/cacheadapter-always-creates-new-config
 
+Notes on Version 4.2.2
+~~~~~~~~~~~~~~~~~~~~~~
+--> Simple spelling fixes and readme updates.
+
 
 
 

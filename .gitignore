@@ -6,3 +6,10 @@
 /Glav.CacheAdapter/bin
 /packages
 /.vs
+/Glav.CacheAdapter/Glav.CacheAdapter.csproj.user
+/TestResults
+/Glav.CacheAdapter.Package/Packages/Glav.CacheAdapter/Glav.CacheAdapter.4.2.2.nupkg
+/Glav.CacheAdapter.Package/Packages/Glav.CacheAdapter/content
+/Glav.CacheAdapter.Package/Packages/Glav.CacheAdapter/lib
+/Glav.CacheAdapter.Package/Packages/Glav.CacheAdapter.Core/lib
+/Glav.CacheAdapter.Package/Packages/Glav.CacheAdapter.Core/Glav.CacheAdapter.Core.4.1.1.nupkg
