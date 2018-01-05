@@ -1,3 +1,5 @@
+![Build Status](https://glav.visualstudio.com/_apis/public/build/definitions/61f8833f-0ad2-44d5-8e4f-4ef692ae6e08/46/badge)
+
 # Glav.CacheAdapter - README #
 
 This library allows developers to code against a single interface **ICacheProvider** and be able to run against a variety of cache implementations simply by changing configuration values. The currently supported list of cache engine/implementations are:
