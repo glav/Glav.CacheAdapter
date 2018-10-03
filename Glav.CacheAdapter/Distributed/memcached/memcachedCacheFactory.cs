@@ -15,6 +15,8 @@ namespace Glav.CacheAdapter.Distributed.memcached
         private int _minPoolSize = 10;
         private int _maxPoolSize = 20;
         private TimeSpan _connectTimeout = TimeSpan.FromSeconds(5);
+        // this is set to text by default due to issues with Binary and Transcoder
+        private string _protocol = "Text";
         private TimeSpan _deadNodeTimeout = TimeSpan.FromSeconds(30);
         private static bool _isInitialised;
         private static readonly object _lockRef = new object();
@@ -31,6 +33,7 @@ namespace Glav.CacheAdapter.Distributed.memcached
         public int MinimumPoolSize { get { return _minPoolSize; } }
         public int MaximumPoolSize { get { return _maxPoolSize; } }
         public TimeSpan ConnectTimeout { get { return _connectTimeout; } }
+        public string Protocol { get { return _protocol; } }
         public TimeSpan DeadNodeTimeout { get { return _deadNodeTimeout; } }
 
         public override CacheFactoryComponentResult CreateCacheComponents()
@@ -63,7 +66,13 @@ namespace Glav.CacheAdapter.Distributed.memcached
                         // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
                         // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
                         // Could be related to memcached version and/or transcoder.
-                        config.Protocol = MemcachedProtocol.Text;
+                        var protocol = MemcachedProtocol.Text;
+                        if (!string.IsNullOrWhiteSpace(Protocol))
+                        {
+                            Enum.TryParse(Protocol, true, out protocol);
+                        }
+                        config.Protocol = protocol;
+
                         config.Transcoder = new DataContractTranscoder();
                         _client = new MemcachedClient(config);
                         Logger.WriteInfoMessage("memcachedAdapter initialised.");
@@ -120,6 +129,12 @@ namespace Glav.CacheAdapter.Distributed.memcached
             if (int.TryParse(maxPoolSizeValue, out value))
             {
                 _maxPoolSize = value;
+            }
+
+            var protocol = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_Protocol);
+            if (!string.IsNullOrWhiteSpace(protocol))
+            {
+                _protocol = protocol;
             }
 
             var connectTimeoutValue = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_ConnectionTimeout);
