@@ -19,5 +19,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '👋 Thanks for reporting! This repository has limited activity due to being superseded by .Net core caching (IDistributedCache). So please be patient. Would happily accept PR's though.'
+            body: '👋 Thanks for reporting! This repository has limited activity due to being superseded by .Net core caching (IDistributedCache). So please be patient. Would happily accept pull requests though.'
           })
