@@ -15,6 +15,10 @@ namespace Glav.CacheAdapter.Distributed.memcached
         private int _minPoolSize = 10;
         private int _maxPoolSize = 20;
         private TimeSpan _connectTimeout = TimeSpan.FromSeconds(5);
+        // this is set to text by default due to issues with Binary and Transcoder
+        private string _protocol = "Text";
+        private string _userName = "";
+        private string _password = "";
         private TimeSpan _deadNodeTimeout = TimeSpan.FromSeconds(30);
         private static bool _isInitialised;
         private static readonly object _lockRef = new object();
@@ -31,6 +35,9 @@ namespace Glav.CacheAdapter.Distributed.memcached
         public int MinimumPoolSize { get { return _minPoolSize; } }
         public int MaximumPoolSize { get { return _maxPoolSize; } }
         public TimeSpan ConnectTimeout { get { return _connectTimeout; } }
+        public string Protocol { get { return _protocol; } }
+        public string UserName { get { return _userName; } }
+        public string Password { get { return _password; } }
         public TimeSpan DeadNodeTimeout { get { return _deadNodeTimeout; } }
 
         public override CacheFactoryComponentResult CreateCacheComponents()
@@ -63,8 +70,23 @@ namespace Glav.CacheAdapter.Distributed.memcached
                         // Note: Tried using the Binary protocol here but I consistently got unreliable results in tests.
                         // TODO: Need to investigate further why Binary protocol is unreliable in this scenario.
                         // Could be related to memcached version and/or transcoder.
-                        config.Protocol = MemcachedProtocol.Text;
+                        var protocol = MemcachedProtocol.Text;
+                        if (!string.IsNullOrWhiteSpace(Protocol))
+                        {
+                            Enum.TryParse(Protocol, true, out protocol);
+                        }
+                        config.Protocol = protocol;
+
                         config.Transcoder = new DataContractTranscoder();
+
+                        if (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password))
+                        {
+                            config.Authentication.Type = typeof(PlainTextAuthenticator);
+                            config.Authentication.Parameters.Add("userName", UserName);
+                            config.Authentication.Parameters.Add("password", Password);
+                            config.Authentication.Parameters.Add("zone", string.Empty);
+                        }
+
                         _client = new MemcachedClient(config);
                         Logger.WriteInfoMessage("memcachedAdapter initialised.");
                         LogManager.AssignFactory(new LogFactoryAdapter(Logger));
@@ -121,6 +143,15 @@ namespace Glav.CacheAdapter.Distributed.memcached
             {
                 _maxPoolSize = value;
             }
+
+            var protocol = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_Protocol);
+            if (!string.IsNullOrWhiteSpace(protocol))
+            {
+                _protocol = protocol;
+            }
+
+            _userName = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_UserName);
+            _password = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_Password);
 
             var connectTimeoutValue = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_ConnectionTimeout);
             var deadTimeoutValue = CacheConfiguration.GetConfigValueFromProviderSpecificValues(memcachedConstants.CONFIG_DeadNodeTimeout);
