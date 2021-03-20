@@ -3,7 +3,7 @@
 	<metadata>
 		<id>Glav.CacheAdapter</id>
 		<title>.NET CacheAdapter</title>
-		<version>4.2.2</version>
+		<version>4.2.3</version>
 		<authors>Paul Glavich</authors>
 		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric, memcached and redis cache mechasnisms. 
 		Supports advanced features such as cache dependencies and also fully supports AppFabric and redis within Azure. This
@@ -15,14 +15,14 @@
 		<language>en-US</language>
 		<projectUrl>https://bitbucket.org/glav/cacheadapter</projectUrl>
 		<frameworkAssemblies>
-		  <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net45" />
-		  <frameworkAssembly assemblyName="System.Web" targetFramework="net45" />
+		  <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net472" />
+		  <frameworkAssembly assemblyName="System.Web" targetFramework="net472" />
 		</frameworkAssemblies>
 		<dependencies>
 			<dependency id="EnyimMemcached" version="2.11" />
 			<dependency id="ServerAppFabric.Client" version="1.1.2106" />
 			<dependency id="StackExchange.Redis" version="1.0.488" />
-			<dependency id="Glav.CacheAdapter.Core" version="4.2.0" />
+			<dependency id="Glav.CacheAdapter.Core" version="4.2.3" />
 		</dependencies>
 		<tags>Cache Caching memcached AppFabric Asp.Net Web redis Glav</tags>
 	</metadata>

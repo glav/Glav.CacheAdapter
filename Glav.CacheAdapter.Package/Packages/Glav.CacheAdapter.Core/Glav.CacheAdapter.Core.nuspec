@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Glav.CacheAdapter.Core</id>
-    <version>4.2.0</version>
+    <version>4.2.3</version>
     <title>.NET CacheAdapter Core components</title>
     <authors>Paul Glavich</authors>
     <owners>Paul Glavich</owners>
@@ -16,13 +16,13 @@
     <language>en-US</language>
     <tags>Cache Caching redis memcached AppFabric Asp.Net Web Glav</tags>
     <dependencies>
-      <dependency id="EnyimMemcached" version="2.11" />
+      <dependency id="EnyimMemcached" version="2.16.0" />
       <dependency id="ServerAppFabric.Client" version="1.1.2106" />
-      <dependency id="StackExchange.Redis" version="1.0.488" />
+      <dependency id="StackExchange.Redis" version="2.2.4" />
     </dependencies>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.5" />
-      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework="net472" />
+      <frameworkAssembly assemblyName="System.Web" targetFramework="net472" />
     </frameworkAssemblies>
   </metadata>
 </package>
