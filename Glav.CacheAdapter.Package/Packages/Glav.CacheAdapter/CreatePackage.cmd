@@ -4,6 +4,7 @@ echo Copying latest files from Release directory
 
 mkdir lib > NUL:
 copy "..\..\..\Glav.CacheAdapter\bin\Release\Glav.CacheAdapter.dll" "lib\net45\" /y > NUL:
+copy "..\..\..\Glav.CacheAdapter\bin\Release\Glav.CacheAdapter.dll" "lib\net472\" /y > NUL:
 copy "..\..\..\Glav.CacheAdapter\Readme.txt" "content\CacheAdapter-ReadMe.txt" /y > NUL:
 copy "..\..\..\Glav.CacheAdapter.ExampleUsage\Program.cs" "content\CacheAdapterExamples\Example-CacheAdapterUsage.cs" /y > NUL:
 copy "..\..\..\Glav.CacheAdapter.ExampleUsage\ConsoleHelper.cs" "content\CacheAdapterExamples\ConsoleHelper.cs" /y > NUL:

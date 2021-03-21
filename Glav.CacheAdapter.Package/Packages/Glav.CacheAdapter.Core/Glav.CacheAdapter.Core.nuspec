@@ -2,12 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Glav.CacheAdapter.Core</id>
-    <version>4.2.0</version>
+    <version>4.3</version>
     <title>.NET CacheAdapter Core components</title>
     <authors>Paul Glavich</authors>
     <owners>Paul Glavich</owners>
     <projectUrl>https://bitbucket.org/glav/cacheadapter</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<license type="expression">MIT</license>
     <description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric, memcached and redis cache mechasnisms. 
 		Supports advanced features such as cache dependencies and also fully supports AppFabric and redis within Azure. 
 		This package contains no examples or documentation and contains core components only. If you require examples, configuration
@@ -15,14 +16,18 @@
     <summary>A Generic cache mechanism supporting multiple cache engines.</summary>
     <language>en-US</language>
     <tags>Cache Caching redis memcached AppFabric Asp.Net Web Glav</tags>
+	<frameworkAssemblies>
+	  <frameworkAssembly assemblyName="System.Runtime.Serialization" />
+	  <frameworkAssembly assemblyName="System.Web" />
+	</frameworkAssemblies>
     <dependencies>
-      <dependency id="EnyimMemcached" version="2.11" />
-      <dependency id="ServerAppFabric.Client" version="1.1.2106" />
-      <dependency id="StackExchange.Redis" version="1.0.488" />
+			  <dependency id="EnyimMemcached" version="2.16.0" />
+			  <dependency id="ServerAppFabric.Client" version="1.1.2106" />
+			  <dependency id="StackExchange.Redis" version="2.2.4" />
     </dependencies>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.5" />
-      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.5" />
-    </frameworkAssemblies>
   </metadata>
+  <files>
+	  <file src="lib\*.dll" target="lib" />
+	  <file src="content\Licence.txt" target="content" />
+  </files>
 </package>

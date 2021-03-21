@@ -4,6 +4,7 @@ echo Copying latest files from Release directory
 
 mkdir lib > NUL:
 copy "..\..\..\Glav.CacheAdapter\bin\Release\Glav.CacheAdapter.dll" "lib\net45\" /y > NUL:
+copy "..\..\..\Glav.CacheAdapter\bin\Release\Glav.CacheAdapter.dll" "lib\net472\" /y > NUL:
 echo ....Done.
 echo.
 echo Creating Glav.CacheAdapter.Core Package
