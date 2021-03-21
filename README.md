@@ -60,6 +60,11 @@ which will return the data from cache if it exists in the cache, or use the lamb
 
 ### Revision History ###
 
+#### Version 4.3 ####
+* Update runtime to 4.7.2
+* Added support to specify user and password for memcached cache to support MemcachedCloud (Redislabs)
+* Some cleanup
+
 #### Version 4.2.2 ####
 * Spelling changes and readme file fixes.
 
