@@ -3,7 +3,7 @@
 	<metadata>
 		<id>Glav.CacheAdapter</id>
 		<title>.NET CacheAdapter</title>
-		<version>4.3</version>
+		<version>4.3.1</version>
 		<authors>Paul Glavich</authors>
 		<license type="expression">MIT</license>
 		<description>A generic cache mechanism that provides config switching between memory, ASP.NET web, AppFabric, memcached and redis cache mechasnisms. 
@@ -20,15 +20,17 @@
 		  <frameworkAssembly assemblyName="System.Web" />
 		</frameworkAssemblies>
 		<dependencies>
+		  <group targetFramework=".NETFramework4.7.2">
               <dependency id="Glav.CacheAdapter.Core" version="4.3" />
 			  <dependency id="EnyimMemcached" version="2.16.0" />
 			  <dependency id="ServerAppFabric.Client" version="1.1.2106" />
 			  <dependency id="StackExchange.Redis" version="2.2.4" />
+		</group>
 		</dependencies>
 		<tags>Cache Caching memcached AppFabric Asp.Net Web redis Glav</tags>
 	</metadata>
 	 <files>
-		  <file src="lib\*.dll" target="lib" />
+		  <file src="lib\net472\*.dll" target="lib\net472" />
 		  <file src="content\app.config.transform" target="content" />
 		  <file src="content\web.config.transform" target="content" />
 		  <file src="content\CacheAdapterExamples\*.cs" target="content\CacheAdapterExamples" />
